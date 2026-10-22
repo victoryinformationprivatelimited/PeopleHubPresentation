@@ -1,0 +1,29 @@
+@import "tailwindcss";
+@import "@fontsource/plus-jakarta-sans/400.css";
+@import "@fontsource/plus-jakarta-sans/600.css";
+@import "@fontsource/plus-jakarta-sans/800.css";
+@import "@fontsource/fraunces/600.css";
+@import "@fontsource/fraunces/700.css";
+
+:root {
+  --bg: #080e1a; --bg2: #0e1729; --card: rgba(255,255,255,.055); --line: rgba(255,255,255,.12);
+  --ink: #f1f5fb; --mute: #94a3c0; --brand: #3b6be0; --brand2: #6ea0ff; --accent: #22d3ee; --ok: #34d399; --warn: #fbbf24; --bad: #fb7185;
+  --logo-filter: invert(1) brightness(2);
+}
+:root[data-theme="light"] {
+  --bg: #eef1f6; --bg2: #ffffff; --card: rgba(255,255,255,.85); --line: rgba(15,23,42,.12);
+  --ink: #0f172a; --mute: #52627f; --brand: #2f57c9; --brand2: #1d4ed8; --accent: #0891b2; --ok: #059669; --warn: #d97706; --bad: #e11d48;
+  --logo-filter: none;
+}
+html, body, #root { height: 100%; margin: 0; background: #000; overflow: hidden; }
+body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color: var(--ink); }
+.serif { font-family: 'Fraunces', Georgia, serif; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 20px; backdrop-filter: blur(10px); }
+.grad-text { background: linear-gradient(90deg, var(--brand2), var(--accent)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.glow { box-shadow: 0 0 60px -10px var(--brand); }
+.grid-bg { background-image: linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px); background-size: 64px 64px; mask-image: radial-gradient(ellipse at 50% 40%, #000 20%, transparent 75%); }
+@keyframes pulseDot { 0%,100% { opacity: .35; transform: scale(1) } 50% { opacity: 1; transform: scale(1.4) } }
+.pulse-dot { animation: pulseDot 1.6s ease-in-out infinite; }
+@keyframes dash { to { stroke-dashoffset: -40 } }
+.flow-line { stroke-dasharray: 6 8; animation: dash 1.2s linear infinite; }
+@media print { html, body { overflow: visible } }
