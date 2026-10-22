@@ -42,3 +42,5 @@ Country drives currency, statutory deductions, tax, leave types, compliance repo
 
 ## Client view (the QR / team link)
 The link in the QR code opens the hosted deck with `view=client`: no presenter notes (N), settings (C), timer (D) or export (E), a "Prepared for <client>" ribbon, and it never reads the presenter's saved settings. It carries country, industry, client, numbers, pain points, theme and agenda. A logo can't fit in a QR code: put the image in `public/logos/`, redeploy, and enter its address in the launcher. Note this hides the tools but the notes text still ships inside the site code — keep the site behind Cloudflare Access for real privacy.
+
+The QR / team-link address is pre-filled with `https://presentation.peoplehub.biz` (`HOSTED_URL` in `src/engine/Launcher.tsx`); change that constant if the site moves, or clear the launcher field to turn the QR code off.

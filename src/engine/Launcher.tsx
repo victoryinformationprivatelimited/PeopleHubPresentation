@@ -28,7 +28,9 @@ function readLogo(file: File): Promise<string> {
 }
 
 const KEY = 'peoplehub-deck-config'
-export const emptyConfig: Config = { country: 'lk', industry: 'generic', client: '', theme: 'dark' }
+/** Where the deck is hosted — pre-filled as the QR / team-link address (can still be changed or cleared). */
+export const HOSTED_URL = 'https://presentation.peoplehub.biz'
+export const emptyConfig: Config = { country: 'lk', industry: 'generic', client: '', theme: 'dark', qrUrl: HOSTED_URL }
 export function loadConfig(): Config {
   try { return { ...emptyConfig, ...JSON.parse(localStorage.getItem(KEY) ?? '{}') } } catch { return emptyConfig }
 }
