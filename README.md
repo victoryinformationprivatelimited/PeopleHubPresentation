@@ -4,7 +4,8 @@ Interactive web deck (42 slides, all 27 modules + IT deep-dive, packages, ROI es
 
 ## Run
 - Dev: `npm install && npm run dev`
-- Offline build: `npm run build` → open `dist/index.html` directly (single file, no server or internet needed). Copy `dist/` to a USB stick.
+- Website build: `npm run build` → `dist/` (small first load; 3D and charts load on demand, assets cached for a year). Used by `npm run deploy`.
+- Offline build: `npm run build:offline` → open `dist-offline/index.html` directly (single file, no server or internet needed). Copy `dist-offline/` to a USB stick.
 
 ## Launcher screen
 Opening the deck shows a configuration screen (country, industry, client name, theme). Press **Load presentation** to start; press **C** during the show to return to it. Last choices are remembered in the browser. Query parameters below skip the launcher.

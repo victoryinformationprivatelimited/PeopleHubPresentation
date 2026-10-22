@@ -8,7 +8,8 @@
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "preview": "vite preview",
-    "deploy": "npm run build && wrangler pages deploy dist --project-name=peoplehub-presentation --branch=main"
+    "deploy": "npm run build && wrangler pages deploy dist --project-name=peoplehub-presentation --branch=main",
+    "build:offline": "tsc -b && vite build --mode offline --outDir dist-offline"
   },
   "dependencies": {
     "@fontsource/fraunces": "^5.3.0",

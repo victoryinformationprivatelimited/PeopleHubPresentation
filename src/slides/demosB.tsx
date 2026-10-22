@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
-import Chart from 'react-apexcharts'
+import Chart from '../ui/LazyChart'
 import { useDeck, money } from '../engine/context'
 import { Avatar, Badge, Bar, Counter, Phone, Window, fade } from '../ui/primitives'
 

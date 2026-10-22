@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react'
-import QRCode from 'qrcode'
 
 /** QR code rendered offline (no external service). */
 export function QrCode({ value, size = 220 }: { value: string; size?: number }) {
   const [src, setSrc] = useState('')
   useEffect(() => {
     let live = true
-    QRCode.toDataURL(value, { margin: 1, width: size * 2, color: { dark: '#0f172a', light: '#ffffff' }, errorCorrectionLevel: 'M' })
+    import('qrcode')
+      .then(m => m.default.toDataURL(value, { margin: 1, width: size * 2, color: { dark: '#0f172a', light: '#ffffff' }, errorCorrectionLevel: 'M' }))
       .then(u => { if (live) setSrc(u) })
       .catch(() => { if (live) setSrc('') })
     return () => { live = false }

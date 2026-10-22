@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Deck } from './engine/Deck'
 import { DeckContext } from './engine/context'
 import { Launcher, loadConfig, saveConfig, type Config } from './engine/Launcher'
@@ -33,6 +33,11 @@ function initial(): { cfg: Config; mode: Mode; auto: boolean } {
 
 export default function App() {
   const init = useMemo(initial, [])
+  useEffect(() => {
+    const warm = () => { void import('./ui/Hero3D'); void import('react-apexcharts'); void import('qrcode') }
+    const t = setTimeout(warm, 1500)
+    return () => clearTimeout(t)
+  }, [])
   const [cfg, setCfg] = useState(init.cfg)
   const [mode, setMode] = useState<Mode>(init.mode)
   const allSlides = useMemo(() => buildSlides(), [])
