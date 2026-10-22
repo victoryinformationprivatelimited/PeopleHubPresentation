@@ -27,3 +27,15 @@ body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color: var(--ink
 @keyframes dash { to { stroke-dashoffset: -40 } }
 .flow-line { stroke-dasharray: 6 8; animation: dash 1.2s linear infinite; }
 @media print { html, body { overflow: visible } }
+
+/* ---- PDF / print (leave-behind) ---- */
+@page { size: 1920px 1080px; margin: 0; }
+@media print {
+  html, body, #root { height: auto !important; overflow: visible !important; background: #fff !important; }
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .no-print { display: none !important; }
+  .card { backdrop-filter: none !important; }
+  .grad-text { background: none !important; -webkit-text-fill-color: currentColor !important; color: var(--brand2) !important; }
+  .print-page { break-after: page; page-break-after: always; break-inside: avoid; }
+}
+#print-root { background: var(--bg); }

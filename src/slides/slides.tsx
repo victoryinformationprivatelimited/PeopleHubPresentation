@@ -1,9 +1,11 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import type { ReactNode } from 'react'
-import { useDeck, money, poss, type SlideDef } from '../engine/context'
+import { useDeck, useNav, money, poss, type SlideDef } from '../engine/context'
 import { Badge, Counter, Flow, Window, fade } from '../ui/primitives'
 import { Hero3D } from '../ui/Hero3D'
+import { IndustryArt } from '../ui/IndustryArt'
+import { QrCode } from '../ui/QrCode'
 import { ModuleSlide, Section } from './layouts'
 import { modules, pillars } from './modules'
 import * as A from './demosA'
@@ -20,10 +22,11 @@ const demos: Record<string, () => ReactNode> = {
 
 /* ================= A. OPEN ================= */
 function Opener() {
-  const { industry, client, country, logo } = useDeck()
+  const { industry, client, country, logo, print } = useDeck()
   return (
     <div className="absolute inset-0">
-      <Hero3D className="absolute right-[-120px] top-0 w-[1100px] h-[1000px] opacity-90" />
+      {!print && <Hero3D className="absolute right-[-120px] top-0 w-[1100px] h-[1000px] opacity-40" />}
+      <motion.div {...fade(0.3)} className="absolute right-12 top-[150px] w-[820px]"><IndustryArt id={industry.id} className="w-full" /></motion.div>
       <div className="absolute left-20 top-24 w-[1000px]">
         <motion.div {...fade(0)} className="flex items-center gap-6 mb-10"><img src="./logo-black.png" alt="PeopleHub" className="h-28 w-28 rounded-full bg-white p-1" />{logo && <><span className="text-[40px]" style={{ color: 'var(--mute)' }}>×</span><img src={logo} alt={client} className="h-28 max-w-[320px] object-contain rounded-2xl bg-white px-4 py-2" /></>}</motion.div>
         <motion.div {...fade(0.1)} className="text-[16px] tracking-[0.3em] uppercase font-bold mb-5" style={{ color: 'var(--accent)' }}>Intelligent Human Capital Platform</motion.div>
@@ -34,7 +37,7 @@ function Opener() {
           <Badge>{country.name}</Badge><Badge tone="mute">{industry.name}</Badge>
         </motion.div>
       </div>
-      <div className="absolute left-20 bottom-24 text-[16px]" style={{ color: 'var(--mute)' }}>A product of {country.contact.company} · Press <b>G</b> to jump · <b>N</b> notes · <b>F</b> fullscreen</div>
+      <div className="absolute left-20 bottom-24 text-[16px]" style={{ color: 'var(--mute)' }}>A product of {country.contact.company}{!print && <> · Press <b>?</b> for shortcuts · <b>G</b> jump · <b>L</b> pointer</>}</div>
     </div>
   )
 }
@@ -42,8 +45,9 @@ function Opener() {
 function Constellation() {
   const { industry } = useDeck()
   const [hover, setHover] = useState<string | null>(null)
+  const { jump } = useNav()
   return (
-    <Section eyebrow="Meet PeopleHub" title="One platform. 27 modules. Zero silos." sub="Five pillars that cover the complete employee lifecycle — start with what you need, grow into the rest." zoom={1.4}>
+    <Section eyebrow="Meet PeopleHub" title="One platform. 27 modules. Zero silos." sub="Click any module to jump straight to it — Backspace (or the button) brings you back here." zoom={1.4}>
       <div className="grid grid-cols-5 gap-5 mt-2">
         {pillars.map((p, k) => (
           <motion.div key={p.id} {...fade(0.15 * k)} className="card p-5" style={{ borderTop: `4px solid ${p.color}` }}>
@@ -53,8 +57,8 @@ function Constellation() {
               {modules.filter(m => m.pillar === p.id).map((m, j) => {
                 const focus = industry.focusModules.includes(m.id)
                 return (
-                  <motion.div key={m.id} {...fade(0.4 + 0.04 * j + 0.1 * k)} onMouseEnter={() => setHover(m.id)} onMouseLeave={() => setHover(null)}
-                    className="rounded-lg px-3 py-2 text-[15px] flex items-center gap-2 cursor-default"
+                  <motion.div key={m.id} {...fade(0.4 + 0.04 * j + 0.1 * k)} onMouseEnter={() => setHover(m.id)} onMouseLeave={() => setHover(null)} onClick={() => jump(m.id)}
+                    className="rounded-lg px-3 py-2 text-[15px] flex items-center gap-2 cursor-pointer"
                     style={{ background: focus || hover === m.id ? `color-mix(in srgb, ${p.color} 28%, transparent)` : 'var(--card)', border: `1px solid ${focus ? p.color : 'var(--line)'}` }}>
                     {focus && <span className="pulse-dot w-2 h-2 rounded-full" style={{ background: p.color }} />}{m.name}
                   </motion.div>
@@ -240,18 +244,26 @@ function NextSteps() {
 }
 
 function Contact() {
-  const { country, client, logo } = useDeck()
+  const { country, client, logo, qrUrl, print, industry } = useDeck()
   const c = country.contact
   return (
     <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-      <Hero3D className="absolute inset-0 opacity-40" />
+      {print ? <IndustryArt id={industry.id} className="absolute right-10 bottom-16 w-[620px] opacity-20" /> : <Hero3D className="absolute inset-0 opacity-40" />}
       <div className="relative">
         <motion.div {...fade(0)} className="flex items-center justify-center gap-6 mb-8"><img src="./logo-black.png" alt="PeopleHub" className="h-32 w-32 rounded-full bg-white p-1" />{logo && <><span className="text-[44px]" style={{ color: 'var(--mute)' }}>×</span><img src={logo} alt={client} className="h-32 max-w-[360px] object-contain rounded-2xl bg-white px-5 py-2" /></>}</motion.div>
         <motion.h1 {...fade(0.1)} className="serif text-[96px] font-bold leading-tight">Thank you{client ? `, ${client}` : ''}.</motion.h1>
         <motion.div {...fade(0.25)} className="text-[30px] mt-4 grad-text font-semibold">Transforming human capital through intelligent workforce management</motion.div>
-        <motion.div {...fade(0.4)} className="card inline-block mt-12 px-12 py-7 text-[24px] leading-loose">
-          <b>{c.company}</b><br />✉ {c.email} &nbsp;·&nbsp; ☎ {c.phone} &nbsp;·&nbsp; 🌐 {c.web}
-        </motion.div>
+        <div className="flex items-stretch justify-center gap-8 mt-10">
+          <motion.div {...fade(0.4)} className="card px-12 py-7 text-[24px] leading-loose flex flex-col justify-center">
+            <b>{c.company}</b><span>✉ {c.email}</span><span>☎ {c.phone}</span><span>🌐 {c.web}</span>
+          </motion.div>
+          {qrUrl && (
+            <motion.div {...fade(0.6)} className="card flex items-center gap-8 px-8 py-5 text-left">
+              <QrCode value={qrUrl} size={190} />
+              <div><div className="serif text-[34px] font-bold">{client ? `${poss(client)} team page` : 'Team page'}</div><div className="text-[19px] mt-1" style={{ color: 'var(--mute)' }}>Scan to open the personalised<br />PeopleHub overview on your phone.</div></div>
+            </motion.div>
+          )}
+        </div>
       </div>
     </div>
   )
@@ -260,15 +272,15 @@ function Contact() {
 /* ================= DECK ================= */
 const modSlides = (): SlideDef[] =>
   modules.map(m => ({
-    id: m.id, section: pillars.find(p => p.id === m.pillar)!.name, title: m.name, notes: m.notes,
+    id: m.id, section: pillars.find(p => p.id === m.pillar)!.name, title: m.name, notes: m.notes, secs: 60, tier: ['employee', 'attendance', 'payroll', 'ess'].includes(m.id) ? 2 : 1,
     render: () => <ModuleSlide mod={m} demo={demos[m.id]()} />,
   }))
 
 export function buildSlides(): SlideDef[] {
-  const s = (id: string, section: string, title: string, notes: string, C: () => ReactNode): SlideDef => ({ id, section, title, notes, render: () => <C /> })
+  const s = (id: string, section: string, title: string, notes: string, C: () => ReactNode): SlideDef => ({ id, section, title, notes, secs: 45, tier: 1, render: () => <C /> })
   const mods = modSlides()
   const part = (pillar: string) => mods.filter(x => modules.find(m => m.id === x.id)!.pillar === pillar)
-  return [
+  const all: SlideDef[] = [
     s('open', 'Open', 'Welcome', 'Greet, thank the audience, set the agenda: challenge → platform → modules → IT view → packages → next steps. Personalise using the client name.', Opener),
     s('challenge', 'Open', 'The challenge', 'Ask the room which of these hurts most. Capture answers — you will come back to them at each module.', Challenge),
     s('beforeafter', 'Open', 'Before & after', 'Walk down the day: left is today, right is with PeopleHub. Ask which row hurts most. The weekly-hours figure is illustrative (assumes ~4 admin hours a day per HR person).', BeforeAfter),
@@ -289,6 +301,13 @@ export function buildSlides(): SlideDef[] {
     s('next', 'Close', 'Next steps', 'Agree the date for the discovery workshop before leaving the room.', NextSteps),
     s('contact', 'Close', 'Thank you', 'Thank them; leave this slide up during Q&A.', Contact),
   ]
+  // [seconds, tier] — tier 3 slides are always kept when an agenda shortens the deck
+  const meta: Record<string, [number, number]> = {
+    open: [30, 3], challenge: [60, 3], beforeafter: [60, 2], constellation: [45, 3], glance: [30, 1],
+    'it-arch': [60, 0], 'it-tenancy': [45, 0], 'it-sec': [45, 0], 'it-int': [45, 0],
+    story: [45, 2], why: [45, 2], versus: [60, 2], pains: [45, 3], packages: [60, 3], implementation: [45, 2], roi: [60, 2], next: [30, 3], contact: [20, 3],
+  }
+  return all.map(sl => (meta[sl.id] ? { ...sl, secs: meta[sl.id][0], tier: meta[sl.id][1] } : sl))
 }
 
 export { money }

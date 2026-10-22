@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "deploy": "npm run build && wrangler pages deploy dist --project-name=peoplehub-presentation --branch=main"
   },
   "dependencies": {
     "@fontsource/fraunces": "^5.3.0",
@@ -17,6 +18,7 @@
     "@tailwindcss/vite": "^4.3.3",
     "apexcharts": "^8.4.1",
     "framer-motion": "^14.6.0",
+    "qrcode": "^1.5.4",
     "react": "^19.3.1",
     "react-apexcharts": "^2.1.1",
     "react-dom": "^19.3.1",
@@ -25,12 +27,14 @@
   },
   "devDependencies": {
     "@types/node": "^24.19.2",
+    "@types/qrcode": "^1.5.6",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "^6.1.2",
     "oxlint": "^1.88.0",
     "typescript": "~6.0.3",
     "vite": "^8.3.4",
-    "vite-plugin-singlefile": "^2.3.4"
+    "vite-plugin-singlefile": "^2.3.4",
+    "wrangler": "^4.152.0"
   }
 }

@@ -12,16 +12,25 @@ export interface DeckCtx {
   hrTeam?: number
   pains: Pain[]        // pain points chosen for this client (may be empty)
   focusPains: Pain[]   // chosen pains, or industry defaults when none chosen
+  qrUrl?: string       // link encoded in the QR code (client team page)
+  print?: boolean      // rendering for PDF export (no WebGL, static)
 }
 
 export const DeckContext = createContext<DeckCtx>(null as unknown as DeckCtx)
 export const useDeck = () => useContext(DeckContext)
+
+/** Navigation helpers available to slides (e.g. the clickable module overview). */
+export interface DeckNav { jump: (slideId: string) => void }
+export const NavContext = createContext<DeckNav>({ jump: () => {} })
+export const useNav = () => useContext(NavContext)
 
 export interface SlideDef {
   id: string
   section: string
   title: string
   notes: string
+  secs: number         // planned speaking time in seconds
+  tier: number         // 3 = always keep, 2 = important, 1 = normal, 0 = optional
   render: (ctx: DeckCtx) => React.ReactNode
 }
 
