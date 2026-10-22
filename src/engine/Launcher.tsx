@@ -7,7 +7,7 @@ import { defaultAgenda, fmtTime, pickSlides, totalSecs, type Agenda } from './ag
 import { buildCtx } from './buildCtx'
 import type { SlideDef } from './context'
 
-export interface Config { country: string; industry: string; client: string; theme: 'dark' | 'light'; logo?: string; headcount?: number; hrTeam?: number; pains?: string[]; customPain?: string; agenda?: Agenda; qrUrl?: string; qrPersonalise?: boolean }
+export interface Config { country: string; industry: string; client: string; theme: 'dark' | 'light'; logo?: string; headcount?: number; hrTeam?: number; pains?: string[]; customPain?: string; agenda?: Agenda; qrUrl?: string; qrPersonalise?: boolean; qrClientView?: boolean; qrLogoUrl?: string }
 
 /** Downscale an uploaded logo so it fits comfortably in browser storage. */
 function readLogo(file: File): Promise<string> {
@@ -28,9 +28,9 @@ function readLogo(file: File): Promise<string> {
 }
 
 const KEY = 'peoplehub-deck-config'
+export const emptyConfig: Config = { country: 'lk', industry: 'generic', client: '', theme: 'dark' }
 export function loadConfig(): Config {
-  const d: Config = { country: 'lk', industry: 'generic', client: '', theme: 'dark' }
-  try { return { ...d, ...JSON.parse(localStorage.getItem(KEY) ?? '{}') } } catch { return d }
+  try { return { ...emptyConfig, ...JSON.parse(localStorage.getItem(KEY) ?? '{}') } } catch { return emptyConfig }
 }
 export function saveConfig(c: Config) { try { localStorage.setItem(KEY, JSON.stringify(c)) } catch { /* storage unavailable */ } }
 
@@ -178,7 +178,11 @@ export function Launcher({ initial, slides, onStart, onExport }: { initial: Conf
             <h2 className="text-[13px] tracking-[0.2em] uppercase font-bold mb-3" style={{ color: 'var(--brand2)' }}>9 · Client team link (QR code) <span className="normal-case tracking-normal font-normal" style={{ color: 'var(--mute)' }}>— shown on the closing slide and the PDF</span></h2>
             <input value={c.qrUrl ?? ''} onChange={e => set({ qrUrl: e.target.value })} placeholder="Private page where this deck is hosted, e.g. https://share.yourcompany.com/peoplehub/index.html"
               className="w-full rounded-xl px-4 py-3 text-[15px] outline-none" style={{ background: 'var(--card)', border: '1.5px solid var(--line)', color: 'var(--ink)' }} />
-            <label className="flex items-center gap-2 mt-3 text-[14px]"><input type="checkbox" checked={c.qrPersonalise !== false} onChange={e => set({ qrPersonalise: e.target.checked })} /> Add this client’s settings (country, industry, name, numbers, pain points) to the link so their team sees the same personalised deck. The logo is not carried in the link.</label>
+            <label className="flex items-center gap-2 mt-3 text-[14px]"><input type="checkbox" checked={c.qrPersonalise !== false} onChange={e => set({ qrPersonalise: e.target.checked })} /> Add this client’s settings (country, industry, name, numbers, pain points, theme, agenda) to the link so their team sees the same personalised deck.</label>
+            <label className="flex items-center gap-2 mt-2 text-[14px]"><input type="checkbox" checked={c.qrClientView !== false} onChange={e => set({ qrClientView: e.target.checked })} /> Client view — hides presenter notes, the settings screen, the timer and export, and shows a “Prepared for” ribbon.</label>
+            <input value={c.qrLogoUrl ?? ''} onChange={e => set({ qrLogoUrl: e.target.value })} placeholder="Client logo web address for the link (optional) — e.g. https://presentation.peoplehub.biz/logos/acme.png"
+              className="w-full mt-3 rounded-xl px-4 py-3 text-[15px] outline-none" style={{ background: 'var(--card)', border: '1.5px solid var(--line)', color: 'var(--ink)' }} />
+            <p className="text-[12.5px] mt-1" style={{ color: 'var(--mute)' }}>A logo can’t be packed into a QR code. To show it for the client’s team, put the image file in the site’s <code>public/logos/</code> folder, redeploy, and enter its address here.</p>
           </section>
 
           <section className="card p-6 flex flex-col md:col-span-2">

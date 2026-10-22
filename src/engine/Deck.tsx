@@ -12,13 +12,14 @@ interface Props {
   ctx: DeckCtx
   theme?: 'dark' | 'light'
   showTimer?: boolean
+  clientView?: boolean      // shared with the client's team: no presenter tools
   onConfigure?: () => void
   onExport?: () => void
 }
 
 type Pointer = 'off' | 'laser' | 'spot'
 
-export function Deck({ slides, allSlides, ctx, theme: initialTheme = 'dark', showTimer: timerDefault = false, onConfigure, onExport }: Props) {
+export function Deck({ slides, allSlides, ctx, theme: initialTheme = 'dark', showTimer: timerDefault = false, clientView = false, onConfigure, onExport }: Props) {
   const order = useMemo(() => slides.map(s => s.id), [slides])
   const byId = useMemo(() => new Map(allSlides.map(s => [s.id, s])), [allSlides])
 
@@ -89,6 +90,7 @@ export function Deck({ slides, allSlides, ctx, theme: initialTheme = 'dark', sho
     const onKey = (e: KeyboardEvent) => {
       if ((e.target as HTMLElement)?.tagName === 'INPUT') return
       const k = e.key
+      if (clientView && ['n', 'c', 'e', 'd'].includes(k.toLowerCase())) return
       if (black && k !== '.') { setBlack(false); return }
       if (['ArrowRight', 'PageDown', ' ', 'Enter'].includes(k) && !grid) { e.preventDefault(); next() }
       else if (['ArrowLeft', 'PageUp', 'Backspace'].includes(k) && !grid) { e.preventDefault(); prev() }
@@ -108,7 +110,7 @@ export function Deck({ slides, allSlides, ctx, theme: initialTheme = 'dark', sho
     }
     addEventListener('keydown', onKey)
     return () => removeEventListener('keydown', onKey)
-  }, [go, next, prev, grid, order.length, onConfigure, onExport, black])
+  }, [go, next, prev, grid, order.length, onConfigure, onExport, black, clientView])
 
   const sections = useMemo(() => {
     const m = new Map<string, SlideDef[]>()
@@ -159,7 +161,7 @@ export function Deck({ slides, allSlides, ctx, theme: initialTheme = 'dark', sho
           {/* footer chrome */}
           <div className="absolute bottom-0 left-0 right-0 h-14 px-14 flex items-center justify-between text-[15px] pointer-events-none" style={{ color: 'var(--mute)' }}>
             <span className="tracking-[0.18em] uppercase text-[12px]">PeopleHub HRIS · {slide.section}</span>
-            {timer && (
+            {timer && !clientView && (
               <button onClick={() => { startRef.current = Date.now() }} title="Click to restart the timer" className="pointer-events-auto rounded-full px-4 py-1 text-[14px]" style={{ background: 'var(--card)', border: '1px solid var(--line)' }}>
                 ⏱ {fmtTime(elapsed)} / {fmtTime(planned)} · <b style={{ color: paceColor }}>{paceLabel}</b>
               </button>
@@ -176,7 +178,11 @@ export function Deck({ slides, allSlides, ctx, theme: initialTheme = 'dark', sho
           <button aria-label="Previous" className="absolute left-0 top-24 bottom-24 w-24 opacity-0" onClick={prev} />
           <button aria-label="Next" className="absolute right-0 top-24 bottom-24 w-24 opacity-0" onClick={next} />
 
-          {notes && (
+          {clientView && slide.id !== 'open' && ctx.client && (
+            <div className="absolute top-6 left-14 z-30 rounded-full px-4 py-1.5 text-[15px] font-semibold" style={{ background: 'var(--card)', border: '1px solid var(--line)', color: 'var(--mute)' }}>Prepared for {ctx.client}</div>
+          )}
+
+          {notes && !clientView && (
             <div className="absolute left-14 right-14 bottom-16 card p-6 text-[20px] leading-snug z-40" style={{ background: 'var(--bg2)' }}>
               <div className="text-[12px] tracking-widest uppercase mb-2" style={{ color: 'var(--brand2)' }}>Presenter notes · {slide.title} · ~{Math.round(slide.secs)}s</div>
               {slide.notes}
@@ -216,7 +222,7 @@ export function Deck({ slides, allSlides, ctx, theme: initialTheme = 'dark', sho
             <div className="absolute inset-0 z-[60] grid place-items-center" style={{ background: 'color-mix(in srgb, var(--bg) 92%, transparent)' }} onClick={() => setHelp(false)}>
               <div className="card p-10 text-[22px] leading-loose" style={{ background: 'var(--bg2)' }}>
                 <div className="serif text-[38px] mb-3">Shortcuts</div>
-                {[['← / → / click edges / clicker', 'Previous / next'], ['G', 'Slide grid (and hidden slides)'], ['N', 'Presenter notes'], ['D', 'Timer & pace (click it to restart)'], ['L', 'Pointer: laser → spotlight → off'], ['.', 'Black screen'], ['Backspace', 'Return from a module jump'], ['T', 'Light / dark'], ['F', 'Fullscreen'], ['E', 'Export PDF leave-behind'], ['C', 'Back to settings']].map(([k, v]) => (
+                {[['← / → / click edges / clicker', 'Previous / next'], ['G', 'Slide grid (and hidden slides)'], ['N', 'Presenter notes'], ['D', 'Timer & pace (click it to restart)'], ['L', 'Pointer: laser → spotlight → off'], ['.', 'Black screen'], ['Backspace', 'Return from a module jump'], ['T', 'Light / dark'], ['F', 'Fullscreen'], ['E', 'Export PDF leave-behind'], ['C', 'Back to settings']].filter(([k]) => !clientView || !['N', 'D', 'E', 'C'].includes(k)).map(([k, v]) => (
                   <div key={k} className="flex gap-8"><b className="w-[360px]" style={{ color: 'var(--brand2)' }}>{k}</b><span>{v}</span></div>
                 ))}
               </div>

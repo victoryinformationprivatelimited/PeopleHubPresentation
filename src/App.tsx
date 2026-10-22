@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Deck } from './engine/Deck'
 import { DeckContext } from './engine/context'
-import { Launcher, loadConfig, saveConfig, type Config } from './engine/Launcher'
+import { Launcher, emptyConfig, loadConfig, saveConfig, type Config } from './engine/Launcher'
 import { PrintView } from './engine/PrintView'
 import { buildCtx } from './engine/buildCtx'
 import { defaultAgenda, pickSlides } from './engine/agenda'
@@ -10,11 +10,13 @@ import { buildSlides } from './slides/slides'
 type Mode = 'launcher' | 'show' | 'print'
 
 /** Launcher screen first. Query params (?country=lk&industry=apparel&client=Name&agenda=30&print=1) skip it. */
-function initial(): { cfg: Config; mode: Mode; auto: boolean } {
+function initial(): { cfg: Config; mode: Mode; auto: boolean; clientView: boolean } {
   const q = new URLSearchParams(location.search)
-  const saved = loadConfig()
-  const keys = ['country', 'industry', 'client', 'headcount', 'hrTeam', 'pains', 'agenda', 'print']
-  if (!keys.some(k => q.has(k))) return { cfg: saved, mode: 'launcher', auto: true }
+  const clientView = q.get('view') === 'client'
+  // The client view must never pick up the presenter's saved settings.
+  const saved = clientView ? emptyConfig : loadConfig()
+  const keys = ['country', 'industry', 'client', 'headcount', 'hrTeam', 'pains', 'agenda', 'slides', 'print', 'view']
+  if (!keys.some(k => q.has(k))) return { cfg: saved, mode: 'launcher', auto: true, clientView: false }
   const agendaParam = q.get('agenda')
   const cfg: Config = {
     ...saved,
@@ -26,9 +28,11 @@ function initial(): { cfg: Config; mode: Mode; auto: boolean } {
     pains: q.has('pains') ? q.get('pains')!.split(',').filter(Boolean) : saved.pains,
     customPain: q.get('customPain') ?? saved.customPain,
     qrUrl: q.get('qr') ?? saved.qrUrl,
-    agenda: agendaParam ? { ...defaultAgenda, mode: 'auto', minutes: Number(agendaParam) || 30 } : saved.agenda,
+    agenda: q.get('slides') ? { ...defaultAgenda, mode: 'manual', ids: q.get('slides')!.split(',').filter(Boolean) } : agendaParam ? { ...defaultAgenda, mode: 'auto', minutes: Number(agendaParam) || 30 } : saved.agenda,
+    logo: q.get('logo') ?? saved.logo,
+    theme: q.get('theme') === 'light' ? 'light' : q.get('theme') === 'dark' ? 'dark' : saved.theme,
   }
-  return { cfg, mode: q.has('print') ? 'print' : 'show', auto: q.get('auto') !== '0' }
+  return { cfg, mode: q.has('print') ? 'print' : 'show', auto: q.get('auto') !== '0', clientView }
 }
 
 export default function App() {
@@ -61,9 +65,9 @@ export default function App() {
     <DeckContext.Provider value={ctx}>
       <Deck
         key={`${cfg.country}-${cfg.industry}-${cfg.client}-${cfg.logo?.length ?? 0}-${cfg.headcount}-${cfg.hrTeam}-${cfg.pains?.join()}-${cfg.customPain}-${agenda.mode}-${agenda.minutes}-${agenda.ids.join()}-${cfg.qrUrl}`}
-        slides={visible} allSlides={allSlides} ctx={ctx} theme={cfg.theme} showTimer={agenda.mode !== 'full'}
-        onConfigure={() => { history.replaceState(null, '', location.pathname); setMode('launcher') }}
-        onExport={() => setMode('print')}
+        slides={visible} allSlides={allSlides} ctx={ctx} theme={cfg.theme} showTimer={agenda.mode !== 'full' && !init.clientView} clientView={init.clientView}
+        onConfigure={init.clientView ? undefined : () => { history.replaceState(null, '', location.pathname); setMode('launcher') }}
+        onExport={init.clientView ? undefined : () => setMode('print')}
       />
     </DeckContext.Provider>
   )

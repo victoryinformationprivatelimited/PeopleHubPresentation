@@ -39,3 +39,6 @@ Country drives currency, statutory deductions, tax, leave types, compliance repo
 2. Cloudflare dashboard → Workers & Pages → peoplehub-presentation → Custom domains → add `presentation.peoplehub.biz` (DNS is already on Cloudflare, so the record is created for you).
 3. Make it private: Zero Trust → Access → Applications → add a self-hosted app for `presentation.peoplehub.biz` with an allow policy (e.g. your company emails or a one-time PIN for client emails). Without this the page is public to anyone with the link.
 `public/_headers` and `robots.txt` tell search engines not to index the site.
+
+## Client view (the QR / team link)
+The link in the QR code opens the hosted deck with `view=client`: no presenter notes (N), settings (C), timer (D) or export (E), a "Prepared for <client>" ribbon, and it never reads the presenter's saved settings. It carries country, industry, client, numbers, pain points, theme and agenda. A logo can't fit in a QR code: put the image in `public/logos/`, redeploy, and enter its address in the launcher. Note this hides the tools but the notes text still ships inside the site code — keep the site behind Cloudflare Access for real privacy.
