@@ -186,8 +186,10 @@ export function NotificationsDemo() {
 
 /* ---------- INTELLIGENCE ---------- */
 export function AnalyticsDemo() {
-  const { industry, company } = useDeck()
-  const d = industry.dash
+  const { industry, company, headcount } = useDeck()
+  const base = industry.dash
+  const ratio = headcount ? headcount / base.headcount : 1
+  const d = { ...base, headcount: headcount ?? base.headcount, deptCounts: base.deptCounts.map(x => Math.max(1, Math.round(x * ratio))) }
   return (
     <Window title={`${company} · HR dashboard`}>
       <div className="grid grid-cols-4 gap-3 mb-3">

@@ -1,13 +1,14 @@
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import { motion } from 'framer-motion'
 import type { ReactNode } from 'react'
-import { useDeck, money, type SlideDef } from '../engine/context'
+import { useDeck, money, poss, type SlideDef } from '../engine/context'
 import { Badge, Counter, Flow, Window, fade } from '../ui/primitives'
 import { Hero3D } from '../ui/Hero3D'
 import { ModuleSlide, Section } from './layouts'
 import { modules, pillars } from './modules'
 import * as A from './demosA'
 import * as B from './demosB'
+import { BeforeAfter, Challenge, PainsSolved, Roi, Versus } from './sales'
 
 const demos: Record<string, () => ReactNode> = {
   org: () => <A.OrgDemo />, employee: () => <A.EmployeeDemo />, lifecycle: () => <A.LifecycleDemo />, termination: () => <A.TerminationDemo />, recruitment: () => <A.RecruitmentDemo />,
@@ -35,25 +36,6 @@ function Opener() {
       </div>
       <div className="absolute left-20 bottom-24 text-[16px]" style={{ color: 'var(--mute)' }}>A product of {country.contact.company} · Press <b>G</b> to jump · <b>N</b> notes · <b>F</b> fullscreen</div>
     </div>
-  )
-}
-
-function Challenge() {
-  const { industry, client } = useDeck()
-  return (
-    <Section eyebrow="The challenge" title={`HR is drowning in admin — and it’s costing ${client || 'you'}.`} sub="Spreadsheets, paper forms and disconnected tools quietly drain time, money and trust." zoom={1.15}>
-      <div className="grid grid-cols-3 gap-8 mt-6">
-        {industry.pains.map((p, k) => (
-          <motion.div key={p.label} {...fade(0.3 + 0.2 * k)} className="card p-10">
-            <div className="serif text-[110px] leading-none font-bold grad-text">{p.stat}</div>
-            <div className="text-[26px] mt-4" style={{ color: 'var(--mute)' }}>{p.label}</div>
-          </motion.div>
-        ))}
-      </div>
-      <motion.div {...fade(1)} className="mt-10 flex gap-4 flex-wrap">
-        {['Scattered employee data', 'Manual attendance & OT', 'Payroll errors & disputes', 'Approvals lost in email', 'Compliance risk', 'No real-time insight'].map(t => <span key={t} className="card px-5 py-3 text-[20px]">⚠ {t}</span>)}
-      </motion.div>
-    </Section>
   )
 }
 
@@ -245,35 +227,11 @@ function Implementation() {
   )
 }
 
-function Roi() {
-  const { industry, country } = useDeck()
-  const [emp, setEmp] = useState(Math.min(5000, Math.max(50, Math.round(industry.dash.headcount / 50) * 50)))
-  const [hrs, setHrs] = useState(6)
-  const saved = useMemo(() => Math.round(emp * hrs * 12 * 0.62), [emp, hrs])
-  return (
-    <Section eyebrow="Value estimator" title="What could you give back to your HR team?" sub="Adjust the sliders to your organisation. Estimates are indicative and based on typical customer outcomes." zoom={1.25}>
-      <div className="grid grid-cols-2 gap-10 mt-2">
-        <div className="card p-8 flex flex-col gap-8">
-          <label className="text-[22px]">Employees: <b className="grad-text">{emp.toLocaleString(country.locale)}</b>
-            <input type="range" min={50} max={5000} step={50} value={emp} onChange={e => setEmp(+e.target.value)} className="w-full mt-3 accent-blue-500" /></label>
-          <label className="text-[22px]">HR admin hours per employee per year: <b className="grad-text">{hrs}</b>
-            <input type="range" min={2} max={14} value={hrs} onChange={e => setHrs(+e.target.value)} className="w-full mt-3 accent-blue-500" /></label>
-          <div className="text-[16px]" style={{ color: 'var(--mute)' }}>Assumes ~62% of manual HR administration is automated (leave, attendance, payroll inputs, letters, queries).</div>
-        </div>
-        <div className="flex flex-col gap-5">
-          <div className="card p-8 glow"><div className="text-[20px]" style={{ color: 'var(--mute)' }}>Hours returned to HR each year</div><div className="serif text-[110px] leading-none font-bold grad-text">{saved.toLocaleString(country.locale)}</div><div className="text-[20px]">≈ {Math.round(saved / 8 / 22)} working months</div></div>
-          <div className="grid grid-cols-3 gap-3">{industry.kpis.map(k => <div key={k.label} className="card p-4"><div className="serif text-[30px] font-bold"><Counter to={k.value} suffix={k.suffix} /></div><div className="text-[14px]" style={{ color: 'var(--mute)' }}>{k.label}</div></div>)}</div>
-        </div>
-      </div>
-    </Section>
-  )
-}
-
 function NextSteps() {
   const { client, industry } = useDeck()
   const steps = [['Discovery workshop', 'Understand your processes and priorities'], ['Tailored demo', `On your ${industry.name.toLowerCase()} processes and policies`], ['Proposal & package', 'Modules, users, timeline and support'], ['Pilot & kick-off', 'Start with a department, scale to all']]
   return (
-    <Section eyebrow="Next steps" title={client ? `Let’s build ${client}’s people platform together.` : 'Let’s build your people platform together.'} sub="Four simple steps from today’s conversation to a live PeopleHub." zoom={1.3}>
+    <Section eyebrow="Next steps" title={client ? `Let’s build ${poss(client)} people platform together.` : 'Let’s build your people platform together.'} sub="Four simple steps from today’s conversation to a live PeopleHub." zoom={1.3}>
       <div className="grid grid-cols-4 gap-6 mt-8">
         {steps.map(([a, b], k) => <motion.div key={a} {...fade(0.15 * k)} className="card p-8"><div className="serif text-[64px] font-bold grad-text">{k + 1}</div><div className="font-extrabold text-[26px]">{a}</div><div className="text-[19px] mt-1" style={{ color: 'var(--mute)' }}>{b}</div></motion.div>)}
       </div>
@@ -313,6 +271,7 @@ export function buildSlides(): SlideDef[] {
   return [
     s('open', 'Open', 'Welcome', 'Greet, thank the audience, set the agenda: challenge → platform → modules → IT view → packages → next steps. Personalise using the client name.', Opener),
     s('challenge', 'Open', 'The challenge', 'Ask the room which of these hurts most. Capture answers — you will come back to them at each module.', Challenge),
+    s('beforeafter', 'Open', 'Before & after', 'Walk down the day: left is today, right is with PeopleHub. Ask which row hurts most. The weekly-hours figure is illustrative (assumes ~4 admin hours a day per HR person).', BeforeAfter),
     s('constellation', 'Open', 'One platform', 'Pulsing items are the modules most relevant for this industry. Say you will focus there but cover everything.', Constellation),
     s('glance', 'Open', 'At a glance', 'Keep short for HR/C-level; IT Manager deep-dive follows later.', Glance),
     ...part('core'), ...part('ops'), ...part('talent'), ...part('exp'), ...part('intel'),
@@ -322,6 +281,8 @@ export function buildSlides(): SlideDef[] {
     s('it-int', 'IT Deep-Dive', 'Integration & APIs', 'Ask which ERP, biometric devices and BI tools they run.', ItIntegration),
     s('story', 'Close', 'Connected journey', 'Walk through the journey and tie it back to modules shown.', Story),
     s('why', 'Close', 'Why PeopleHub', 'Summarise differentiators; link to the pains from slide 2.', Why),
+    s('versus', 'Close', 'Why switch', 'Do not bash competitors by name. Frame the comparison as spreadsheets vs patchwork tools vs one connected platform. Partial ticks mean the alternative can do part of it with effort.', Versus),
+    s('pains', 'Close', 'Your challenges solved', 'Recap each pain point the client gave us and the modules that solve it. If none were chosen, this shows typical priorities for the industry — ask them to confirm.', PainsSolved),
     s('packages', 'Close', 'Packages', 'No prices on the slide. Recommend a package based on the discussion; mention à la carte option.', Packages),
     s('implementation', 'Close', 'Implementation', 'Typical timeline depends on scope and data quality — avoid committing dates until after discovery.', Implementation),
     s('roi', 'Close', 'Value estimator', 'Use their headcount live. Figures are indicative.', Roi),

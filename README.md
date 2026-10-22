@@ -14,6 +14,8 @@ Add query parameters: `index.html?country=lk&industry=apparel&client=Acme`
 - country: `lk` (default), `in`, `ae`, `fj` – edit/add in `src/profiles/countries.ts`
 - industry: `generic` (default), `apparel`, `retail`, `bpo`, `healthcare`, `education`, `finance`, `construction`, `logistics`, `hospitality`, `plantation` – edit/add in `src/profiles/industries.ts`
 - client: shown on opener and closing slide
+- headcount, hrTeam: client numbers (personalise the value estimator and dashboards)
+- pains: comma list of ids — attendance,payroll,leave,data,hiring,compliance,insight,attrition,queries,training (add customPain=text)
 
 ## Keys
 ←/→ or click edges: navigate · G: slide grid · N: presenter notes · T: light/dark · F: fullscreen · C: back to settings

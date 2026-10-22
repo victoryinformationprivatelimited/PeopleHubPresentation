@@ -7,7 +7,8 @@ import { useDeck } from '../engine/context'
 
 export function ModuleSlide({ mod, demo }: { mod: Mod; demo: ReactNode }) {
   const p = pillarById[mod.pillar]
-  const { industry, company } = useDeck()
+  const { industry, company, pains } = useDeck()
+  const solved = pains.find(x => x.modules.includes(mod.id))
   const useCase = industry.id !== 'generic' ? industry.useCases[mod.id] : undefined
   return (
     <div className="absolute inset-0 px-20 pt-16 pb-20 grid grid-cols-12 gap-14 items-center">
@@ -25,6 +26,11 @@ export function ModuleSlide({ mod, demo }: { mod: Mod; demo: ReactNode }) {
             </motion.li>
           ))}
         </ul>
+        {solved && (
+          <motion.div {...fade(0.7)} className="mt-6 inline-flex items-center gap-3 rounded-full px-5 py-2.5 text-[18px] font-bold" style={{ background: 'color-mix(in srgb, var(--ok) 18%, transparent)', border: '1px solid var(--ok)', color: 'var(--ok)' }}>
+            ✓ Solves: {solved.icon} {solved.label}
+          </motion.div>
+        )}
         {useCase && (
           <motion.div {...fade(0.8)} className="card mt-7 px-5 py-4 text-[19px] leading-snug" style={{ borderLeft: `4px solid ${p.color}` }}>
             <div className="text-[12px] tracking-[0.18em] uppercase font-bold mb-1" style={{ color: p.color }}>For {company} · {industry.name}</div>

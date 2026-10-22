@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import { countries } from '../profiles/countries'
 import { industries } from '../profiles/industries'
+import { painOptions } from '../profiles/pains'
 
-export interface Config { country: string; industry: string; client: string; theme: 'dark' | 'light'; logo?: string }
+export interface Config { country: string; industry: string; client: string; theme: 'dark' | 'light'; logo?: string; headcount?: number; hrTeam?: number; pains?: string[]; customPain?: string }
 
 /** Downscale an uploaded logo so it fits comfortably in browser storage. */
 function readLogo(file: File): Promise<string> {
@@ -91,14 +92,41 @@ export function Launcher({ initial, onStart }: { initial: Config; onStart: (c: C
             </div>
           </section>
 
-          <section className="card p-6 flex flex-col">
+          <section className="card p-6 md:col-span-2">
+            <h2 className="text-[13px] tracking-[0.2em] uppercase font-bold mb-3" style={{ color: 'var(--brand2)' }}>6 · Client numbers <span className="normal-case tracking-normal font-normal" style={{ color: 'var(--mute)' }}>— personalises the value estimator and dashboards</span></h2>
+            <div className="grid grid-cols-2 gap-4">
+              {([['headcount', 'Number of employees', 'e.g. 850'], ['hrTeam', 'HR team size', 'e.g. 6']] as const).map(([k, label, ph]) => (
+                <label key={k} className="text-[14px]">{label}
+                  <input type="number" min={1} value={c[k] ?? ''} placeholder={ph} onChange={e => set({ [k]: e.target.value ? Math.max(1, Number(e.target.value)) : undefined })}
+                    className="w-full mt-1 rounded-xl px-4 py-3 text-[16px] outline-none" style={{ background: 'var(--card)', border: '1.5px solid var(--line)', color: 'var(--ink)' }} />
+                </label>
+              ))}
+            </div>
+          </section>
+
+          <section className="card p-6 md:col-span-2">
+            <h2 className="text-[13px] tracking-[0.2em] uppercase font-bold mb-3" style={{ color: 'var(--brand2)' }}>7 · Client pain points <span className="normal-case tracking-normal font-normal" style={{ color: 'var(--mute)' }}>— pick up to 4; they are tracked through the modules</span></h2>
+            <div className="grid grid-cols-2 gap-2">
+              {painOptions.map(p => {
+                const on = (c.pains ?? []).includes(p.id)
+                const full = (c.pains ?? []).length >= 4
+                return <Tile key={p.id} active={on} title={`${p.icon} ${p.label}`} onClick={() => { if (!on && full) return; set({ pains: on ? (c.pains ?? []).filter(x => x !== p.id) : [...(c.pains ?? []), p.id] }) }} />
+              })}
+            </div>
+            <input value={c.customPain ?? ''} onChange={e => set({ customPain: e.target.value })} placeholder="Another pain point in the client's own words (optional)"
+              className="w-full mt-3 rounded-xl px-4 py-3 text-[15px] outline-none" style={{ background: 'var(--card)', border: '1.5px solid var(--line)', color: 'var(--ink)' }} />
+          </section>
+
+          <section className="card p-6 flex flex-col md:col-span-2">
             <h2 className="text-[13px] tracking-[0.2em] uppercase font-bold mb-3" style={{ color: 'var(--brand2)' }}>Summary</h2>
             <ul className="text-[15px] leading-relaxed flex-1" style={{ color: 'var(--mute)' }}>
               <li><b style={{ color: 'var(--ink)' }}>Country:</b> {co.name} ({co.currency}, {co.taxName})</li>
               <li><b style={{ color: 'var(--ink)' }}>Industry:</b> {ind.name}</li>
               <li><b style={{ color: 'var(--ink)' }}>Client:</b> {c.client || '— none —'}{c.logo ? ' (logo added)' : ''}</li>
               <li><b style={{ color: 'var(--ink)' }}>Spotlight modules:</b> {ind.focusModules.join(', ')}</li>
-              <li><b style={{ color: 'var(--ink)' }}>Deck:</b> 42 slides · 27 modules · IT deep-dive · packages</li>
+              <li><b style={{ color: 'var(--ink)' }}>Numbers:</b> {c.headcount ? `${c.headcount} employees` : 'default sample'}{c.hrTeam ? ` · HR team of ${c.hrTeam}` : ''}</li>
+              <li><b style={{ color: 'var(--ink)' }}>Pain points:</b> {(c.pains ?? []).length + (c.customPain?.trim() ? 1 : 0) || 'industry defaults'}</li>
+              <li><b style={{ color: 'var(--ink)' }}>Deck:</b> 45 slides · 27 modules · IT deep-dive · packages</li>
             </ul>
             <button onClick={() => onStart(c)} className="mt-4 rounded-2xl py-4 text-[19px] font-extrabold text-white" style={{ background: 'linear-gradient(90deg, var(--brand), var(--accent))' }}>▶ Load presentation</button>
           </section>
