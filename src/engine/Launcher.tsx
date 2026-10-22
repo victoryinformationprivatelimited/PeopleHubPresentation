@@ -45,7 +45,7 @@ function Tile({ active, title, sub, onClick }: { active: boolean; title: string;
   )
 }
 
-export function Launcher({ initial, slides, onStart, onExport }: { initial: Config; slides: SlideDef[]; onStart: (c: Config) => void; onExport: (c: Config) => void }) {
+export function Launcher({ initial, slides, onStart, onExport, onGuide }: { initial: Config; slides: SlideDef[]; onStart: (c: Config) => void; onExport: (c: Config) => void; onGuide: () => void }) {
   const [c, setC] = useState<Config>(initial)
   const set = (p: Partial<Config>) => { const n = { ...c, ...p }; setC(n); if (p.theme) document.documentElement.dataset.theme = p.theme }
   const co = countries[c.country], ind = industries[c.industry]
@@ -74,7 +74,8 @@ export function Launcher({ initial, slides, onStart, onExport }: { initial: Conf
       <div className="max-w-[1100px] mx-auto px-8 py-10">
         <div className="flex items-center gap-4 mb-8">
           <img src="./logo-black.png" alt="PeopleHub" className="h-16 w-16 rounded-full bg-white p-0.5" />
-          <div><div className="serif text-[32px] font-bold leading-tight">PeopleHub HRIS</div><div style={{ color: 'var(--mute)' }}>Sales presentation · configure before you present</div></div>
+          <div className="flex-1"><div className="serif text-[32px] font-bold leading-tight">PeopleHub HRIS</div><div style={{ color: 'var(--mute)' }}>Sales presentation · configure before you present</div></div>
+          <button onClick={onGuide} className="rounded-xl px-5 py-3 text-[15px] font-bold" style={{ background: 'var(--card)', border: '1.5px solid var(--line)' }}>📖 Presenter guide</button>
         </div>
 
         <div className="grid md:grid-cols-2 gap-6">

@@ -3,11 +3,12 @@ import { Deck } from './engine/Deck'
 import { DeckContext } from './engine/context'
 import { Launcher, emptyConfig, loadConfig, saveConfig, type Config } from './engine/Launcher'
 import { PrintView } from './engine/PrintView'
+import { Guide } from './engine/Guide'
 import { buildCtx } from './engine/buildCtx'
 import { defaultAgenda, pickSlides } from './engine/agenda'
 import { buildSlides } from './slides/slides'
 
-type Mode = 'launcher' | 'show' | 'print'
+type Mode = 'launcher' | 'show' | 'print' | 'guide'
 
 /** Launcher screen first. Query params (?country=lk&industry=apparel&client=Name&agenda=30&print=1) skip it. */
 function initial(): { cfg: Config; mode: Mode; auto: boolean; clientView: boolean } {
@@ -15,6 +16,7 @@ function initial(): { cfg: Config; mode: Mode; auto: boolean; clientView: boolea
   const clientView = q.get('view') === 'client'
   // The client view must never pick up the presenter's saved settings.
   const saved = clientView ? emptyConfig : loadConfig()
+  if (q.has('guide')) return { cfg: saved, mode: 'guide', auto: true, clientView: false }
   const keys = ['country', 'industry', 'client', 'headcount', 'hrTeam', 'pains', 'agenda', 'slides', 'print', 'view']
   if (!keys.some(k => q.has(k))) return { cfg: saved, mode: 'launcher', auto: true, clientView: false }
   const agendaParam = q.get('agenda')
@@ -50,8 +52,9 @@ export default function App() {
 
   if (mode === 'launcher') {
     document.documentElement.dataset.theme = cfg.theme
-    return <Launcher initial={cfg} slides={allSlides} onStart={c => { saveConfig(c); setCfg(c); setMode('show') }} onExport={c => { saveConfig(c); setCfg(c); setMode('print') }} />
+    return <Launcher initial={cfg} slides={allSlides} onStart={c => { saveConfig(c); setCfg(c); setMode('show') }} onExport={c => { saveConfig(c); setCfg(c); setMode('print') }} onGuide={() => setMode('guide')} />
   }
+  if (mode === 'guide') return <Guide onClose={() => { history.replaceState(null, '', location.pathname); setMode('launcher') }} />
   if (mode === 'print') {
     document.documentElement.dataset.theme = cfg.theme
     return (
