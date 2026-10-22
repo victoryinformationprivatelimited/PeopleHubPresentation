@@ -22,7 +22,7 @@ const demos: Record<string, () => ReactNode> = {
 
 /* ================= A. OPEN ================= */
 function Opener() {
-  const { industry, client, country, logo, print } = useDeck()
+  const { industry, client, country, logo, print, presenter } = useDeck()
   return (
     <div className="absolute inset-0">
       {!print && <Hero3D className="absolute right-[-120px] top-0 w-[1100px] h-[1000px] opacity-40" />}
@@ -37,7 +37,7 @@ function Opener() {
           <Badge>{country.name}</Badge><Badge tone="mute">{industry.name}</Badge>
         </motion.div>
       </div>
-      <div className="absolute left-20 bottom-24 text-[16px]" style={{ color: 'var(--mute)' }}>A product of {country.contact.company}{!print && <> · Press <b>?</b> for shortcuts · <b>G</b> jump · <b>L</b> pointer</>}</div>
+      <div className="absolute left-20 bottom-24 text-[16px]" style={{ color: 'var(--mute)' }}>PeopleHub is a product of {country.contact.company}{presenter.isPartner && <> · Presented by <b>{presenter.company}</b>{presenter.name ? ` · ${presenter.name}` : ''}</>}{!print && <> · Press <b>?</b> for shortcuts · <b>G</b> jump · <b>L</b> pointer</>}</div>
     </div>
   )
 }
@@ -244,8 +244,7 @@ function NextSteps() {
 }
 
 function Contact() {
-  const { country, client, logo, qrUrl, print, industry } = useDeck()
-  const c = country.contact
+  const { country, client, logo, qrUrl, print, industry, presenter: c } = useDeck()
   return (
     <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
       {print ? <IndustryArt id={industry.id} className="absolute right-10 bottom-16 w-[620px] opacity-20" /> : <Hero3D className="absolute inset-0 opacity-40" />}
@@ -254,8 +253,12 @@ function Contact() {
         <motion.h1 {...fade(0.1)} className="serif text-[96px] font-bold leading-tight">Thank you{client ? `, ${client}` : ''}.</motion.h1>
         <motion.div {...fade(0.25)} className="text-[30px] mt-4 grad-text font-semibold">Transforming human capital through intelligent workforce management</motion.div>
         <div className="flex items-stretch justify-center gap-8 mt-10">
-          <motion.div {...fade(0.4)} className="card px-12 py-7 text-[24px] leading-loose flex flex-col justify-center">
-            <b>{c.company}</b><span>✉ {c.email}</span><span>☎ {c.phone}</span><span>🌐 {c.web}</span>
+          <motion.div {...fade(0.4)} className="card px-12 py-7 text-[24px] leading-loose flex flex-col justify-center items-center">
+            {c.logo && <img src={c.logo} alt="" className="h-14 max-w-[240px] object-contain rounded-lg bg-white px-3 py-1 mb-2" />}
+            <b>{c.company}</b>
+            {c.name && <span className="font-semibold">{c.name}{c.title ? <span style={{ color: 'var(--mute)' }}> · {c.title}</span> : null}</span>}
+            {c.email && <span>✉ {c.email}</span>}{c.phone && <span>☎ {c.phone}</span>}{c.web && <span>🌐 {c.web}</span>}
+            {c.isPartner && <span className="text-[15px] mt-1" style={{ color: 'var(--mute)' }}>PeopleHub is a product of {country.contact.company}</span>}
           </motion.div>
           {qrUrl && (
             <motion.div {...fade(0.6)} className="card flex items-center gap-8 px-8 py-5 text-left">

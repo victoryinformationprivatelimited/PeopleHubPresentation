@@ -2,6 +2,18 @@ import { createContext, useContext } from 'react'
 import type { CountryProfile, IndustryProfile } from '../profiles/types'
 import type { Pain } from '../profiles/pains'
 
+/** Who is presenting (Victory Information by default, or a sales partner). */
+export interface Presenter {
+  company: string
+  name?: string
+  title?: string
+  email?: string
+  phone?: string
+  web?: string
+  logo?: string        // data URL or web address
+  isPartner: boolean   // true when the presenter is not Victory Information
+}
+
 export interface DeckCtx {
   country: CountryProfile
   industry: IndustryProfile
@@ -12,6 +24,7 @@ export interface DeckCtx {
   hrTeam?: number
   pains: Pain[]        // pain points chosen for this client (may be empty)
   focusPains: Pain[]   // chosen pains, or industry defaults when none chosen
+  presenter: Presenter
   qrUrl?: string       // link encoded in the QR code (client team page)
   print?: boolean      // rendering for PDF export (no WebGL, static)
 }

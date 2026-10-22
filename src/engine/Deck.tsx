@@ -179,7 +179,7 @@ export function Deck({ slides, allSlides, ctx, theme: initialTheme = 'dark', sho
           <button aria-label="Next" className="absolute right-0 top-24 bottom-24 w-24 opacity-0" onClick={next} />
 
           {clientView && slide.id !== 'open' && ctx.client && (
-            <div className="absolute top-6 left-14 z-30 rounded-full px-4 py-1.5 text-[15px] font-semibold" style={{ background: 'var(--card)', border: '1px solid var(--line)', color: 'var(--mute)' }}>Prepared for {ctx.client}</div>
+            <div className="absolute top-6 left-14 z-30 rounded-full px-4 py-1.5 text-[15px] font-semibold" style={{ background: 'var(--card)', border: '1px solid var(--line)', color: 'var(--mute)' }}>Prepared for {ctx.client}{ctx.presenter.isPartner ? ` by ${ctx.presenter.company}` : ''}</div>
           )}
 
           {notes && !clientView && (

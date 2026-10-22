@@ -7,7 +7,10 @@ import { defaultAgenda, fmtTime, pickSlides, totalSecs, type Agenda } from './ag
 import { buildCtx } from './buildCtx'
 import type { SlideDef } from './context'
 
-export interface Config { country: string; industry: string; client: string; theme: 'dark' | 'light'; logo?: string; headcount?: number; hrTeam?: number; pains?: string[]; customPain?: string; agenda?: Agenda; qrUrl?: string; qrPersonalise?: boolean; qrClientView?: boolean; qrLogoUrl?: string }
+export interface Config { country: string; industry: string; client: string; theme: 'dark' | 'light'; logo?: string; headcount?: number; hrTeam?: number; pains?: string[]; customPain?: string; agenda?: Agenda; qrUrl?: string; qrPersonalise?: boolean; qrClientView?: boolean; qrLogoUrl?: string; presenter?: PresenterConfig }
+
+/** Presenter / partner details typed on the settings screen. Blank company = Victory Information defaults. */
+export interface PresenterConfig { company?: string; name?: string; title?: string; email?: string; phone?: string; web?: string; logo?: string }
 
 /** Downscale an uploaded logo so it fits comfortably in browser storage. */
 function readLogo(file: File): Promise<string> {
@@ -52,6 +55,8 @@ export function Launcher({ initial, slides, onStart, onExport, onGuide }: { init
   const agenda = c.agenda ?? defaultAgenda
   const visible = pickSlides(slides, agenda, buildCtx(c))
   const setAgenda = (a: Partial<Agenda>) => set({ agenda: { ...agenda, ...a } })
+  const pr = c.presenter ?? {}
+  const setPresenter = (p: Partial<PresenterConfig>) => set({ presenter: { ...pr, ...p } })
   const manualIds = agenda.ids
   const orderedAll = agenda.mode === 'manual' ? [...manualIds.map(id => slides.find(s => s.id === id)).filter((s): s is SlideDef => !!s), ...slides.filter(s => !manualIds.includes(s.id))] : slides
   const toggleSlide = (id: string) => {
@@ -77,6 +82,32 @@ export function Launcher({ initial, slides, onStart, onExport, onGuide }: { init
           <div className="flex-1"><div className="serif text-[32px] font-bold leading-tight">PeopleHub HRIS</div><div style={{ color: 'var(--mute)' }}>Sales presentation · configure before you present</div></div>
           <button onClick={onGuide} className="rounded-xl px-5 py-3 text-[15px] font-bold" style={{ background: 'var(--card)', border: '1.5px solid var(--line)' }}>📖 Presenter guide</button>
         </div>
+
+        <section className="card p-6 mb-6">
+          <div className="flex items-start justify-between gap-4 mb-3">
+            <h2 className="text-[13px] tracking-[0.2em] uppercase font-bold" style={{ color: 'var(--brand2)' }}>Presenter / partner <span className="normal-case tracking-normal font-normal" style={{ color: 'var(--mute)' }}>— whose details appear on the opener, closing slide, PDF and team link</span></h2>
+            {(pr.company || pr.name || pr.email || pr.phone || pr.web || pr.title || pr.logo) && <button onClick={() => set({ presenter: undefined })} className="text-[13px] underline flex-none" style={{ color: 'var(--mute)' }}>Reset to Victory Information</button>}
+          </div>
+          <div className="grid grid-cols-3 gap-3">
+            {([['company', 'Company', co.contact.company], ['name', 'Presenter name', 'e.g. Nimal Perera'], ['title', 'Job title', 'e.g. Sales Manager'], ['email', 'Email', co.contact.email], ['phone', 'Phone', co.contact.phone], ['web', 'Website', co.contact.web]] as const).map(([k, label, ph]) => (
+              <label key={k} className="text-[13px]">{label}
+                <input value={pr[k] ?? ''} onChange={e => setPresenter({ [k]: e.target.value })} placeholder={ph}
+                  className="w-full mt-1 rounded-xl px-3 py-2.5 text-[15px] outline-none" style={{ background: 'var(--card)', border: '1.5px solid var(--line)', color: 'var(--ink)' }} />
+              </label>
+            ))}
+          </div>
+          <div className="flex items-center gap-4 mt-3">
+            <div className="h-14 w-32 rounded-lg grid place-items-center overflow-hidden flex-none" style={{ background: '#fff', border: '1.5px dashed var(--line)' }}>
+              {pr.logo ? <img src={pr.logo} alt="Presenter logo" className="max-h-full max-w-full object-contain p-1" /> : <span className="text-[11px] text-slate-500">No logo</span>}
+            </div>
+            <label className="cursor-pointer rounded-xl px-4 py-2 text-[13px] font-bold" style={{ background: 'var(--card)', border: '1.5px solid var(--line)' }}>
+              Upload presenter / partner logo
+              <input type="file" accept="image/*" className="hidden" onChange={async e => { const f = e.target.files?.[0]; if (f) { try { setPresenter({ logo: await readLogo(f) }) } catch { /* ignore unreadable file */ } } e.target.value = '' }} />
+            </label>
+            {pr.logo && <button onClick={() => setPresenter({ logo: undefined })} className="text-[13px] underline" style={{ color: 'var(--mute)' }}>Remove</button>}
+            <span className="text-[12.5px]" style={{ color: 'var(--mute)' }}>Leave Company blank to present as Victory Information. If you enter a company, only the details you fill in are shown — nothing from Victory is added to your contact card.</span>
+          </div>
+        </section>
 
         <div className="grid md:grid-cols-2 gap-6">
           <section className="card p-6">
@@ -193,6 +224,7 @@ export function Launcher({ initial, slides, onStart, onExport, onGuide }: { init
             <ul className="text-[15px] leading-relaxed flex-1" style={{ color: 'var(--mute)' }}>
               <li><b style={{ color: 'var(--ink)' }}>Country:</b> {co.name} ({co.currency}, {co.taxName})</li>
               <li><b style={{ color: 'var(--ink)' }}>Industry:</b> {ind.name}</li>
+              <li><b style={{ color: 'var(--ink)' }}>Presenter:</b> {pr.company?.trim() || co.contact.company}{pr.name ? ` · ${pr.name}` : ''}</li>
               <li><b style={{ color: 'var(--ink)' }}>Client:</b> {c.client || '— none —'}{c.logo ? ' (logo added)' : ''}</li>
               <li><b style={{ color: 'var(--ink)' }}>Spotlight modules:</b> {ind.focusModules.join(', ')}</li>
               <li><b style={{ color: 'var(--ink)' }}>Numbers:</b> {c.headcount ? `${c.headcount} employees` : 'default sample'}{c.hrTeam ? ` · HR team of ${c.hrTeam}` : ''}</li>

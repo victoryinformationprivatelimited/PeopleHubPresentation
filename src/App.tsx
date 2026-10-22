@@ -17,7 +17,7 @@ function initial(): { cfg: Config; mode: Mode; auto: boolean; clientView: boolea
   // The client view must never pick up the presenter's saved settings.
   const saved = clientView ? emptyConfig : loadConfig()
   if (q.has('guide')) return { cfg: saved, mode: 'guide', auto: true, clientView: false }
-  const keys = ['country', 'industry', 'client', 'headcount', 'hrTeam', 'pains', 'agenda', 'slides', 'print', 'view']
+  const keys = ['country', 'industry', 'client', 'headcount', 'hrTeam', 'pains', 'agenda', 'slides', 'print', 'view', 'pco']
   if (!keys.some(k => q.has(k))) return { cfg: saved, mode: 'launcher', auto: true, clientView: false }
   const agendaParam = q.get('agenda')
   const cfg: Config = {
@@ -32,6 +32,7 @@ function initial(): { cfg: Config; mode: Mode; auto: boolean; clientView: boolea
     qrUrl: q.get('qr') ?? saved.qrUrl,
     agenda: q.get('slides') ? { ...defaultAgenda, mode: 'manual', ids: q.get('slides')!.split(',').filter(Boolean) } : agendaParam ? { ...defaultAgenda, mode: 'auto', minutes: Number(agendaParam) || 30 } : saved.agenda,
     logo: q.get('logo') ?? saved.logo,
+    presenter: q.has('pco') || q.has('pname') ? { company: q.get('pco') ?? '', name: q.get('pname') ?? '', title: q.get('ptitle') ?? '', email: q.get('pemail') ?? '', phone: q.get('pphone') ?? '', web: q.get('pweb') ?? '' } : saved.presenter,
     theme: q.get('theme') === 'light' ? 'light' : q.get('theme') === 'dark' ? 'dark' : saved.theme,
   }
   return { cfg, mode: q.has('print') ? 'print' : 'show', auto: q.get('auto') !== '0', clientView }

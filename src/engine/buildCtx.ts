@@ -1,7 +1,7 @@
 import { countries } from '../profiles/countries'
 import { industries } from '../profiles/industries'
 import { defaultPains, resolvePains } from '../profiles/pains'
-import type { DeckCtx } from './context'
+import type { DeckCtx, Presenter } from './context'
 import type { Config } from './Launcher'
 
 /** Link encoded in the QR code; optionally carries the personalisation so the client's team sees the same deck. */
@@ -24,10 +24,26 @@ function qrLink(cfg: Config): string | undefined {
       if (a?.mode === 'auto') p.set('agenda', String(a.minutes))
       else if (a?.mode === 'manual' && a.ids.length) p.set('slides', a.ids.join(','))
     }
+    const pr = cfg.presenter
+    if (pr) {
+      const m: [string, string | undefined][] = [['pco', pr.company], ['pname', pr.name], ['ptitle', pr.title], ['pemail', pr.email], ['pphone', pr.phone], ['pweb', pr.web]]
+      m.forEach(([k, v]) => { if (v?.trim()) p.set(k, v.trim()) })
+    }
     if (cfg.qrClientView !== false) p.set('view', 'client')
     if (cfg.qrLogoUrl?.trim()) p.set('logo', cfg.qrLogoUrl.trim())
     return u.toString()
   } catch { return raw }
+}
+
+/** Blank company → Victory Information defaults. A partner company shows only the details it filled in. */
+function resolvePresenter(cfg: Config): Presenter {
+  const base = (countries[cfg.country] ?? countries.lk).contact
+  const p = cfg.presenter ?? {}
+  const clean = (v?: string) => v?.trim() || undefined
+  if (!clean(p.company)) {
+    return { company: base.company, name: clean(p.name), title: clean(p.title), email: base.email, phone: base.phone, web: base.web, logo: p.logo, isPartner: false }
+  }
+  return { company: p.company!.trim(), name: clean(p.name), title: clean(p.title), email: clean(p.email), phone: clean(p.phone), web: clean(p.web), logo: p.logo, isPartner: true }
 }
 
 export function buildCtx(cfg: Config, print = false): DeckCtx {
@@ -43,6 +59,7 @@ export function buildCtx(cfg: Config, print = false): DeckCtx {
     hrTeam: cfg.hrTeam,
     pains,
     focusPains: pains.length ? pains : defaultPains(industry),
+    presenter: resolvePresenter(cfg),
     qrUrl: qrLink(cfg),
     print,
   }

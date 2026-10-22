@@ -37,7 +37,7 @@ export function PrintView({ slides, ctx, auto = true, onDone }: { slides: SlideD
             <div className="absolute inset-0">{s.render(ctx)}</div>
             {ctx.logo && s.id !== 'open' && s.id !== 'contact' && <img src={ctx.logo} alt="" className="absolute top-6 right-10 z-30 h-14 max-w-[220px] object-contain rounded-xl bg-white px-3 py-1.5" />}
             <div className="absolute bottom-0 left-0 right-0 h-14 px-14 flex items-center justify-between text-[15px]" style={{ color: 'var(--mute)' }}>
-              <span className="tracking-[0.18em] uppercase text-[12px]">PeopleHub HRIS{ctx.client ? ` · Prepared for ${ctx.client}` : ''} · {s.section}</span>
+              <span className="tracking-[0.18em] uppercase text-[12px]">PeopleHub HRIS{ctx.client ? ` · Prepared for ${ctx.client}` : ''}{ctx.presenter.isPartner ? ` · ${ctx.presenter.company}` : ''} · {s.section}</span>
               <span>{k + 1} / {slides.length}</span>
             </div>
           </section>

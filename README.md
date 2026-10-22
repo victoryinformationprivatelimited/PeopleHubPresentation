@@ -47,3 +47,6 @@ The QR / team-link address is pre-filled with `https://presentation.peoplehub.bi
 
 ## Presenter guide
 In the app: settings screen → "Presenter guide" (or add `?guide=1` to the address); it prints to a 5-page A4 PDF. A copy is in `docs/PeopleHub-Presenter-Guide.pdf` (regenerate after editing `src/engine/Guide.tsx`).
+
+## Presenter / partner details
+The settings screen has a Presenter / partner block (company, name, title, email, phone, website, logo). Blank company = Victory Information defaults from `src/profiles/countries.ts`. A partner company shows only the details it filled in, with "PeopleHub is a product of Victory Information" credited. The details are carried in the client team link (`pco`, `pname`, `ptitle`, `pemail`, `pphone`, `pweb`) so the client's team sees the same contact card; the presenter logo is not (a logo can't travel in a QR code).

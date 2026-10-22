@@ -144,8 +144,10 @@ export function IndustryArt({ id, className = '' }: { id: string; className?: st
       <defs>
         <linearGradient id="art-fade-g" x1="0" x2="1" y1="0" y2="0"><stop offset="0" stopColor="#fff" stopOpacity="0" /><stop offset=".14" stopColor="#fff" /><stop offset=".86" stopColor="#fff" /><stop offset="1" stopColor="#fff" stopOpacity="0" /></linearGradient>
         <mask id="art-fade"><rect width="800" height="620" fill="url(#art-fade-g)" /></mask>
+        <linearGradient id="art-fade-gy" x1="0" x2="0" y1="0" y2="1"><stop offset=".78" stopColor="#fff" /><stop offset=".97" stopColor="#fff" stopOpacity="0" /></linearGradient>
+        <mask id="art-fade-y"><rect width="800" height="620" fill="url(#art-fade-gy)" /></mask>
       </defs>
-      <g mask={fade ? 'url(#art-fade)' : undefined}><Scene /></g>
+      <g mask={fade ? 'url(#art-fade)' : undefined}><g mask={fade ? 'url(#art-fade-y)' : undefined}><Scene /></g></g>
     </svg>
   )
 }
