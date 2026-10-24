@@ -2,13 +2,15 @@ import type { SlideDef } from '../../engine/context'
 import { byChapters } from '../../engine/agenda'
 import { buildSlides } from '../../slides/slides'
 import { OUTCOMES, chapterSlideId } from './data'
+import { momentSlides } from './moments'
 import { BlueprintSlide, ChapterCard, DaySlide, DetailsSlide, FabricSlide, RecapSlide, RolesSlide, WallSlide, WavesSlide } from './slides'
 
 /**
  * Outcome Workshop — a co-design session: who is in the room → a day at the client → the client picks outcomes on the
  * discovery wall → their blueprint → ten outcome chapters → close.
- * Phase 2: opening, wall, blueprint, system map, ten chapter cards and the close. The scenario "moment" slides inside each
- * chapter are added in the next phases (ids follow `${outcome}-${key}`, see data.ts).
+ * Phase 2: opening, wall, blueprint, system map, ten chapter cards and the close.
+ * Phase 3: scenario "moment" slides for chapters 1–5 (ids follow `${outcome}-${key}`, see data.ts and moments.tsx).
+ * Phase 4 adds chapters 6–10.
  */
 export function buildWorkshopSlides(): SlideDef[] {
   const tour = buildSlides()
@@ -16,9 +18,10 @@ export function buildWorkshopSlides(): SlideDef[] {
   const mk = (id: string, section: string, title: string, secs: number, tier: number, notes: string, render: () => React.ReactNode, chapter?: string): SlideDef =>
     ({ id, section, title, secs, tier, notes, render, chapter })
 
-  const chapters: SlideDef[] = OUTCOMES.map(o => mk(chapterSlideId(o.id), o.name, o.name, 25, 1,
+  const moments = momentSlides()
+  const chapters: SlideDef[] = OUTCOMES.flatMap(o => [mk(chapterSlideId(o.id), o.name, o.name, 25, 1,
     `Outcome chapter: ${o.name}. Say the promise, then open the capabilities the client cares about. The KPI is illustrative — present it as typical, not guaranteed. Tap "Add to your blueprint" if they want it and have not picked it yet.`,
-    () => <ChapterCard o={o} />, o.id))
+    () => <ChapterCard o={o} />, o.id), ...moments.filter(m => m.chapter === o.id)])
 
   return [
     reuse('open', { section: 'Open' }),

@@ -41,7 +41,7 @@ export function OrgDemo() {
   )
 }
 
-const sections = ['Personal', 'Contact', 'Job', 'Compensation', 'Bank', 'Statutory', 'Education', 'Experience', 'Skills', 'Family', 'Emergency', 'Documents', 'Contracts', 'Assets', 'Leave', 'Attendance', 'Training', 'Performance', 'Disciplinary', 'Loans', 'Benefits', 'Letters', 'History']
+const sections = ['Personal', 'Contact', 'Job', 'Compensation', 'Bank', 'Statutory', 'Education', 'Experience', 'Skills', 'Family', 'Emergency', 'Documents', 'Contracts', 'Assets', 'Leave', 'Attendance', 'Training', 'Performance', 'Disciplinary', 'Loans', 'Benefits', 'Letters', 'History', 'Attendance locations', 'Payroll accounts', 'Exit']
 export function EmployeeDemo() {
   const { country, industry, company } = useDeck()
   const [first, last] = country.sampleNames[1].toLowerCase().split(' ')
@@ -57,7 +57,7 @@ export function EmployeeDemo() {
           <div className="flex gap-2 mt-2"><Badge tone="ok">Active</Badge><Badge>Confirmed</Badge><Badge tone="warn">🔒 Encrypted PII</Badge></div>
         </div>
       </div>
-      <div className="text-[13px] tracking-widest uppercase mb-2" style={{ color: 'var(--mute)' }}>23 profile sections</div>
+      <div className="text-[13px] tracking-widest uppercase mb-2" style={{ color: 'var(--mute)' }}>{sections.length} profile sections</div>
       <div className="flex flex-wrap gap-2">
         {sections.map((s, k) => <motion.span key={s} {...fade(0.03 * k)} className="card px-3 py-1.5 text-[14px]">{s}</motion.span>)}
       </div>

@@ -59,3 +59,6 @@ On touch devices (or windows under 900px) the deck switches to a mobile shell: a
 
 ## Outcome Workshop (deck 2) — status
 Phase 2 done: opener, role lens, a day at the client, what we heard, discovery wall, live blueprint, system map, ten outcome chapter cards and the close (recap, rollout waves, packages, value, leave-your-details, next steps, contact). The scenario slides inside each chapter (ids like `time-capture`, listed in `src/decks/workshop/data.ts`) arrive in the next phases; chapter cards link to them automatically once they exist. Live choices (wall, roles, details) are kept in memory only and carried in the team link (`outcomes`, `roles`).
+
+### Phase 3 (chapters 1–5)
+Scenario slides for Know every person, Hire & onboard, Time you can trust, Leave without the chase and Pay people right (22 slides, `src/decks/workshop/moments.tsx`, new demos in `demosP3.tsx`). Each slide's presenter notes end with a private **Readiness** line (Live / Partial / Preview) taken from the code review — shown only in presenter notes (N), never in the client view or PDF. Chapters 6–10 follow in phase 4.
