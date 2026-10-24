@@ -3,6 +3,7 @@ import { motion } from 'framer-motion'
 import { poss, useDeck, useNav, useSession } from '../../engine/context'
 import { PainBanner } from '../../ui/PainBanner'
 import { SkipBar } from './extra'
+import { OIcon } from '../../ui/OutcomeIcons'
 import { Avatar, Badge, Counter, fade } from '../../ui/primitives'
 import { Section } from '../../slides/layouts'
 import { modules, pillars } from '../../slides/modules'
@@ -25,7 +26,7 @@ export function RolesSlide() {
               <div className="serif text-[30px] font-bold mt-3">{r.name}</div>
               <div className="text-[18px] mt-1 mb-4" style={{ color: 'var(--mute)' }}>{r.line}</div>
               <ul className="flex flex-col gap-2 text-[16px]">{r.bullets.map(b => <li key={b} className="flex gap-2"><span style={{ color: 'var(--brand2)' }}>▸</span>{b}</li>)}</ul>
-              <div className="flex flex-wrap gap-1.5 mt-4">{r.outcomes.map(o => <span key={o} className="rounded-full px-2.5 py-1 text-[13px]" style={{ background: mix(outcomeById[o].color, 22), border: `1px solid ${mix(outcomeById[o].color, 50)}` }}>{outcomeById[o].icon} {outcomeById[o].short}</span>)}</div>
+              <div className="flex flex-wrap gap-1.5 mt-4">{r.outcomes.map(o => <span key={o} className="rounded-full px-2.5 py-1 text-[13px]" style={{ background: mix(outcomeById[o].color, 22), border: `1px solid ${mix(outcomeById[o].color, 50)}` }}><OIcon id={o} size={20} color={outcomeById[o].color} /> {outcomeById[o].short}</span>)}</div>
             </motion.button>
           )
         })}
@@ -84,12 +85,12 @@ export function WallSlide() {
           const hint = ROLES.filter(r => roles.includes(r.id) && r.outcomes.includes(o.id))
           return (
             <motion.button key={o.id} {...fade(0.05 * k)} onClick={() => toggleOutcome(o.id)} className="card p-5 text-left relative transition"
-              style={{ minHeight: 238, outline: on ? `3px solid ${o.color}` : 'none', background: on ? mix(o.color, 20) : undefined, boxShadow: on ? `0 0 40px -8px ${o.color}` : undefined }}>
+              style={{ minHeight: 262, outline: on ? `3px solid ${o.color}` : 'none', background: on ? mix(o.color, 20) : undefined, boxShadow: on ? `0 0 40px -8px ${o.color}` : undefined }}>
               {on && <span className="absolute top-3 right-3 w-8 h-8 rounded-full grid place-items-center font-extrabold text-[16px] text-white" style={{ background: o.color }}>{rank + 1}</span>}
-              <div className="text-[42px] leading-none">{o.icon}</div>
+              <OIcon id={o.id} size={62} color={o.color} />
               <div className="serif text-[24px] font-bold leading-tight mt-3">{o.name}</div>
               <div className="text-[14.5px] mt-2 leading-snug" style={{ color: 'var(--mute)' }}>{o.promise}</div>
-              <div className="absolute bottom-3 left-5 right-5 flex items-center justify-between text-[12.5px]" style={{ color: 'var(--mute)' }}>
+              <div className="mt-3 flex items-center justify-between text-[13px]" style={{ color: 'var(--mute)' }}>
                 <span>{o.moments.length} capabilities</span>
                 <span>{hint.map(r => r.icon).join(' ')}</span>
               </div>
@@ -120,7 +121,7 @@ export function BlueprintSlide() {
           {chosen.map((o, k) => (
             <motion.button key={o.id} {...fade(0.1 * k)} onClick={() => jump(chapterSlideId(o.id))} className="card px-4 py-3 flex items-center gap-4 text-left" style={{ borderLeft: `5px solid ${o.color}` }}>
               <span className="w-9 h-9 rounded-full grid place-items-center font-extrabold text-white flex-none" style={{ background: o.color }}>{k + 1}</span>
-              <span className="text-[30px]">{o.icon}</span>
+              <OIcon id={o.id} size={42} color={o.color} />
               <span className="flex-1"><b className="text-[19px]">{o.name}</b><span className="block text-[13.5px]" style={{ color: 'var(--mute)' }}>{o.moments.length} capabilities · tap to open this chapter</span></span>
             </motion.button>
           ))}
@@ -170,7 +171,7 @@ export function FabricSlide() {
               const on = outcomes.includes(o.id)
               return (
                 <button key={o.id} onClick={() => jump(chapterSlideId(o.id))} className="rounded-xl p-3 text-left transition hover:brightness-125" style={{ background: mix(o.color, on ? 30 : 14), border: `${on ? 2 : 1}px solid ${on ? o.color : 'var(--line)'}` }}>
-                  <div className="text-[26px] leading-none">{o.icon}</div>
+                  <OIcon id={o.id} size={40} color={o.color} />
                   <div className="font-bold text-[15px] leading-tight mt-1.5">{o.name}</div>
                   <div className="text-[12px] mt-1" style={{ color: 'var(--mute)' }}>{o.moments.length} capabilities</div>
                 </button>
@@ -200,7 +201,7 @@ export function ChapterCard({ o }: { o: Outcome }) {
     <div className="absolute inset-0 px-20 pt-16 pb-24 grid grid-cols-12 gap-14 items-center">
       <div className="col-span-5">
         <motion.div {...fade(0)} className="text-[18px] tracking-[0.22em] uppercase font-bold mb-3" style={{ color: o.color }}>Outcome {idx + 1} of {OUTCOMES.length}</motion.div>
-        <motion.div initial={{ scale: 0, rotate: -20 }} animate={{ scale: 1, rotate: 0 }} transition={{ type: 'spring', delay: 0.1 }} className="text-[84px] leading-none mb-3">{o.icon}</motion.div>
+        <motion.div initial={{ scale: 0, rotate: -20 }} animate={{ scale: 1, rotate: 0 }} transition={{ type: 'spring', delay: 0.1 }} className="mb-3"><OIcon id={o.id} size={104} color={o.color} /></motion.div>
         <motion.h2 {...fade(0.15)} className="serif text-[72px] leading-[1.03] font-bold mb-4">{o.name}</motion.h2>
         <motion.p {...fade(0.25)} className="text-[29px] leading-snug mb-6" style={{ color: 'var(--mute)' }}>{o.promise}</motion.p>
         <motion.div {...fade(0.35)} className="card p-5 mb-5 flex items-center gap-6" style={{ borderLeft: `5px solid ${o.color}` }}>
@@ -249,7 +250,7 @@ export function RecapSlide() {
           {chosen.length === 0 && <div className="card p-6 text-[20px]" style={{ color: 'var(--mute)' }}>No outcomes chosen on the discovery wall.</div>}
           {chosen.map((o, k) => (
             <motion.div key={o.id} {...fade(0.08 * k)} className="card px-4 py-3" style={{ borderLeft: `5px solid ${o.color}` }}>
-              <div className="flex items-center gap-3"><span className="text-[26px]">{o.icon}</span><b className="text-[19px]">{k + 1}. {o.name}</b></div>
+              <div className="flex items-center gap-3"><OIcon id={o.id} size={36} color={o.color} /><b className="text-[19px]">{k + 1}. {o.name}</b></div>
               <div className="flex flex-wrap gap-1.5 mt-2">{o.moments.map(m => <span key={m.key} className="rounded-full px-2.5 py-0.5 text-[12.5px]" style={{ background: mix(o.color, 20), border: `1px solid ${mix(o.color, 45)}` }}>{m.name}</span>)}</div>
             </motion.div>
           ))}
@@ -289,7 +290,7 @@ export function WavesSlide() {
             {w.foundation && <div className="flex flex-wrap gap-1.5">{FOUNDATION.slice(0, 5).map(f => <span key={f} className="rounded-full px-2.5 py-1 text-[12.5px]" style={{ background: mix('var(--brand)', 22), border: '1px solid var(--line)' }}>⬢ {f}</span>)}</div>}
             {w.items.map(o => (
               <div key={o.id} className="rounded-xl px-3 py-2.5 flex items-center gap-3" style={{ background: mix(o.color, 18), border: `1px solid ${mix(o.color, 45)}` }}>
-                <span className="text-[24px]">{o.icon}</span><span className="flex-1 text-[16px] font-semibold leading-tight">{o.name}</span>
+                <OIcon id={o.id} size={34} color={o.color} /><span className="flex-1 text-[16px] font-semibold leading-tight">{o.name}</span>
                 {outcomes.includes(o.id) && <span title="Your priority" className="text-[16px]" style={{ color: 'var(--warn)' }}>★</span>}
               </div>
             ))}
@@ -329,7 +330,7 @@ export function DetailsSlide() {
         <div className="flex flex-col gap-4">
           <div className="card p-6">
             <div className="text-[14px] tracking-[0.18em] uppercase font-bold mb-2" style={{ color: 'var(--brand2)' }}>Your priorities</div>
-            {outcomes.length ? outcomes.map(id => <div key={id} className="text-[19px] mb-1">{outcomeById[id].icon} {outcomeById[id].name}</div>) : <div style={{ color: 'var(--mute)' }}>—</div>}
+            {outcomes.length ? outcomes.map(id => <div key={id} className="text-[19px] mb-1.5 flex items-center gap-2.5"><OIcon id={id} size={28} color={outcomeById[id].color} />{outcomeById[id].name}</div>) : <div style={{ color: 'var(--mute)' }}>—</div>}
           </div>
           <div className="text-[14px]" style={{ color: 'var(--mute)' }}>These details stay in this browser session and are included if you export the PDF. They are not sent anywhere.</div>
         </div>

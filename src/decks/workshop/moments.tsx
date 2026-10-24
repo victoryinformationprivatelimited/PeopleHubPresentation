@@ -5,6 +5,7 @@ import { Badge, fade } from '../../ui/primitives'
 import { FitDemo } from '../../ui/FitDemo'
 import { PainBanner } from '../../ui/PainBanner'
 import { SkipBar } from './extra'
+import { OIcon } from '../../ui/OutcomeIcons'
 import { AttendanceDemo, BenefitsDemo, EmployeeDemo, LifecycleDemo, OrgDemo, PayrollDemo, RecruitmentDemo, TasksDemo } from '../../slides/demosA'
 import { AdvanceDemo, BulkDemo, ClaimsDemo, FinanceDemo, LeaveCalendarDemo, LeavePhoneDemo, LeaveTypesDemo, LettersDemo, LiveDemo, ManualAttDemo, PayslipPhoneDemo, PolicyDemo, ProcessDemo, RosterDemo } from './demosP3'
 import { PAIN_MOMENTS, momentSlideId, outcomeById } from './data'
@@ -34,7 +35,7 @@ function MomentSlide({ def }: { def: MomentDef }) {
       <div className="col-span-5 flex flex-col gap-4">
         <div>
           <motion.div {...fade(0)} className="text-[18px] tracking-[0.2em] uppercase font-bold mb-2 flex items-center gap-2" style={{ color: o.color }}>
-            <span className="text-[26px]">{o.icon}</span>{o.name} · {idx + 1}/{o.moments.length}
+            <OIcon id={o.id} size={38} color={o.color} />{o.name} · {idx + 1}/{o.moments.length}
           </motion.div>
           <motion.h2 {...fade(0.06)} className="serif text-[58px] leading-[1.04] font-bold mb-2">{def.title}</motion.h2>
           <motion.div {...fade(0.12)} className="text-[28px] font-semibold grad-text leading-snug">{def.headline}</motion.div>

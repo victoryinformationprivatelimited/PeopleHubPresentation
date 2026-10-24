@@ -4,6 +4,7 @@ import { poss, useDeck, useNav, useSession } from '../../engine/context'
 import { painOptions } from '../../profiles/pains'
 import { Badge, Counter, fade } from '../../ui/primitives'
 import { Section } from '../../slides/layouts'
+import { OIcon, OIconBody, OIconDefs } from '../../ui/OutcomeIcons'
 import { OUTCOMES, PAIN_MOMENTS, chapterSlideId, momentSlideId, outcomeById } from './data'
 
 const mix = (c: string, p: number) => `color-mix(in srgb, ${c} ${p}%, transparent)`
@@ -36,21 +37,24 @@ export function HeroBuild() {
         </motion.div>
       </div>
 
-      <svg viewBox="0 0 760 760" className="absolute right-10 top-[150px] w-[780px]">
-        <defs><radialGradient id="hubg" cx="50%" cy="40%"><stop offset="0" stopColor="var(--brand2)" /><stop offset="1" stopColor="var(--brand)" /></radialGradient></defs>
+      <svg viewBox="0 0 760 810" className="absolute right-10 top-[96px] w-[780px]">
+        <OIconDefs /><defs><radialGradient id="hubg" cx="50%" cy="40%"><stop offset="0" stopColor="var(--brand2)" /><stop offset="1" stopColor="var(--brand)" /></radialGradient></defs>
         <circle cx={C} cy={C} r={R + 48} fill="none" stroke="var(--line)" strokeWidth="2" strokeDasharray="4 12" />
         <circle cx={C} cy={C} r={R - 70} fill="none" stroke="var(--line)" strokeWidth="1.5" strokeDasharray="2 10" />
         {nodes.map((n, k) => <motion.line key={n.o.id} x1={C} y1={C} x2={n.x} y2={n.y} stroke={n.o.color} strokeWidth="2.5" strokeOpacity="0.55" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ delay: 0.9 + k * 0.12, duration: 0.7 }} />)}
         <motion.circle cx={C} cy={C} r="120" fill="none" stroke="var(--accent)" strokeWidth="2" initial={{ opacity: 0.6, scale: 1 }} animate={{ opacity: 0, scale: 1.7 }} transition={{ repeat: Infinity, duration: 3.2, ease: 'easeOut' }} style={{ transformOrigin: `${C}px ${C}px` }} />
-        <motion.circle cx={C} cy={C} r="112" fill="url(#hubg)" initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.3, type: 'spring', stiffness: 120 }} style={{ transformOrigin: `${C}px ${C}px` }} />
-        <motion.image href="./logo-black.png" x={C - 74} y={C - 74} width="148" height="148" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.7 }} />
+        <motion.g initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.3, type: 'spring', stiffness: 120 }} style={{ transformOrigin: `${C}px ${C}px` }}>
+          <circle cx={C} cy={C} r="118" fill="url(#hubg)" />
+          <circle cx={C} cy={C} r="100" fill="#fff" />
+          <image href="./logo-black.png" x={C - 92} y={C - 92} width="184" height="184" />
+        </motion.g>
         {nodes.map((n, k) => (
           <g key={n.o.id} transform={`translate(${n.x} ${n.y})`}>
             <motion.g initial={{ x: n.vx, y: n.vy, opacity: 0, scale: 0.3 }} animate={{ x: 0, y: 0, opacity: 1, scale: 1 }} transition={{ delay: 0.6 + k * 0.12, type: 'spring', stiffness: 70, damping: 14 }}>
               <motion.g animate={{ y: [0, -9, 0] }} transition={{ repeat: Infinity, duration: 3 + (k % 4) * 0.6, delay: 2 + k * 0.2, ease: 'easeInOut' }}>
-                <circle r="58" fill={mix(n.o.color, 30)} stroke={n.o.color} strokeWidth="3" />
-                <text y="14" textAnchor="middle" fontSize="46">{n.o.icon}</text>
-                <text y="92" textAnchor="middle" fontSize="19" fontWeight="700" fill="var(--ink)">{n.o.short}</text>
+                <circle r="68" fill={mix(n.o.color, 14)} stroke={n.o.color} strokeOpacity=".35" strokeWidth="2" />
+                <g transform="scale(2.5) translate(-24 -24)"><OIconBody id={n.o.id} color={n.o.color} /></g>
+                <text y="100" textAnchor="middle" fontSize="19" fontWeight="700" fill="var(--ink)">{n.o.short}</text>
               </motion.g>
             </motion.g>
           </g>
@@ -104,7 +108,7 @@ export function ToolkitSlide() {
             const on = outcomes.includes(o.id)
             return (
               <motion.div key={o.id} {...fade(0.05 * k)} className="rounded-2xl p-3" style={{ background: mix(o.color, on ? 20 : 11), border: `${on ? 2.5 : 1}px solid ${on ? o.color : 'var(--line)'}` }}>
-                <div className="flex items-center gap-2 mb-2"><span className="text-[28px]">{o.icon}</span><b className="text-[17px] leading-tight">{o.name}</b></div>
+                <div className="flex items-center gap-2.5 mb-2"><OIcon id={o.id} size={38} color={o.color} /><b className="text-[17px] leading-tight">{o.name}</b></div>
                 <div className="flex flex-col gap-1.5">
                   {o.moments.map(m => {
                     const id = momentSlideId(o.id, m.key), hot = painSlides.has(id)
