@@ -50,3 +50,6 @@ In the app: settings screen → "Presenter guide" (or add `?guide=1` to the addr
 
 ## Presenter / partner details
 The settings screen has a Presenter / partner block (company, name, title, email, phone, website, logo). Blank company = Victory Information defaults from `src/profiles/countries.ts`. A partner company shows only the details it filled in, with "PeopleHub is a product of Victory Information" credited. The details are carried in the client team link (`pco`, `pname`, `ptitle`, `pemail`, `pphone`, `pweb`) so the client's team sees the same contact card; the presenter logo is not (a logo can't travel in a QR code).
+
+## Phones and tablets
+On touch devices (or windows under 900px) the deck switches to a mobile shell: a control bar (◀ ☰ ▶, zoom Fit/Read/Large, fullscreen), swipe left/right to change slides (when zoomed, swipe from the slide's edge), a full-screen slide list, and the 3D opener is skipped to save battery. Phones held upright start in the Read zoom with a one-time tip to turn the phone sideways. The settings screen and presenter guide are responsive.

@@ -15,7 +15,8 @@
   --ink: #0f172a; --mute: #52627f; --brand: #2f57c9; --brand2: #1d4ed8; --accent: #0891b2; --ok: #059669; --warn: #d97706; --bad: #e11d48;
   --logo-filter: none;
 }
-html, body, #root { height: 100%; margin: 0; background: #000; overflow: hidden; }
+html, body, #root { height: 100%; margin: 0; background: #000; overflow: hidden; -webkit-text-size-adjust: 100%; overscroll-behavior: none; }
+button { touch-action: manipulation; }
 body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color: var(--ink); }
 .serif { font-family: 'Fraunces', Georgia, serif; }
 .card { background: var(--card); border: 1px solid var(--line); border-radius: 20px; backdrop-filter: blur(10px); }
@@ -49,3 +50,6 @@ body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color: var(--ink
   .guide-scroll { position: static !important; overflow: visible !important; background: #fff !important; }
   .guide-doc { box-shadow: none !important; margin: 0 !important; max-width: none !important; padding: 0 !important; }
 }
+
+/* keyboard-only hints are hidden on touch devices */
+@media (pointer: coarse) { .hide-touch { display: none; } }

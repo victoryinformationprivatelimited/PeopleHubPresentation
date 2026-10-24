@@ -39,10 +39,10 @@ export function Guide({ onClose }: { onClose: () => void }) {
         </span>
       </div>
 
-      <article className="guide-doc mx-auto my-6 px-12 py-10 max-w-[860px] shadow-xl" style={{ background: '#fff', color: '#0f172a' }}>
+      <article className="guide-doc mx-auto my-0 sm:my-6 px-5 sm:px-12 py-6 sm:py-10 max-w-[860px] shadow-xl" style={{ background: '#fff', color: '#0f172a' }}>
         <header className="mb-8 pb-5 border-b" style={{ borderColor: '#dbe2ee' }}>
           <div className="text-[13px] tracking-[0.2em] uppercase font-bold" style={{ color: '#3b6be0' }}>Victory Information · PeopleHub HRIS</div>
-          <h1 className="serif text-[38px] font-bold leading-tight mt-1">Presenter guide</h1>
+          <h1 className="serif text-[30px] sm:text-[38px] font-bold leading-tight mt-1">Presenter guide</h1>
           <p className="text-[16px] mt-2" style={{ color: '#52627f' }}>How to prepare, run and follow up a client presentation with the interactive PeopleHub deck. Keep this open or printed on your first few visits.</p>
         </header>
 
@@ -84,7 +84,7 @@ export function Guide({ onClose }: { onClose: () => void }) {
                 ['IT questions · as needed', 'If an IT manager is present, open the IT deep-dive slides from the grid (G): architecture, tenancy & deployment, security, integration. Keep to capabilities.'],
                 ['Why switch & value · ~4 min', 'Alternatives comparison, then the value estimator — drag the sliders with their numbers. Say the figures are indicative.'],
                 ['Packages & close · ~4 min', 'Recommend a package based on what they reacted to (no prices on screen). Finish on Next steps and ask for the discovery workshop date before you leave.'],
-              ] as const).map(([a, b]) => <tr key={a}><td className="p-2 border font-semibold align-top w-[170px]" style={{ borderColor: '#dbe2ee' }}>{a}</td><td className="p-2 border" style={{ borderColor: '#dbe2ee' }}>{b}</td></tr>)}
+              ] as const).map(([a, b]) => <tr key={a}><td className="p-2 border font-semibold align-top sm:w-[170px]" style={{ borderColor: '#dbe2ee' }}>{a}</td><td className="p-2 border" style={{ borderColor: '#dbe2ee' }}>{b}</td></tr>)}
             </tbody>
           </table>
           <h3 className="font-bold text-[17px] mt-5 mb-2">Presentation craft</h3>
@@ -99,7 +99,7 @@ export function Guide({ onClose }: { onClose: () => void }) {
 
         <Section n={4} title="Keyboard & clicker controls">
           <table className="w-full text-[14.5px] border-collapse">
-            <tbody>{keys.map(([k, v]) => <tr key={k}><td className="p-2 border font-mono text-[13px] w-[330px]" style={{ borderColor: '#dbe2ee', background: '#f8fafc' }}>{k}</td><td className="p-2 border" style={{ borderColor: '#dbe2ee' }}>{v}</td></tr>)}</tbody>
+            <tbody>{keys.map(([k, v]) => <tr key={k}><td className="p-2 border font-mono text-[13px] sm:w-[330px]" style={{ borderColor: '#dbe2ee', background: '#f8fafc' }}>{k}</td><td className="p-2 border" style={{ borderColor: '#dbe2ee' }}>{v}</td></tr>)}</tbody>
           </table>
           <p className="text-[14px] mt-2" style={{ color: '#52627f' }}>You can also click the left or right edge of the slide to go back or forward. Standard presentation clickers (Page Up / Page Down, or arrows) work without setup.</p>
         </Section>

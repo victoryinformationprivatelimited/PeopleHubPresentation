@@ -37,7 +37,7 @@ function Opener() {
           <Badge>{country.name}</Badge><Badge tone="mute">{industry.name}</Badge>
         </motion.div>
       </div>
-      <div className="absolute left-20 bottom-24 text-[16px]" style={{ color: 'var(--mute)' }}>PeopleHub is a product of {country.contact.company}{presenter.isPartner && <> · Presented by <b>{presenter.company}</b>{presenter.name ? ` · ${presenter.name}` : ''}</>}{!print && <> · Press <b>?</b> for shortcuts · <b>G</b> jump · <b>L</b> pointer</>}</div>
+      <div className="absolute left-20 bottom-24 text-[16px]" style={{ color: 'var(--mute)' }}>PeopleHub is a product of {country.contact.company}{presenter.isPartner && <> · Presented by <b>{presenter.company}</b>{presenter.name ? ` · ${presenter.name}` : ''}</>}{!print && <span className="hide-touch"> · Press <b>?</b> for shortcuts · <b>G</b> jump · <b>L</b> pointer</span>}</div>
     </div>
   )
 }

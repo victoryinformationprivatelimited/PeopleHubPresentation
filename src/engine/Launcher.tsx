@@ -76,10 +76,10 @@ export function Launcher({ initial, slides, onStart, onExport, onGuide }: { init
 
   return (
     <div className="fixed inset-0 overflow-auto" style={{ background: 'radial-gradient(ellipse at 15% 0%, color-mix(in srgb, var(--brand) 25%, transparent), transparent 55%), var(--bg)' }}>
-      <div className="max-w-[1100px] mx-auto px-8 py-10">
-        <div className="flex items-center gap-4 mb-8">
+      <div className="max-w-[1100px] mx-auto px-4 sm:px-8 py-6 sm:py-10">
+        <div className="flex flex-wrap items-center gap-4 mb-6 sm:mb-8">
           <img src="./logo-black.png" alt="PeopleHub" className="h-16 w-16 rounded-full bg-white p-0.5" />
-          <div className="flex-1"><div className="serif text-[32px] font-bold leading-tight">PeopleHub HRIS</div><div style={{ color: 'var(--mute)' }}>Sales presentation · configure before you present</div></div>
+          <div className="flex-1"><div className="serif text-[24px] sm:text-[32px] font-bold leading-tight">PeopleHub HRIS</div><div style={{ color: 'var(--mute)' }}>Sales presentation · configure before you present</div></div>
           <button onClick={onGuide} className="rounded-xl px-5 py-3 text-[15px] font-bold" style={{ background: 'var(--card)', border: '1.5px solid var(--line)' }}>📖 Presenter guide</button>
         </div>
 
@@ -88,11 +88,11 @@ export function Launcher({ initial, slides, onStart, onExport, onGuide }: { init
             <h2 className="text-[13px] tracking-[0.2em] uppercase font-bold" style={{ color: 'var(--brand2)' }}>Presenter / partner <span className="normal-case tracking-normal font-normal" style={{ color: 'var(--mute)' }}>— whose details appear on the opener, closing slide, PDF and team link</span></h2>
             {(pr.company || pr.name || pr.email || pr.phone || pr.web || pr.title || pr.logo) && <button onClick={() => set({ presenter: undefined })} className="text-[13px] underline flex-none" style={{ color: 'var(--mute)' }}>Reset to Victory Information</button>}
           </div>
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             {([['company', 'Company', co.contact.company], ['name', 'Presenter name', 'e.g. Nimal Perera'], ['title', 'Job title', 'e.g. Sales Manager'], ['email', 'Email', co.contact.email], ['phone', 'Phone', co.contact.phone], ['web', 'Website', co.contact.web]] as const).map(([k, label, ph]) => (
               <label key={k} className="text-[13px]">{label}
                 <input value={pr[k] ?? ''} onChange={e => setPresenter({ [k]: e.target.value })} placeholder={ph}
-                  className="w-full mt-1 rounded-xl px-3 py-2.5 text-[15px] outline-none" style={{ background: 'var(--card)', border: '1.5px solid var(--line)', color: 'var(--ink)' }} />
+                  className="w-full mt-1 rounded-xl px-3 py-2.5 text-[16px] outline-none" style={{ background: 'var(--card)', border: '1.5px solid var(--line)', color: 'var(--ink)' }} />
               </label>
             ))}
           </div>
@@ -164,7 +164,7 @@ export function Launcher({ initial, slides, onStart, onExport, onGuide }: { init
 
           <section className="card p-6 md:col-span-2">
             <h2 className="text-[13px] tracking-[0.2em] uppercase font-bold mb-3" style={{ color: 'var(--brand2)' }}>7 · Client pain points <span className="normal-case tracking-normal font-normal" style={{ color: 'var(--mute)' }}>— pick up to 4; they are tracked through the modules</span></h2>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               {painOptions.map(p => {
                 const on = (c.pains ?? []).includes(p.id)
                 const full = (c.pains ?? []).length >= 4
@@ -172,12 +172,12 @@ export function Launcher({ initial, slides, onStart, onExport, onGuide }: { init
               })}
             </div>
             <input value={c.customPain ?? ''} onChange={e => set({ customPain: e.target.value })} placeholder="Another pain point in the client's own words (optional)"
-              className="w-full mt-3 rounded-xl px-4 py-3 text-[15px] outline-none" style={{ background: 'var(--card)', border: '1.5px solid var(--line)', color: 'var(--ink)' }} />
+              className="w-full mt-3 rounded-xl px-4 py-3 text-[16px] outline-none" style={{ background: 'var(--card)', border: '1.5px solid var(--line)', color: 'var(--ink)' }} />
           </section>
 
           <section className="card p-6 md:col-span-2">
             <h2 className="text-[13px] tracking-[0.2em] uppercase font-bold mb-3" style={{ color: 'var(--brand2)' }}>8 · Presentation time &amp; agenda <span className="normal-case tracking-normal font-normal" style={{ color: 'var(--mute)' }}>— hides or shows slides automatically, or schedule them yourself</span></h2>
-            <div className="grid grid-cols-6 gap-2">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2">
               {modeBtn('Full deck', agenda.mode === 'full', () => setAgenda({ mode: 'full' }))}
               {[20, 30, 45].map(m => modeBtn(`${m} min`, agenda.mode === 'auto' && agenda.minutes === m, () => setAgenda({ mode: 'auto', minutes: m })))}
               <label className="rounded-xl px-3 py-2 flex items-center gap-2 text-[14px]" style={{ background: agenda.mode === 'auto' && ![20, 30, 45].includes(agenda.minutes) ? 'color-mix(in srgb, var(--brand) 30%, transparent)' : 'var(--card)', border: '1.5px solid var(--line)' }}>
@@ -211,11 +211,11 @@ export function Launcher({ initial, slides, onStart, onExport, onGuide }: { init
           <section className="card p-6 md:col-span-2">
             <h2 className="text-[13px] tracking-[0.2em] uppercase font-bold mb-3" style={{ color: 'var(--brand2)' }}>9 · Client team link (QR code) <span className="normal-case tracking-normal font-normal" style={{ color: 'var(--mute)' }}>— shown on the closing slide and the PDF</span></h2>
             <input value={c.qrUrl ?? ''} onChange={e => set({ qrUrl: e.target.value })} placeholder="Private page where this deck is hosted, e.g. https://share.yourcompany.com/peoplehub/index.html"
-              className="w-full rounded-xl px-4 py-3 text-[15px] outline-none" style={{ background: 'var(--card)', border: '1.5px solid var(--line)', color: 'var(--ink)' }} />
+              className="w-full rounded-xl px-4 py-3 text-[16px] outline-none" style={{ background: 'var(--card)', border: '1.5px solid var(--line)', color: 'var(--ink)' }} />
             <label className="flex items-center gap-2 mt-3 text-[14px]"><input type="checkbox" checked={c.qrPersonalise !== false} onChange={e => set({ qrPersonalise: e.target.checked })} /> Add this client’s settings (country, industry, name, numbers, pain points, theme, agenda) to the link so their team sees the same personalised deck.</label>
             <label className="flex items-center gap-2 mt-2 text-[14px]"><input type="checkbox" checked={c.qrClientView !== false} onChange={e => set({ qrClientView: e.target.checked })} /> Client view — hides presenter notes, the settings screen, the timer and export, and shows a “Prepared for” ribbon.</label>
             <input value={c.qrLogoUrl ?? ''} onChange={e => set({ qrLogoUrl: e.target.value })} placeholder="Client logo web address for the link (optional) — e.g. https://presentation.peoplehub.biz/logos/acme.png"
-              className="w-full mt-3 rounded-xl px-4 py-3 text-[15px] outline-none" style={{ background: 'var(--card)', border: '1.5px solid var(--line)', color: 'var(--ink)' }} />
+              className="w-full mt-3 rounded-xl px-4 py-3 text-[16px] outline-none" style={{ background: 'var(--card)', border: '1.5px solid var(--line)', color: 'var(--ink)' }} />
             <p className="text-[12.5px] mt-1" style={{ color: 'var(--mute)' }}>A logo can’t be packed into a QR code. To show it for the client’s team, put the image file in the site’s <code>public/logos/</code> folder, redeploy, and enter its address here.</p>
           </section>
 
@@ -232,8 +232,8 @@ export function Launcher({ initial, slides, onStart, onExport, onGuide }: { init
               <li><b style={{ color: 'var(--ink)' }}>Deck:</b> {visible.length} slides · about {fmtTime(totalSecs(visible))} min ({agenda.mode})</li>
               <li><b style={{ color: 'var(--ink)' }}>QR link:</b> {c.qrUrl?.trim() ? 'set' : 'not set'}</li>
             </ul>
-            <div className="grid grid-cols-3 gap-3 mt-4">
-              <button onClick={() => onStart(c)} className="col-span-2 rounded-2xl py-4 text-[19px] font-extrabold text-white" style={{ background: 'linear-gradient(90deg, var(--brand), var(--accent))' }}>▶ Load presentation</button>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-4">
+              <button onClick={() => onStart(c)} className="sm:col-span-2 rounded-2xl py-4 text-[19px] font-extrabold text-white" style={{ background: 'linear-gradient(90deg, var(--brand), var(--accent))' }}>▶ Load presentation</button>
               <button onClick={() => onExport(c)} className="rounded-2xl py-4 text-[16px] font-bold" style={{ background: 'var(--card)', border: '1.5px solid var(--line)' }}>⬇ Export PDF leave-behind</button>
             </div>
           </section>
