@@ -33,8 +33,23 @@ export const DeckContext = createContext<DeckCtx>(null as unknown as DeckCtx)
 export const useDeck = () => useContext(DeckContext)
 
 /** Navigation helpers available to slides (e.g. the clickable module overview). */
-export interface DeckNav { jump: (slideId: string) => void }
-export const NavContext = createContext<DeckNav>({ jump: () => {} })
+export interface DeckNav { jump: (slideId: string) => void; has: (slideId: string) => boolean }
+export const NavContext = createContext<DeckNav>({ jump: () => {}, has: () => false })
+
+/** Details the client leaves on the “leave your details” slide (kept in memory only; printed into the PDF). */
+export interface Lead { name?: string; role?: string; email?: string; phone?: string; notes?: string }
+
+/** Live choices made during the Outcome Workshop: outcomes picked on the discovery wall and who is in the room. */
+export interface Session {
+  outcomes: string[]                       // in the order the client picked them
+  toggleOutcome: (id: string) => void
+  roles: string[]
+  toggleRole: (id: string) => void
+  lead: Lead
+  setLead: (p: Partial<Lead>) => void
+}
+export const SessionContext = createContext<Session>({ outcomes: [], toggleOutcome: () => {}, roles: [], toggleRole: () => {}, lead: {}, setLead: () => {} })
+export const useSession = () => useContext(SessionContext)
 export const useNav = () => useContext(NavContext)
 
 export interface SlideDef {
@@ -44,6 +59,7 @@ export interface SlideDef {
   notes: string
   secs: number         // planned speaking time in seconds
   tier: number         // 3 = always keep, 2 = important, 1 = normal, 0 = optional
+  chapter?: string     // outcome chapter this slide belongs to (Outcome Workshop)
   render: (ctx: DeckCtx) => React.ReactNode
 }
 

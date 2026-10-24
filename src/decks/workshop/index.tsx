@@ -1,33 +1,49 @@
-import { motion } from 'framer-motion'
 import type { SlideDef } from '../../engine/context'
+import { byChapters } from '../../engine/agenda'
 import { buildSlides } from '../../slides/slides'
-import { Section } from '../../slides/layouts'
-import { fade } from '../../ui/primitives'
+import { OUTCOMES, chapterSlideId } from './data'
+import { BlueprintSlide, ChapterCard, DaySlide, DetailsSlide, FabricSlide, RecapSlide, RolesSlide, WallSlide, WavesSlide } from './slides'
 
 /**
- * Outcome Workshop — work in progress.
- * Phase 1 only proves the multi-deck platform: it reuses a handful of Platform Tour slides plus a placeholder.
- * The full storyline (role lens, day at the client, discovery wall, ten outcome chapters, blueprint) comes in later phases.
+ * Outcome Workshop — a co-design session: who is in the room → a day at the client → the client picks outcomes on the
+ * discovery wall → their blueprint → ten outcome chapters → close.
+ * Phase 2: opening, wall, blueprint, system map, ten chapter cards and the close. The scenario "moment" slides inside each
+ * chapter are added in the next phases (ids follow `${outcome}-${key}`, see data.ts).
  */
-function InPreparation() {
-  return (
-    <Section eyebrow="Outcome Workshop" title="This presentation is being built." sub="The co-design storyline — who is in the room, a day at your company, the discovery wall and ten outcome chapters — is added in the next phases.">
-      <motion.div {...fade(0.3)} className="card p-8 text-[22px] max-w-[900px]" style={{ color: 'var(--mute)' }}>
-        For now this deck reuses a few Platform Tour slides so that the presentation chooser, per-deck agenda, timer, PDF and team link can be tested end to end.
-      </motion.div>
-    </Section>
-  )
+export function buildWorkshopSlides(): SlideDef[] {
+  const tour = buildSlides()
+  const reuse = (id: string, over: Partial<SlideDef> = {}): SlideDef => ({ ...tour.find(s => s.id === id)!, ...over })
+  const mk = (id: string, section: string, title: string, secs: number, tier: number, notes: string, render: () => React.ReactNode, chapter?: string): SlideDef =>
+    ({ id, section, title, secs, tier, notes, render, chapter })
+
+  const chapters: SlideDef[] = OUTCOMES.map(o => mk(chapterSlideId(o.id), o.name, o.name, 25, 1,
+    `Outcome chapter: ${o.name}. Say the promise, then open the capabilities the client cares about. The KPI is illustrative — present it as typical, not guaranteed. Tap "Add to your blueprint" if they want it and have not picked it yet.`,
+    () => <ChapterCard o={o} />, o.id))
+
+  return [
+    reuse('open', { section: 'Open' }),
+    mk('ws-roles', 'Open', 'Who is in the room', 45, 3, 'Ask who is here and tap their roles. Each role gets a one-line promise. The picks tint the discovery wall and the order we suggest. Keep it light: 30 seconds.', () => <RolesSlide />),
+    mk('ws-day', 'Open', 'A day at your company', 75, 2, 'Walk the day from 07:55 to 17:30. Names and roles come from the client’s industry and country. Tap a tag to jump into that outcome, Backspace to return. Do not linger — this is the unifying story.', () => <DaySlide />),
+    reuse('challenge', { section: 'Open', title: 'What we heard', tier: 3, secs: 60 }),
+    mk('ws-wall', 'Co-design', 'Discovery wall', 120, 3, 'This is the heart of the session. Hand over: "Tap what matters most." Pre-ticked from their pain points and industry. Order matters — number 1 is what we start with. Ask why for each choice and capture the answers.', () => <WallSlide />),
+    mk('ws-blueprint', 'Co-design', 'Your blueprint, live', 60, 3, 'Their choices become a blueprint. Read it back: "So we start with… then…". Lit modules show what is in scope. Tap an outcome to open its chapter.', () => <BlueprintSlide />),
+    mk('ws-fabric', 'Co-design', 'The PeopleHub fabric', 45, 2, 'The whole system on one page: experiences on top, outcomes in the middle, the shared foundation underneath. Use it to answer "what else is there?".', () => <FabricSlide />),
+    ...chapters,
+    reuse('why', { section: 'Close' }),
+    reuse('versus', { section: 'Close' }),
+    reuse('pains', { section: 'Close' }),
+    mk('ws-recap', 'Close', 'Your blueprint recap', 45, 2, 'Read back their blueprint and the package that fits. Packages are cumulative; any module can be added à la carte. No prices on screen.', () => <RecapSlide />),
+    mk('ws-waves', 'Close', 'Rollout waves', 45, 2, 'Three waves, their priorities first. Do not give dates here — dates come after the discovery workshop and scoping.', () => <WavesSlide />),
+    reuse('packages', { section: 'Close' }),
+    reuse('roi', { section: 'Close' }),
+    mk('ws-details', 'Close', 'Leave your details', 30, 1, 'Let the client type their details. They stay in this browser session and print into the PDF if you export it; nothing is sent anywhere.', () => <DetailsSlide />),
+    reuse('next', { section: 'Close' }),
+    reuse('contact', { section: 'Close' }),
+  ]
 }
 
-export function buildWorkshopSlides(): SlideDef[] {
-  const base = buildSlides()
-  const keep = ['open', 'challenge', 'packages', 'roi', 'next', 'contact']
-  const picked = keep.map(id => base.find(s => s.id === id)!).filter(Boolean)
-  const placeholder: SlideDef = {
-    id: 'ws-preparing', section: 'Open', title: 'Coming together', secs: 30, tier: 2,
-    notes: 'Placeholder while the Outcome Workshop deck is under construction.',
-    render: () => <InPreparation />,
-  }
-  const at = picked.findIndex(s => s.id === 'challenge') + 1
-  return [...picked.slice(0, at), placeholder, ...picked.slice(at)]
+/** Chosen chapters first (in the order the client picked them), then the rest in the standard order. */
+export function arrangeWorkshop(slides: SlideDef[], outcomes: string[]): SlideDef[] {
+  const rest = OUTCOMES.map(o => o.id).filter(id => !outcomes.includes(id))
+  return byChapters(slides, [...outcomes.filter(id => OUTCOMES.some(o => o.id === id)), ...rest])
 }

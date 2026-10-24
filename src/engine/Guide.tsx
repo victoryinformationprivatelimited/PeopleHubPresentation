@@ -88,6 +88,13 @@ export function Guide({ onClose }: { onClose: () => void }) {
               ] as const).map(([a, b]) => <tr key={a}><td className="p-2 border font-semibold align-top sm:w-[170px]" style={{ borderColor: '#dbe2ee' }}>{a}</td><td className="p-2 border" style={{ borderColor: '#dbe2ee' }}>{b}</td></tr>)}
             </tbody>
           </table>
+          <h3 className="font-bold text-[17px] mt-5 mb-2">If you chose the Outcome Workshop</h3>
+          <List items={[
+            <>Open with <b>Who is in the room</b> (tap everyone present), then <b>A day at your company</b> and <b>What we heard</b>.</>,
+            <>On the <b>Discovery wall</b> hand the conversation over: the client taps the outcomes that matter, in priority order (number 1 = where we start). Pain points and industry pre-tick a few. Ask why for each pick.</>,
+            <><b>Your blueprint, live</b> reads their choices back and lights the modules in scope. The chapters that follow are re-ordered to their picks. In the settings screen you can instead choose <i>Pick chapters</i> to set the chapters and order yourself.</>,
+            <>Close with the blueprint recap, rollout waves (no dates), packages, value and <b>Leave your details</b> — what they type stays in the browser session and prints in the PDF.</>,
+          ]} />
           <h3 className="font-bold text-[17px] mt-5 mb-2">Presentation craft</h3>
           <List items={[
             <>Press <b>N</b> to read the talk track and likely objections for the current slide, and see its planned time. The client’s team won’t see these in their link.</>,

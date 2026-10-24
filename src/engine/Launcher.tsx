@@ -5,7 +5,8 @@ import { painOptions } from '../profiles/pains'
 import { IndustryArt } from '../ui/IndustryArt'
 import { agendaFor, fmtTime, pickSlides, totalSecs, type Agenda } from './agenda'
 import { DeckThumb } from '../ui/DeckThumb'
-import { decks, getDeckSlides, resolveDeckId } from '../decks/registry'
+import { arrangeFor, decks, getDeckSlides, resolveDeckId } from '../decks/registry'
+import { defaultOutcomes } from '../decks/workshop/data'
 import { buildCtx } from './buildCtx'
 import type { SlideDef } from './context'
 
@@ -57,7 +58,15 @@ export function Launcher({ initial, onStart, onExport, onGuide }: { initial: Con
   const deckId = resolveDeckId(c.deck)
   const slides = getDeckSlides(deckId)
   const agenda = agendaFor(c, deckId)
-  const visible = pickSlides(slides, agenda, buildCtx(c))
+  const deckDef = decks.find(d => d.id === deckId)!
+  const chapterDefs = deckDef.chapters
+  const previewCtx = buildCtx(c)
+  const previewOutcomes = defaultOutcomes(previewCtx)
+  const visible = pickSlides(arrangeFor(deckId, slides, previewOutcomes), agenda, { ...previewCtx, outcomes: previewOutcomes })
+  const chapterIds = agenda.chapters ?? chapterDefs?.map(ch => ch.id) ?? []
+  const chapterRows = chapterDefs ? [...chapterIds.map(id => chapterDefs.find(ch => ch.id === id)).filter((ch): ch is { id: string; name: string } => !!ch), ...chapterDefs.filter(ch => !chapterIds.includes(ch.id))] : []
+  const toggleChapter = (id: string) => setAgenda({ mode: 'chapters', chapters: chapterIds.includes(id) ? chapterIds.filter(x => x !== id) : [...chapterIds, id] })
+  const moveChapter = (id: string, d: -1 | 1) => { const i = chapterIds.indexOf(id), j = i + d; if (i < 0 || j < 0 || j >= chapterIds.length) return; const n = [...chapterIds]; [n[i], n[j]] = [n[j], n[i]]; setAgenda({ mode: 'chapters', chapters: n }) }
   const setAgenda = (a: Partial<Agenda>) => set({ agendas: { ...(c.agendas ?? {}), [deckId]: { ...agenda, ...a } } })
   const pr = c.presenter ?? {}
   const setPresenter = (p: Partial<PresenterConfig>) => set({ presenter: { ...pr, ...p } })
@@ -204,18 +213,35 @@ export function Launcher({ initial, onStart, onExport, onGuide }: { initial: Con
 
           <section className="card p-6 md:col-span-2">
             <h2 className="text-[13px] tracking-[0.2em] uppercase font-bold mb-3" style={{ color: 'var(--brand2)' }}>8 · Presentation time &amp; agenda <span className="normal-case tracking-normal font-normal" style={{ color: 'var(--mute)' }}>— hides or shows slides automatically, or schedule them yourself</span></h2>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2">
+            <div className={`grid grid-cols-2 sm:grid-cols-3 ${chapterDefs ? 'md:grid-cols-4 lg:grid-cols-7' : 'md:grid-cols-6'} gap-2`}>
               {modeBtn('Full deck', agenda.mode === 'full', () => setAgenda({ mode: 'full' }))}
               {[20, 30, 45].map(m => modeBtn(`${m} min`, agenda.mode === 'auto' && agenda.minutes === m, () => setAgenda({ mode: 'auto', minutes: m })))}
               <label className="rounded-xl px-3 py-2 flex items-center gap-2 text-[14px]" style={{ background: agenda.mode === 'auto' && ![20, 30, 45].includes(agenda.minutes) ? 'color-mix(in srgb, var(--brand) 30%, transparent)' : 'var(--card)', border: '1.5px solid var(--line)' }}>
                 <input type="number" min={5} max={180} value={agenda.minutes} onChange={e => setAgenda({ mode: 'auto', minutes: Math.min(180, Math.max(5, Number(e.target.value) || 5)) })} className="w-14 bg-transparent outline-none font-bold text-[16px]" /> min
               </label>
+              {chapterDefs && modeBtn('Pick chapters', agenda.mode === 'chapters', () => setAgenda({ mode: 'chapters', chapters: agenda.chapters ?? chapterDefs.map(ch => ch.id) }))}
               {modeBtn('Manual', agenda.mode === 'manual', () => setAgenda({ mode: 'manual', ids: agenda.mode === 'manual' && manualIds.length ? manualIds : visible.map(s => s.id) }))}
             </div>
             <p className="text-[14px] mt-3" style={{ color: 'var(--mute)' }}>
               <b style={{ color: 'var(--ink)' }}>{visible.length} of {slides.length} slides · about {fmtTime(totalSecs(visible))} min.</b>{' '}
-              {agenda.mode === 'auto' ? 'Keeps the opener, challenges, packages and close, then adds the modules that matter most for this client’s industry and pain points until the time is used. Hidden slides can still be opened from the slide grid (G).' : agenda.mode === 'manual' ? 'Tick the slides to include and use ▲ ▼ to set the order.' : 'Every slide, in the standard order.'}
+              {agenda.mode === 'auto' ? 'Keeps the opener, challenges, packages and close, then adds the modules that matter most for this client’s industry and pain points until the time is used. Hidden slides can still be opened from the slide grid (G).' : agenda.mode === 'chapters' ? 'Tick the outcome chapters to include and use ▲ ▼ to set their order. The opening and closing slides always stay.' : agenda.mode === 'manual' ? 'Tick the slides to include and use ▲ ▼ to set the order.' : 'Every slide, in the standard order.'}
             </p>
+            {agenda.mode === 'chapters' && (
+              <div className="mt-3 flex flex-col gap-1.5">
+                {chapterRows.map(ch => {
+                  const on = chapterIds.includes(ch.id), i = chapterIds.indexOf(ch.id)
+                  return (
+                    <div key={ch.id} className="flex items-center gap-3 rounded-lg px-3 py-1.5 text-[14px]" style={{ background: on ? 'color-mix(in srgb, var(--brand) 18%, transparent)' : 'var(--card)', border: '1px solid var(--line)', opacity: on ? 1 : 0.65 }}>
+                      <input type="checkbox" checked={on} onChange={() => toggleChapter(ch.id)} />
+                      <span className="w-6 text-right" style={{ color: 'var(--mute)' }}>{on ? i + 1 : ''}</span>
+                      <span className="flex-1 font-semibold">{ch.name}</span>
+                      <button disabled={!on || i === 0} onClick={() => moveChapter(ch.id, -1)} className="px-2 disabled:opacity-25">▲</button>
+                      <button disabled={!on || i === chapterIds.length - 1} onClick={() => moveChapter(ch.id, 1)} className="px-2 disabled:opacity-25">▼</button>
+                    </div>
+                  )
+                })}
+              </div>
+            )}
             {agenda.mode === 'manual' && (
               <div className="mt-3 max-h-[320px] overflow-auto pr-1 flex flex-col gap-1.5">
                 {orderedAll.map(s => {

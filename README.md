@@ -56,3 +56,6 @@ On touch devices (or windows under 900px) the deck switches to a mobile shell: a
 
 ## Multiple presentations
 `src/decks/registry.ts` lists the presentations (Outcome Workshop, Platform Tour). The settings screen opens with a chooser; each deck keeps its own agenda (`agendas` in the saved settings). `?deck=workshop|tour` selects one directly and the QR/team link carries it. `DEFAULT_DECK` is the one opened when nothing is chosen (currently the Platform Tour, to switch to the Outcome Workshop once that deck is complete). Add a deck by adding an entry to `decks` with a `build()` that returns its slides.
+
+## Outcome Workshop (deck 2) — status
+Phase 2 done: opener, role lens, a day at the client, what we heard, discovery wall, live blueprint, system map, ten outcome chapter cards and the close (recap, rollout waves, packages, value, leave-your-details, next steps, contact). The scenario slides inside each chapter (ids like `time-capture`, listed in `src/decks/workshop/data.ts`) arrive in the next phases; chapter cards link to them automatically once they exist. Live choices (wall, roles, details) are kept in memory only and carried in the team link (`outcomes`, `roles`).

@@ -275,7 +275,7 @@ export function Deck({ slides, allSlides, ctx, theme: initialTheme = 'dark', sho
   const barStyle = { background: 'var(--card)', border: '1px solid var(--line)', color: 'var(--ink)' }
 
   return (
-    <NavContext.Provider value={{ jump }}>
+    <NavContext.Provider value={{ jump, has: (id: string) => byId.has(id) }}>
       <div className={mobile ? 'fixed inset-0 flex flex-col' : 'fixed inset-0 flex items-center justify-center overflow-hidden'} style={{ background: 'var(--bg)', cursor: pointer === 'off' ? undefined : 'none' }}>
         {mobile ? (
           <div ref={scroller} className="flex-1 min-h-0 overflow-auto" style={{ WebkitOverflowScrolling: 'touch', overscrollBehavior: 'contain' }} onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>

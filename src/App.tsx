@@ -1,17 +1,18 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Deck } from './engine/Deck'
-import { DeckContext } from './engine/context'
+import { DeckContext, SessionContext, type Lead } from './engine/context'
 import { Launcher, emptyConfig, loadConfig, saveConfig, type Config } from './engine/Launcher'
 import { PrintView } from './engine/PrintView'
 import { Guide } from './engine/Guide'
 import { buildCtx } from './engine/buildCtx'
 import { agendaFor, defaultAgenda, pickSlides } from './engine/agenda'
-import { getDeckSlides, resolveDeckId } from './decks/registry'
+import { arrangeFor, getDeckSlides, resolveDeckId } from './decks/registry'
+import { defaultOutcomes } from './decks/workshop/data'
 
 type Mode = 'launcher' | 'show' | 'print' | 'guide'
 
 /** Launcher screen first. Query params (?country=lk&industry=apparel&client=Name&agenda=30&print=1) skip it. */
-function initial(): { cfg: Config; mode: Mode; auto: boolean; clientView: boolean } {
+function initial(): { cfg: Config; mode: Mode; auto: boolean; clientView: boolean; outcomes?: string[]; roles?: string[] } {
   const q = new URLSearchParams(location.search)
   const clientView = q.get('view') === 'client'
   // The client view must never pick up the presenter's saved settings.
@@ -38,7 +39,8 @@ function initial(): { cfg: Config; mode: Mode; auto: boolean; clientView: boolea
     presenter: q.has('pco') || q.has('pname') ? { company: q.get('pco') ?? '', name: q.get('pname') ?? '', title: q.get('ptitle') ?? '', email: q.get('pemail') ?? '', phone: q.get('pphone') ?? '', web: q.get('pweb') ?? '' } : saved.presenter,
     theme: q.get('theme') === 'light' ? 'light' : q.get('theme') === 'dark' ? 'dark' : saved.theme,
   }
-  return { cfg, mode: q.has('print') ? 'print' : 'show', auto: q.get('auto') !== '0', clientView }
+  const list = (k: string) => (q.has(k) ? q.get(k)!.split(',').filter(Boolean) : undefined)
+  return { cfg, mode: q.has('print') ? 'print' : 'show', auto: q.get('auto') !== '0', clientView, outcomes: list('outcomes'), roles: list('roles') }
 }
 
 export default function App() {
@@ -52,31 +54,52 @@ export default function App() {
   const [mode, setMode] = useState<Mode>(init.mode)
   const deckId = resolveDeckId(cfg.deck)
   const allSlides = useMemo(() => getDeckSlides(deckId), [deckId])
-  const ctx = useMemo(() => buildCtx(cfg, mode === 'print'), [cfg, mode])
+  // Live choices from the Outcome Workshop (discovery wall, roles in the room, details left). Kept in memory only.
+  const signature = `${deckId}|${cfg.client}|${cfg.industry}|${(cfg.pains ?? []).join()}|${cfg.customPain ?? ''}`
+  const [session, setSession] = useState(() => ({ sig: signature, outcomes: init.outcomes ?? defaultOutcomes(buildCtx(cfg)), roles: init.roles ?? [] as string[], lead: {} as Lead }))
+  const sessionApi = useMemo(() => ({
+    outcomes: session.outcomes,
+    roles: session.roles,
+    lead: session.lead,
+    toggleOutcome: (id: string) => setSession(s => ({ ...s, outcomes: s.outcomes.includes(id) ? s.outcomes.filter(x => x !== id) : [...s.outcomes, id] })),
+    toggleRole: (id: string) => setSession(s => {
+      const roles = s.roles.includes(id) ? s.roles.filter(x => x !== id) : [...s.roles, id]
+      return { ...s, roles }
+    }),
+    setLead: (p: Partial<Lead>) => setSession(s => ({ ...s, lead: { ...s.lead, ...p } })),
+  }), [session])
+  const ctx = useMemo(() => buildCtx(cfg, mode === 'print', session), [cfg, mode, session])
   const agenda = agendaFor(cfg, deckId)
-  const visible = useMemo(() => pickSlides(allSlides, agenda, ctx), [allSlides, agenda, ctx])
+  const arranged = useMemo(() => arrangeFor(deckId, allSlides, session.outcomes), [deckId, allSlides, session.outcomes])
+  const visible = useMemo(() => pickSlides(arranged, agenda, { ...ctx, outcomes: session.outcomes }), [arranged, agenda, ctx, session.outcomes])
+
+  // starting a different client / deck / set of pains begins a fresh workshop; re-entering the same one keeps the wall
+  const begin = (c: Config) => {
+    const sig = `${resolveDeckId(c.deck)}|${c.client}|${c.industry}|${(c.pains ?? []).join()}|${c.customPain ?? ''}`
+    if (sig !== session.sig) setSession({ sig, outcomes: defaultOutcomes(buildCtx(c)), roles: [], lead: {} })
+  }
 
   if (mode === 'launcher') {
     document.documentElement.dataset.theme = cfg.theme
-    return <Launcher initial={cfg} onStart={c => { saveConfig(c); setCfg(c); setMode('show') }} onExport={c => { saveConfig(c); setCfg(c); setMode('print') }} onGuide={() => setMode('guide')} />
+    return <Launcher initial={cfg} onStart={c => { begin(c); saveConfig(c); setCfg(c); setMode('show') }} onExport={c => { begin(c); saveConfig(c); setCfg(c); setMode('print') }} onGuide={() => setMode('guide')} />
   }
   if (mode === 'guide') return <Guide onClose={() => { history.replaceState(null, '', location.pathname); setMode('launcher') }} />
   if (mode === 'print') {
     document.documentElement.dataset.theme = cfg.theme
     return (
-      <DeckContext.Provider value={ctx}>
+      <SessionContext.Provider value={sessionApi}><DeckContext.Provider value={ctx}>
         <PrintView slides={visible} ctx={ctx} auto={init.auto} onDone={() => setMode('show')} />
-      </DeckContext.Provider>
+      </DeckContext.Provider></SessionContext.Provider>
     )
   }
   return (
-    <DeckContext.Provider value={ctx}>
+    <SessionContext.Provider value={sessionApi}><DeckContext.Provider value={ctx}>
       <Deck
         key={`${deckId}-${cfg.country}-${cfg.industry}-${cfg.client}-${cfg.logo?.length ?? 0}-${cfg.headcount}-${cfg.hrTeam}-${cfg.pains?.join()}-${cfg.customPain}-${agenda.mode}-${agenda.minutes}-${agenda.ids.join()}-${cfg.qrUrl}`}
-        slides={visible} allSlides={allSlides} ctx={ctx} theme={cfg.theme} showTimer={agenda.mode !== 'full' && !init.clientView} clientView={init.clientView}
+        slides={visible} allSlides={arranged} ctx={ctx} theme={cfg.theme} showTimer={agenda.mode !== 'full' && !init.clientView} clientView={init.clientView}
         onConfigure={init.clientView ? undefined : () => { history.replaceState(null, '', location.pathname); setMode('launcher') }}
         onExport={init.clientView ? undefined : () => setMode('print')}
       />
-    </DeckContext.Provider>
+    </DeckContext.Provider></SessionContext.Provider>
   )
 }

@@ -7,7 +7,7 @@ import { agendaFor } from './agenda'
 import { resolveDeckId } from '../decks/registry'
 
 /** Link encoded in the QR code; optionally carries the personalisation so the client's team sees the same deck. */
-function qrLink(cfg: Config): string | undefined {
+function qrLink(cfg: Config, session?: { outcomes: string[]; roles: string[] }): string | undefined {
   const raw = cfg.qrUrl?.trim()
   if (!raw) return undefined
   try {
@@ -23,6 +23,8 @@ function qrLink(cfg: Config): string | undefined {
       if (cfg.customPain?.trim()) p.set('customPain', cfg.customPain.trim())
       if (cfg.theme === 'light') p.set('theme', 'light')
       p.set('deck', resolveDeckId(cfg.deck))
+      if (session?.outcomes.length) p.set('outcomes', session.outcomes.join(','))
+      if (session?.roles.length) p.set('roles', session.roles.join(','))
       const a = agendaFor(cfg, resolveDeckId(cfg.deck))
       if (a?.mode === 'auto') p.set('agenda', String(a.minutes))
       else if (a?.mode === 'manual' && a.ids.length) p.set('slides', a.ids.join(','))
@@ -49,7 +51,7 @@ function resolvePresenter(cfg: Config): Presenter {
   return { company: p.company!.trim(), name: clean(p.name), title: clean(p.title), email: clean(p.email), phone: clean(p.phone), web: clean(p.web), logo: p.logo, isPartner: true }
 }
 
-export function buildCtx(cfg: Config, print = false): DeckCtx {
+export function buildCtx(cfg: Config, print = false, session?: { outcomes: string[]; roles: string[] }): DeckCtx {
   const industry = industries[cfg.industry] ?? industries.generic
   const pains = resolvePains(cfg.pains, cfg.customPain)
   return {
@@ -63,7 +65,7 @@ export function buildCtx(cfg: Config, print = false): DeckCtx {
     pains,
     focusPains: pains.length ? pains : defaultPains(industry),
     presenter: resolvePresenter(cfg),
-    qrUrl: qrLink(cfg),
+    qrUrl: qrLink(cfg, session),
     print,
   }
 }
