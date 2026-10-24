@@ -10,6 +10,8 @@ import { ModuleSlide, Section } from './layouts'
 import { modules, pillars } from './modules'
 import * as A from './demosA'
 import * as B from './demosB'
+import { NotifRulesDemo } from './demosC'
+import type { Mod } from './modules'
 import { BeforeAfter, Challenge, PainsSolved, Roi, Versus } from './sales'
 
 const demos: Record<string, () => ReactNode> = {
@@ -273,6 +275,13 @@ function Contact() {
 }
 
 /* ================= DECK ================= */
+const notifRulesMod: Mod = {
+  id: 'notif-rules', pillar: 'exp', name: 'Notification Rules', headline: 'You decide who is told — and how and when',
+  blurb: 'For every event, choose the recipients, then pick the channels and timing for each one. No developer needed.',
+  bullets: ['8 recipient types: Self, Workflow Approvers, Head of Entity, HR, All Employees, Same Role, Same Unit, Specific Employees', 'Email, SMS, WhatsApp, Push and In-App — set per recipient', 'Timing per recipient: immediately, delayed or a daily digest', 'Approver notifications appear only where a workflow is assigned'],
+  notes: '',
+}
+
 const modSlides = (): SlideDef[] =>
   modules.map(m => ({
     id: m.id, section: pillars.find(p => p.id === m.pillar)!.name, title: m.name, notes: m.notes, secs: 60, tier: ['employee', 'attendance', 'payroll', 'ess'].includes(m.id) ? 2 : 1,
@@ -282,6 +291,11 @@ const modSlides = (): SlideDef[] =>
 export function buildSlides(): SlideDef[] {
   const s = (id: string, section: string, title: string, notes: string, C: () => ReactNode): SlideDef => ({ id, section, title, notes, secs: 45, tier: 1, render: () => <C /> })
   const mods = modSlides()
+  const notifRules: SlideDef = {
+    id: 'notif-rules', section: 'Employee Experience', title: 'Notification Rules', secs: 60, tier: 1,
+    notes: 'Click an event, tick recipients, then toggle channels and timing per recipient. Stress that HR controls this without IT. Timing options on screen are examples — confirm the exact options with the product team before promising a specific schedule.',
+    render: () => <ModuleSlide mod={notifRulesMod} demo={<NotifRulesDemo />} />,
+  }
   const part = (pillar: string) => mods.filter(x => modules.find(m => m.id === x.id)!.pillar === pillar)
   const all: SlideDef[] = [
     s('open', 'Open', 'Welcome', 'Greet, thank the audience, set the agenda: challenge → platform → modules → IT view → packages → next steps. Personalise using the client name.', Opener),
@@ -289,7 +303,7 @@ export function buildSlides(): SlideDef[] {
     s('beforeafter', 'Open', 'Before & after', 'Walk down the day: left is today, right is with PeopleHub. Ask which row hurts most. The weekly-hours figure is illustrative (assumes ~4 admin hours a day per HR person).', BeforeAfter),
     s('constellation', 'Open', 'One platform', 'Pulsing items are the modules most relevant for this industry. Say you will focus there but cover everything.', Constellation),
     s('glance', 'Open', 'At a glance', 'Keep short for HR/C-level; IT Manager deep-dive follows later.', Glance),
-    ...part('core'), ...part('ops'), ...part('talent'), ...part('exp'), ...part('intel'),
+    ...part('core'), ...part('ops'), ...part('talent'), ...part('exp').flatMap(sl => (sl.id === 'notifications' ? [sl, notifRules] : [sl])), ...part('intel'),
     s('it-arch', 'IT Deep-Dive', 'Architecture', 'For the IT Manager: layered architecture. Invite questions on stack, hosting and DR. Confirm the PostgreSQL / Azure Storage positioning before presenting.', Architecture),
     s('it-tenancy', 'IT Deep-Dive', 'Tenancy & deployment', 'SaaS vs deploy-into-your-Azure. Ask about their cloud policy.', Tenancy),
     s('it-sec', 'IT Deep-Dive', 'Security', 'Capabilities only; do not claim certifications unless confirmed. Offer a security questionnaire response under NDA.', ItSecurity),
