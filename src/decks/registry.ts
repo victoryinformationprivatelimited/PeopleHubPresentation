@@ -21,7 +21,6 @@ export const decks: DeckDef[] = [
     name: 'Outcome Workshop',
     tagline: 'Co-design session: the client picks the outcomes that matter, then sees their own PeopleHub built live.',
     bestFor: 'Owners, HR, finance & payroll and IT together — discovery and first meetings',
-    badge: 'Preview',
     build: buildWorkshopSlides,
     chapters: OUTCOMES.map(o => ({ id: o.id, name: `${o.icon} ${o.name}` })),
     arrange: arrangeWorkshop,
@@ -35,8 +34,8 @@ export const decks: DeckDef[] = [
   },
 ]
 
-/** Deck opened when nothing has been chosen. Switch to 'workshop' once that deck is complete. */
-export const DEFAULT_DECK = 'tour'
+/** Deck opened when nothing has been chosen. */
+export const DEFAULT_DECK = 'workshop'
 
 export const resolveDeckId = (id?: string) => (decks.some(d => d.id === id) ? id! : DEFAULT_DECK)
 export const getDeck = (id?: string) => decks.find(d => d.id === resolveDeckId(id))!

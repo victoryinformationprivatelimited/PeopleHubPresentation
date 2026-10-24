@@ -90,7 +90,7 @@ export function LifecycleDemo() {
 
 export function TerminationDemo() {
   const { country, industry, company } = useDeck()
-  const items = ['Resignation accepted', 'Notice period computed', `Assets returned (${industry.assets[0][1].toLowerCase()}, ${industry.assets[2][1].toLowerCase()})`, 'Exit interview completed', 'Leave encashment calculated', 'Final settlement approved']
+  const items = ['Resignation accepted', 'Notice period computed', `Assets returned (${industry.assets[0][1]}, ${industry.assets[2][1]})`, 'Exit interview completed', 'Leave encashment calculated', 'Final settlement approved']
   return (
     <Window title={`${company} · Exit · ${country.sampleNames[4]}`}>
       <div className="grid grid-cols-5 gap-6">

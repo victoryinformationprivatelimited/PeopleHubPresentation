@@ -62,3 +62,6 @@ Phase 2 done: opener, role lens, a day at the client, what we heard, discovery w
 
 ### Phase 3 (chapters 1–5)
 Scenario slides for Know every person, Hire & onboard, Time you can trust, Leave without the chase and Pay people right (22 slides, `src/decks/workshop/moments.tsx`, new demos in `demosP3.tsx`). Each slide's presenter notes end with a private **Readiness** line (Live / Partial / Preview) taken from the code review — shown only in presenter notes (N), never in the client view or PDF. Chapters 6–10 follow in phase 4.
+
+### Phase 4 (chapters 6–10) — Outcome Workshop complete
+Scenario slides for Approve faster (workflow builder, higher authorization, approvals inbox, notification rules), Grow and keep your people, Serve every employee, Decide with data & stay compliant, and Secure, scalable, yours (`moments4.tsx`, demos in `demosP4.tsx`). The deck is 75 slides and is now the default (`DEFAULT_DECK` in `src/decks/registry.ts`). Notification Rules demo now follows the real configure screen (Email/SMS/WhatsApp/In-App, on-event or before/after timing; Push shown as coming soon).

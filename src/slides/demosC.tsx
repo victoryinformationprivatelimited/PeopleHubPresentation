@@ -16,9 +16,9 @@ const RECIPIENTS: { id: string; name: string; desc: string }[] = [
   { id: 'specific', name: 'Specific Employees', desc: 'Pick particular employees from the employee list' },
 ]
 
-const CHANNELS = ['Email', 'SMS', 'WhatsApp', 'Push', 'In-App'] as const
-const CH_ICON: Record<string, string> = { Email: '✉️', SMS: '💬', WhatsApp: '🟢', Push: '📳', 'In-App': '🔔' }
-const TIMINGS = ['Immediately', 'After 15 min', 'Daily digest · 08:00'] as const
+const CHANNELS = ['Email', 'SMS', 'WhatsApp', 'In-App'] as const
+const CH_ICON: Record<string, string> = { Email: '✉️', SMS: '💬', WhatsApp: '🟢', 'In-App': '🔔' }
+const TIMINGS = ['On the event', '1 day before', '2 days after'] as const
 
 interface EventDef { name: string; workflow: boolean; recipients: string[] }
 const EVENTS: EventDef[] = [
@@ -30,7 +30,7 @@ const EVENTS: EventDef[] = [
 
 type Rule = { channels: string[]; timing: number }
 const defaultRule = (rid: string): Rule => (
-  rid === 'self' ? { channels: ['Push', 'In-App'], timing: 0 }
+  rid === 'self' ? { channels: ['SMS', 'In-App'], timing: 0 }
     : rid === 'hr' ? { channels: ['Email'], timing: 2 }
       : rid === 'all' ? { channels: ['Email', 'In-App'], timing: 0 }
         : { channels: ['Email', 'In-App'], timing: 0 }
@@ -97,6 +97,7 @@ export function NotifRulesDemo() {
                     className="rounded-full px-2.5 py-1 text-[12px] font-semibold transition"
                     style={on ? { background: 'color-mix(in srgb, var(--ok) 22%, transparent)', border: '1px solid var(--ok)', color: 'var(--ok)' } : { background: 'transparent', border: '1px solid var(--line)', color: 'var(--mute)' }}>{CH_ICON[c]} {c}</button>
                 })}
+                <span className="rounded-full px-2.5 py-1 text-[12px]" style={{ border: '1px dashed var(--line)', color: 'var(--mute)' }} title="Push notifications are coming soon">📳 Push · soon</span>
               </div>
               <button onClick={() => setRule(r.id, { ...rule, timing: (rule.timing + 1) % TIMINGS.length })} className="rounded-lg px-2.5 py-1 text-[12px] font-semibold" style={{ background: 'var(--bg)', border: '1px solid var(--line)' }} title="Click to change timing">⏱ {TIMINGS[rule.timing]}</button>
             </div>

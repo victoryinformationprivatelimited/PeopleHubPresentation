@@ -93,6 +93,7 @@ export function Guide({ onClose }: { onClose: () => void }) {
             <>Open with <b>Who is in the room</b> (tap everyone present), then <b>A day at your company</b> and <b>What we heard</b>.</>,
             <>On the <b>Discovery wall</b> hand the conversation over: the client taps the outcomes that matter, in priority order (number 1 = where we start). Pain points and industry pre-tick a few. Ask why for each pick.</>,
             <><b>Your blueprint, live</b> reads their choices back and lights the modules in scope. The chapters that follow are re-ordered to their picks. In the settings screen you can instead choose <i>Pick chapters</i> to set the chapters and order yourself.</>,
+            <>Inside each chapter there is a scenario slide per capability (a short story, the screen, and what changes). Press <b>N</b> for the talk track — each slide's notes end with a <b>private readiness line</b> (Live / Partial / Preview / No code yet) so you know what you can demo live and what to describe as in build.</>,
             <>Close with the blueprint recap, rollout waves (no dates), packages, value and <b>Leave your details</b> — what they type stays in the browser session and prints in the PDF.</>,
           ]} />
           <h3 className="font-bold text-[17px] mt-5 mb-2">Presentation craft</h3>
