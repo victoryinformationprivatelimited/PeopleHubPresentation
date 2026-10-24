@@ -4,6 +4,7 @@ import type { Mod } from './modules'
 import { pillarById } from './modules'
 import { fade } from '../ui/primitives'
 import { useDeck } from '../engine/context'
+import { PainBanner } from '../ui/PainBanner'
 
 export function ModuleSlide({ mod, demo }: { mod: Mod; demo: ReactNode }) {
   const p = pillarById[mod.pillar]
@@ -26,11 +27,7 @@ export function ModuleSlide({ mod, demo }: { mod: Mod; demo: ReactNode }) {
             </motion.li>
           ))}
         </ul>
-        {solved && (
-          <motion.div {...fade(0.7)} className="mt-6 inline-flex items-center gap-3 rounded-full px-5 py-2.5 text-[18px] font-bold" style={{ background: 'color-mix(in srgb, var(--ok) 18%, transparent)', border: '1px solid var(--ok)', color: 'var(--ok)' }}>
-            ✓ Solves: {solved.icon} {solved.label}
-          </motion.div>
-        )}
+        {solved && <div className="mt-6"><PainBanner pains={[solved]} solver={mod.name} /></div>}
         {useCase && (
           <motion.div {...fade(0.8)} className="card mt-7 px-5 py-4 text-[19px] leading-snug" style={{ borderLeft: `4px solid ${p.color}` }}>
             <div className="text-[12px] tracking-[0.18em] uppercase font-bold mb-1" style={{ color: p.color }}>For {company} · {industry.name}</div>

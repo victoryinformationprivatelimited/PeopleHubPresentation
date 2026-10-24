@@ -33,8 +33,12 @@ export const DeckContext = createContext<DeckCtx>(null as unknown as DeckCtx)
 export const useDeck = () => useContext(DeckContext)
 
 /** Navigation helpers available to slides (e.g. the clickable module overview). */
-export interface DeckNav { jump: (slideId: string) => void; has: (slideId: string) => boolean }
-export const NavContext = createContext<DeckNav>({ jump: () => {}, has: () => false })
+export interface DeckNav {
+  jump: (slideId: string) => void     // open a slide as a side trip; a “Back” button returns
+  goTo: (slideId: string) => void     // move on for good (no way-back button); skips to the next shown slide if it is hidden
+  has: (slideId: string) => boolean
+}
+export const NavContext = createContext<DeckNav>({ jump: () => {}, goTo: () => {}, has: () => false })
 
 /** Details the client leaves on the “leave your details” slide (kept in memory only; printed into the PDF). */
 export interface Lead { name?: string; role?: string; email?: string; phone?: string; notes?: string }
@@ -45,10 +49,14 @@ export interface Session {
   toggleOutcome: (id: string) => void
   roles: string[]
   toggleRole: (id: string) => void
+  pains: string[]                          // pain-point ids picked for this client (can be changed in the presentation)
+  togglePain: (id: string) => void
+  customPain: string
+  setCustomPain: (t: string) => void
   lead: Lead
   setLead: (p: Partial<Lead>) => void
 }
-export const SessionContext = createContext<Session>({ outcomes: [], toggleOutcome: () => {}, roles: [], toggleRole: () => {}, lead: {}, setLead: () => {} })
+export const SessionContext = createContext<Session>({ outcomes: [], toggleOutcome: () => {}, roles: [], toggleRole: () => {}, pains: [], togglePain: () => {}, customPain: '', setCustomPain: () => {}, lead: {}, setLead: () => {} })
 export const useSession = () => useContext(SessionContext)
 export const useNav = () => useContext(NavContext)
 

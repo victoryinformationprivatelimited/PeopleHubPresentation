@@ -65,6 +65,15 @@ export function Deck({ slides, allSlides, ctx, theme: initialTheme = 'dark', sho
     setDir(1); setCur(id)
   }, [byId, cur])
 
+  const goTo = useCallback((id: string) => {
+    if (!byId.has(id)) return
+    setReturnTo(null); setDir(1)
+    if (order.includes(id)) { setCur(id); return }
+    const ids = allSlides.map(s => s.id)
+    const next = ids.slice(ids.indexOf(id)).find(x => order.includes(x))
+    setCur(next ?? order[order.length - 1])
+  }, [byId, order, allSlides])
+
   const back = useCallback(() => {
     if (!returnTo) return
     setDir(-1); setCur(returnTo); setReturnTo(null)
@@ -213,6 +222,7 @@ export function Deck({ slides, allSlides, ctx, theme: initialTheme = 'dark', sho
     <div style={{ width: W, height: H, transform: `scale(${s})`, transformOrigin: mobile ? 'top left' : undefined, flex: 'none' }} className="relative overflow-hidden">
       <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse at 20% 0%, color-mix(in srgb, var(--brand) 22%, transparent), transparent 55%), radial-gradient(ellipse at 90% 100%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 50%), var(--bg)' }} />
       <div className="absolute inset-0 grid-bg opacity-40" />
+      <div className="bg-blob b1" /><div className="bg-blob b2" />
       <AnimatePresence mode="wait" custom={dir}>
         <motion.div
           key={slide.id}
@@ -275,7 +285,7 @@ export function Deck({ slides, allSlides, ctx, theme: initialTheme = 'dark', sho
   const barStyle = { background: 'var(--card)', border: '1px solid var(--line)', color: 'var(--ink)' }
 
   return (
-    <NavContext.Provider value={{ jump, has: (id: string) => byId.has(id) }}>
+    <NavContext.Provider value={{ jump, goTo, has: (id: string) => byId.has(id) }}>
       <div className={mobile ? 'fixed inset-0 flex flex-col' : 'fixed inset-0 flex items-center justify-center overflow-hidden'} style={{ background: 'var(--bg)', cursor: pointer === 'off' ? undefined : 'none' }}>
         {mobile ? (
           <div ref={scroller} className="flex-1 min-h-0 overflow-auto" style={{ WebkitOverflowScrolling: 'touch', overscrollBehavior: 'contain' }} onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>

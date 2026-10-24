@@ -7,7 +7,8 @@ import { agendaFor } from './agenda'
 import { resolveDeckId } from '../decks/registry'
 
 /** Link encoded in the QR code; optionally carries the personalisation so the client's team sees the same deck. */
-function qrLink(cfg: Config, session?: { outcomes: string[]; roles: string[] }): string | undefined {
+type Live = { outcomes: string[]; roles: string[]; pains?: string[]; customPain?: string }
+function qrLink(cfg: Config, session?: Live): string | undefined {
   const raw = cfg.qrUrl?.trim()
   if (!raw) return undefined
   try {
@@ -19,8 +20,10 @@ function qrLink(cfg: Config, session?: { outcomes: string[]; roles: string[] }):
       if (cfg.client) p.set('client', cfg.client)
       if (cfg.headcount) p.set('headcount', String(cfg.headcount))
       if (cfg.hrTeam) p.set('hrTeam', String(cfg.hrTeam))
-      if (cfg.pains?.length) p.set('pains', cfg.pains.join(','))
-      if (cfg.customPain?.trim()) p.set('customPain', cfg.customPain.trim())
+      const pn = session?.pains ?? cfg.pains
+      const cp = session?.customPain ?? cfg.customPain
+      if (pn?.length) p.set('pains', pn.join(','))
+      if (cp?.trim()) p.set('customPain', cp.trim())
       if (cfg.theme === 'light') p.set('theme', 'light')
       p.set('deck', resolveDeckId(cfg.deck))
       if (session?.outcomes.length) p.set('outcomes', session.outcomes.join(','))
@@ -51,9 +54,9 @@ function resolvePresenter(cfg: Config): Presenter {
   return { company: p.company!.trim(), name: clean(p.name), title: clean(p.title), email: clean(p.email), phone: clean(p.phone), web: clean(p.web), logo: p.logo, isPartner: true }
 }
 
-export function buildCtx(cfg: Config, print = false, session?: { outcomes: string[]; roles: string[] }): DeckCtx {
+export function buildCtx(cfg: Config, print = false, session?: Live): DeckCtx {
   const industry = industries[cfg.industry] ?? industries.generic
-  const pains = resolvePains(cfg.pains, cfg.customPain)
+  const pains = resolvePains(session?.pains ?? cfg.pains, session?.customPain ?? cfg.customPain)
   return {
     country: countries[cfg.country] ?? countries.lk,
     industry,

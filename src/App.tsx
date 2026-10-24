@@ -7,7 +7,7 @@ import { Guide } from './engine/Guide'
 import { buildCtx } from './engine/buildCtx'
 import { agendaFor, defaultAgenda, pickSlides } from './engine/agenda'
 import { arrangeFor, getDeckSlides, resolveDeckId } from './decks/registry'
-import { defaultOutcomes } from './decks/workshop/data'
+import { PAIN_OUTCOME, defaultOutcomes } from './decks/workshop/data'
 
 type Mode = 'launcher' | 'show' | 'print' | 'guide'
 
@@ -56,7 +56,7 @@ export default function App() {
   const allSlides = useMemo(() => getDeckSlides(deckId), [deckId])
   // Live choices from the Outcome Workshop (discovery wall, roles in the room, details left). Kept in memory only.
   const signature = `${deckId}|${cfg.client}|${cfg.industry}|${(cfg.pains ?? []).join()}|${cfg.customPain ?? ''}`
-  const [session, setSession] = useState(() => ({ sig: signature, outcomes: init.outcomes ?? defaultOutcomes(buildCtx(cfg)), roles: init.roles ?? [] as string[], lead: {} as Lead }))
+  const [session, setSession] = useState(() => ({ sig: signature, outcomes: init.outcomes ?? defaultOutcomes(buildCtx(cfg)), roles: init.roles ?? [] as string[], pains: cfg.pains ?? [] as string[], customPain: cfg.customPain ?? '', lead: {} as Lead }))
   const sessionApi = useMemo(() => ({
     outcomes: session.outcomes,
     roles: session.roles,
@@ -66,6 +66,14 @@ export default function App() {
       const roles = s.roles.includes(id) ? s.roles.filter(x => x !== id) : [...s.roles, id]
       return { ...s, roles }
     }),
+    pains: session.pains,
+    customPain: session.customPain,
+    togglePain: (id: string) => setSession(s => {
+      const on = s.pains.includes(id)
+      const add = (PAIN_OUTCOME[id] ?? []).filter(o => !s.outcomes.includes(o))   // choosing a pain also puts its outcomes on the wall
+      return { ...s, pains: on ? s.pains.filter(x => x !== id) : [...s.pains, id], outcomes: on ? s.outcomes : [...s.outcomes, ...add] }
+    }),
+    setCustomPain: (t: string) => setSession(s => ({ ...s, customPain: t })),
     setLead: (p: Partial<Lead>) => setSession(s => ({ ...s, lead: { ...s.lead, ...p } })),
   }), [session])
   const ctx = useMemo(() => buildCtx(cfg, mode === 'print', session), [cfg, mode, session])
@@ -76,7 +84,7 @@ export default function App() {
   // starting a different client / deck / set of pains begins a fresh workshop; re-entering the same one keeps the wall
   const begin = (c: Config) => {
     const sig = `${resolveDeckId(c.deck)}|${c.client}|${c.industry}|${(c.pains ?? []).join()}|${c.customPain ?? ''}`
-    if (sig !== session.sig) setSession({ sig, outcomes: defaultOutcomes(buildCtx(c)), roles: [], lead: {} })
+    if (sig !== session.sig) setSession({ sig, outcomes: defaultOutcomes(buildCtx(c)), roles: [], pains: c.pains ?? [], customPain: c.customPain ?? '', lead: {} })
   }
 
   if (mode === 'launcher') {

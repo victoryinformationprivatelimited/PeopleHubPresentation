@@ -53,3 +53,15 @@ body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color: var(--ink
 
 /* keyboard-only hints are hidden on touch devices */
 @media (pointer: coarse) { .hide-touch { display: none; } }
+
+/* ---- animated deck background + gently pulsing windows ---- */
+.bg-blob { position: absolute; width: 900px; height: 900px; border-radius: 50%; opacity: .28; pointer-events: none; will-change: transform; }
+.bg-blob.b1 { left: -250px; top: -300px; background: radial-gradient(circle, var(--brand), transparent 65%); animation: driftA 24s ease-in-out infinite alternate; }
+.bg-blob.b2 { right: -300px; bottom: -350px; background: radial-gradient(circle, var(--accent), transparent 65%); animation: driftB 30s ease-in-out infinite alternate; }
+@keyframes driftA { to { transform: translate(380px, 260px) scale(1.15); } }
+@keyframes driftB { to { transform: translate(-420px, -220px) scale(1.2); } }
+@keyframes glowPulse { 0%, 100% { box-shadow: 0 0 46px -14px var(--brand); } 50% { box-shadow: 0 0 78px -6px var(--accent); } }
+.glow { animation: glowPulse 5.5s ease-in-out infinite; }
+@keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+.shimmer-text { background: linear-gradient(90deg, var(--ink) 0%, var(--brand2) 25%, var(--accent) 50%, var(--brand2) 75%, var(--ink) 100%); background-size: 200% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; animation: shimmer 6s linear infinite; }
+@media print { .bg-blob { display: none; } .glow, .shimmer-text { animation: none !important; } .shimmer-text { background: none !important; color: var(--brand2) !important; -webkit-text-fill-color: currentColor !important; } }

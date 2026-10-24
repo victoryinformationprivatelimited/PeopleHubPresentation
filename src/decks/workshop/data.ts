@@ -47,7 +47,7 @@ export const OUTCOMES: Outcome[] = [
   { id: 'serve', name: 'Serve every employee', short: 'Service', icon: '🙋', color: '#10b981', pillar: 'exp', modules: ['ess', 'grievance', 'tickets', 'assets', 'kb', 'chat', 'leisure'],
     promise: 'Self-service on web and phone, answers before the question, and every request tracked.',
     kpi: { value: 50, suffix: '%', label: 'fewer routine HR queries' },
-    moments: [{ key: 'ess', name: 'Employee self-service' }, { key: 'mobile', name: 'Android app' }, { key: 'kb', name: 'Knowledge base' }, { key: 'tickets', name: 'Ticketing & service desk' }, { key: 'grievance', name: 'Grievance handling' }, { key: 'assets', name: 'Asset management' }, { key: 'chat', name: 'Chat & AI assistant' }, { key: 'news', name: 'News & announcements' }] },
+    moments: [{ key: 'ess', name: 'Employee self-service' }, { key: 'mobile', name: 'Android & iPhone apps' }, { key: 'kb', name: 'Knowledge base' }, { key: 'tickets', name: 'Ticketing & service desk' }, { key: 'grievance', name: 'Grievance handling' }, { key: 'assets', name: 'Asset management' }, { key: 'chat', name: 'Chat & AI assistant' }, { key: 'news', name: 'News & announcements' }] },
   { id: 'data', name: 'Decide with data, stay compliant', short: 'Data', icon: '📊', color: '#eab308', pillar: 'intel', modules: ['analytics', 'compliance'],
     promise: 'Live dashboards, build-your-own reports and audit-ready statutory reporting.',
     kpi: { value: 85, suffix: '%', label: 'faster compliance reporting' },
@@ -78,9 +78,23 @@ export const ROLES: Role[] = [
 export const roleById = Object.fromEntries(ROLES.map(r => [r.id, r])) as Record<string, Role>
 
 /** Pain-point ids (profiles/pains.ts) → outcomes. */
-const PAIN_OUTCOME: Record<string, string[]> = {
+export const PAIN_OUTCOME: Record<string, string[]> = {
   attendance: ['time'], payroll: ['pay'], leave: ['leave'], data: ['know'], hiring: ['hire'],
   compliance: ['data', 'secure'], insight: ['data'], attrition: ['grow'], queries: ['serve'], training: ['grow'],
+}
+
+/** Slides (moments) that answer each pain point — used for the animated “this will solve your pain” banner. */
+export const PAIN_MOMENTS: Record<string, string[]> = {
+  attendance: ['time-capture', 'time-manual', 'time-policy', 'time-process'],
+  payroll: ['pay-engine', 'pay-payslips', 'pay-advance'],
+  leave: ['leave-types', 'leave-apply', 'leave-calendar'],
+  data: ['know-org', 'know-emp', 'know-bulk'],
+  hiring: ['hire-recruit', 'hire-onboard', 'hire-letters'],
+  compliance: ['data-compliance', 'data-audit', 'secure-sec'],
+  insight: ['know-live', 'data-dash'],
+  attrition: ['grow-perf', 'grow-engage', 'grow-succ'],
+  queries: ['serve-ess', 'serve-kb', 'serve-chat', 'serve-tickets'],
+  training: ['grow-learn'],
 }
 
 /** Outcomes pre-ticked on the discovery wall: the client's pains, else the industry's focus modules. */

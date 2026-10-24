@@ -2,9 +2,12 @@ import type { ReactNode } from 'react'
 import { motion } from 'framer-motion'
 import { useDeck, type DeckCtx, type SlideDef } from '../../engine/context'
 import { Badge, fade } from '../../ui/primitives'
+import { FitDemo } from '../../ui/FitDemo'
+import { PainBanner } from '../../ui/PainBanner'
+import { SkipBar } from './extra'
 import { AttendanceDemo, BenefitsDemo, EmployeeDemo, LifecycleDemo, OrgDemo, PayrollDemo, RecruitmentDemo, TasksDemo } from '../../slides/demosA'
 import { AdvanceDemo, BulkDemo, ClaimsDemo, FinanceDemo, LeaveCalendarDemo, LeavePhoneDemo, LeaveTypesDemo, LettersDemo, LiveDemo, ManualAttDemo, PayslipPhoneDemo, PolicyDemo, ProcessDemo, RosterDemo } from './demosP3'
-import { momentSlideId, outcomeById } from './data'
+import { PAIN_MOMENTS, momentSlideId, outcomeById } from './data'
 
 /** One scenario slide: a short story (who does what), the screen, and what changes. */
 export interface MomentDef {
@@ -23,28 +26,34 @@ export interface MomentDef {
 function MomentSlide({ def }: { def: MomentDef }) {
   const o = outcomeById[def.outcome]
   const ctx = useDeck()
+  const id = momentSlideId(def.outcome, def.key)
   const idx = o.moments.findIndex(m => m.key === def.key)
+  const hit = ctx.pains.filter(p => PAIN_MOMENTS[p.id]?.includes(id))
   return (
-    <div className="absolute inset-0 px-20 pt-16 pb-20 grid grid-cols-12 gap-12 items-center">
-      <div className="col-span-4 flex flex-col gap-5">
+    <div className="absolute inset-0 px-16 pt-14 pb-24 grid grid-cols-12 gap-10 items-center">
+      <div className="col-span-5 flex flex-col gap-4">
         <div>
-          <motion.div {...fade(0)} className="text-[15px] tracking-[0.2em] uppercase font-bold mb-3 flex items-center gap-2" style={{ color: o.color }}>
-            <span className="text-[22px]">{o.icon}</span>{o.name} · {idx + 1}/{o.moments.length}
+          <motion.div {...fade(0)} className="text-[18px] tracking-[0.2em] uppercase font-bold mb-2 flex items-center gap-2" style={{ color: o.color }}>
+            <span className="text-[26px]">{o.icon}</span>{o.name} · {idx + 1}/{o.moments.length}
           </motion.div>
-          <motion.h2 {...fade(0.06)} className="serif text-[50px] leading-[1.05] font-bold mb-2">{def.title}</motion.h2>
-          <motion.div {...fade(0.12)} className="text-[24px] font-semibold grad-text">{def.headline}</motion.div>
+          <motion.h2 {...fade(0.06)} className="serif text-[58px] leading-[1.04] font-bold mb-2">{def.title}</motion.h2>
+          <motion.div {...fade(0.12)} className="text-[28px] font-semibold grad-text leading-snug">{def.headline}</motion.div>
         </div>
-        <motion.div {...fade(0.2)} className="card p-5" style={{ borderLeft: `5px solid ${o.color}` }}>
-          <div className="text-[12px] tracking-[0.2em] uppercase font-bold mb-1.5" style={{ color: o.color }}>Scenario</div>
-          <div className="text-[20px] leading-snug">{def.scenario(ctx)}</div>
+        {hit.length > 0 && <PainBanner pains={hit} solver={def.title} />}
+        <motion.div {...fade(0.2)} className="card px-5 py-4" style={{ borderLeft: `5px solid ${o.color}` }}>
+          <div className="text-[14px] tracking-[0.2em] uppercase font-bold mb-1.5" style={{ color: o.color }}>Scenario</div>
+          <div className="text-[23px] leading-snug">{def.scenario(ctx)}</div>
         </motion.div>
         <motion.div {...fade(0.3)}>
-          <div className="text-[12px] tracking-[0.2em] uppercase font-bold mb-2" style={{ color: 'var(--ok)' }}>What changes</div>
-          <ul className="flex flex-col gap-2">{def.results.map(r => <li key={r} className="flex gap-3 text-[19px] leading-snug"><span style={{ color: 'var(--ok)' }}>✓</span>{r}</li>)}</ul>
+          <div className="text-[14px] tracking-[0.2em] uppercase font-bold mb-2" style={{ color: 'var(--ok)' }}>What changes</div>
+          <ul className="flex flex-col gap-2">{def.results.map(r => <li key={r} className="flex gap-3 text-[22px] leading-snug"><span style={{ color: 'var(--ok)' }}>✓</span>{r}</li>)}</ul>
         </motion.div>
-        <motion.div {...fade(0.4)} className="flex flex-wrap gap-1.5">{def.included.map(x => <Badge key={x} tone="mute">{x}</Badge>)}</motion.div>
+        {hit.length === 0 && <motion.div {...fade(0.4)} className="flex flex-wrap gap-2">{def.included.map(x => <Badge key={x} tone="mute">{x}</Badge>)}</motion.div>}
       </div>
-      <div className="col-span-8" style={{ zoom: 1.12 }}>{def.demo()}</div>
+      <motion.div className="col-span-7" initial={{ opacity: 0, scale: 0.94, x: 40 }} animate={{ opacity: 1, scale: 1, x: 0 }} transition={{ delay: 0.15, duration: 0.6, ease: 'easeOut' }}>
+        <FitDemo maxHeight={860}>{def.demo()}</FitDemo>
+      </motion.div>
+      <SkipBar />
     </div>
   )
 }

@@ -65,3 +65,6 @@ Scenario slides for Know every person, Hire & onboard, Time you can trust, Leave
 
 ### Phase 4 (chapters 6–10) — Outcome Workshop complete
 Scenario slides for Approve faster (workflow builder, higher authorization, approvals inbox, notification rules), Grow and keep your people, Serve every employee, Decide with data & stay compliant, and Secure, scalable, yours (`moments4.tsx`, demos in `demosP4.tsx`). The deck is 75 slides and is now the default (`DEFAULT_DECK` in `src/decks/registry.ts`). Notification Rules demo now follows the real configure screen (Email/SMS/WhatsApp/In-App, on-event or before/after timing; Push shown as coming soon).
+
+### Round 2 changes (review feedback)
+New confident animated opener; pain points are picked inside the presentation (session state, with an animated *this will solve your pain* banner on solving slides and in the Platform Tour module slides); **Your PeopleHub toolkit** explorer (select any capability, Back returns) with *Done exploring → next step* on every capability slide (`goTo` in the deck navigation); **How your project runs** journey screen; Android & iPhone wording; larger text via auto-fit demo screens (`ui/FitDemo.tsx`) and bigger layouts; more animation (drifting background, pulsing windows, auto-playing day timeline, animated KPI rings, blueprint cascade).

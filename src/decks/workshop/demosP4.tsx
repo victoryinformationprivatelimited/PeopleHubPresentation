@@ -103,10 +103,11 @@ export function InboxDemo() {
 export function AndroidDemo() {
   const { country, company, industry } = useDeck()
   const [inn, setIn] = useState(false)
+  const [plat, setPlat] = useState<'Android' | 'iPhone'>('Android')
   return (
     <div className="flex items-center justify-center gap-10">
       <Phone>
-        <div className="text-[12px] font-bold truncate" style={{ color: 'var(--mute)' }}>{company}</div>
+        <div className="text-[12px] font-bold truncate" style={{ color: 'var(--mute)' }}>{company} · {plat}</div>
         <div className="text-[17px] font-bold mb-2">Good morning, {country.sampleNames[1].split(' ')[0]} 👋</div>
         <div className="card p-3 mb-2">
           <div className="flex justify-between text-[12px]"><span>📍 {industry.site.split(' – ')[0]}</span><Badge tone="ok">inside zone · 40 m</Badge></div>
@@ -115,8 +116,9 @@ export function AndroidDemo() {
         <div className="grid grid-cols-2 gap-2 text-[12px]">{[['Leave', `${country.leaveTypes[0][1]} days`], ['Payslip', 'Oct ready'], ['Approvals', '2 waiting'], ['Roster', 'Shift A']].map(([a, b]) => <div key={a} className="card p-2.5"><div style={{ color: 'var(--mute)' }}>{a}</div><b className="text-[14px]">{b}</b></div>)}</div>
       </Phone>
       <div className="flex flex-col gap-2.5 w-[260px]">
-        <div className="serif text-[26px] font-bold">Android app</div>
-        {['Camera + GPS check-in', 'Leave, payslips, roster', 'Approvals for managers', 'Files & sharing', 'Same login as the web portal'].map((x, k) => <motion.div key={x} {...fade(0.12 * k)} className="card px-3 py-2 text-[14px]">✓ {x}</motion.div>)}
+        <div className="serif text-[26px] font-bold">Mobile apps</div>
+        <div className="flex gap-2">{(['Android', 'iPhone'] as const).map(x => <button key={x} onClick={() => setPlat(x)} className="rounded-full px-4 py-1.5 text-[14px] font-bold" style={plat === x ? { background: 'var(--brand)', color: '#fff' } : { background: 'var(--card)', border: '1px solid var(--line)' }}>{x === 'Android' ? '🤖 Android' : ' iPhone'}</button>)}</div>
+        {['Camera + GPS check-in', 'Leave, payslips, roster', 'Approvals for managers', 'Same login on both platforms', 'Same login as the web portal'].map((x, k) => <motion.div key={x} {...fade(0.12 * k)} className="card px-3 py-2 text-[14px]">✓ {x}</motion.div>)}
       </div>
     </div>
   )

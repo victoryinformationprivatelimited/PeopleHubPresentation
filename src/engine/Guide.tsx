@@ -90,11 +90,13 @@ export function Guide({ onClose }: { onClose: () => void }) {
           </table>
           <h3 className="font-bold text-[17px] mt-5 mb-2">If you chose the Outcome Workshop</h3>
           <List items={[
-            <>Open with <b>Who is in the room</b> (tap everyone present), then <b>A day at your company</b> and <b>What we heard</b>.</>,
+            <>Open with the confident <b>Run every people process on one platform</b> screen, then <b>Who is in the room</b> (tap everyone present) and <b>A day at your company</b>.</>,
+            <>On <b>What’s holding you back?</b> the client taps their pains (pre-ticked from your settings; they can add their own words). Every capability slide that answers a pain then plays an animated <i>“this will solve your pain”</i> moment, and the wrap-up replays the list.</>,
             <>On the <b>Discovery wall</b> hand the conversation over: the client taps the outcomes that matter, in priority order (number 1 = where we start). Pain points and industry pre-tick a few. Ask why for each pick.</>,
+            <><b>Your PeopleHub toolkit</b> lets the client pick any capability to see it live — tap one, use the <b>Back</b> button to return — and <b>Done exploring — next step</b> (also on every capability slide) jumps to the wrap-up when they have seen enough.</>,
             <><b>Your blueprint, live</b> reads their choices back and lights the modules in scope. The chapters that follow are re-ordered to their picks. In the settings screen you can instead choose <i>Pick chapters</i> to set the chapters and order yourself.</>,
             <>Inside each chapter there is a scenario slide per capability (a short story, the screen, and what changes). Press <b>N</b> for the talk track — each slide's notes end with a <b>private readiness line</b> (Live / Partial / Preview / No code yet) so you know what you can demo live and what to describe as in build.</>,
-            <>Close with the blueprint recap, rollout waves (no dates), packages, value and <b>Leave your details</b> — what they type stays in the browser session and prints in the PDF.</>,
+            <>Close with challenges solved, the blueprint recap, rollout waves (no dates), <b>How your project runs</b> (presentation ⇄ proposal, approval, SOW, project plan, implementation, UAT, go-live, hypercare), packages, value and <b>Leave your details</b> — what they type stays in the browser session and prints in the PDF.</>,
           ]} />
           <h3 className="font-bold text-[17px] mt-5 mb-2">Presentation craft</h3>
           <List items={[
