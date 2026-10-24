@@ -59,7 +59,8 @@ export function Guide({ onClose }: { onClose: () => void }) {
 
         <Section n={2} title="The settings screen — what to fill in">
           <List items={[
-            <><b>Presenter / partner</b> (top of the screen) — enter your company, name, title, email, phone, website and logo. These replace the Victory Information contact details on the opener, thank-you slide, PDF and client team link. Leave Company blank to present as Victory Information. Sales partners should fill this in once; it is remembered on that laptop.</>,
+            <><b>Choose presentation</b> (very top) — pick <i>Outcome Workshop</i> (client co-design session) or <i>Platform Tour</i> (full module walk-through). Each keeps its own length and slide selection, and the team link / QR opens the same one.</>,
+            <><b>Presenter / partner</b> (below that) — enter your company, name, title, email, phone, website and logo. These replace the Victory Information contact details on the opener, thank-you slide, PDF and client team link. Leave Company blank to present as Victory Information. Sales partners should fill this in once; it is remembered on that laptop.</>,
             <><b>1 Country</b> sets currency, statutory deductions (e.g. EPF/ETF, FNPF), tax name, leave types, compliance reports and sample names.</>,
             <><b>2 Industry</b> sets the headline, departments, roles, shifts, the illustration, and the sample data inside every module demo.</>,
             <><b>3 Client</b> name appears on the opener, ribbons, demo screens and the closing slide. <b>4 Logo</b> — upload a PNG/JPG/SVG (a transparent PNG works best).</>,

@@ -53,3 +53,6 @@ The settings screen has a Presenter / partner block (company, name, title, email
 
 ## Phones and tablets
 On touch devices (or windows under 900px) the deck switches to a mobile shell: a control bar (◀ ☰ ▶, zoom Fit/Read/Large, fullscreen), swipe left/right to change slides (when zoomed, swipe from the slide's edge), a full-screen slide list, and the 3D opener is skipped to save battery. Phones held upright start in the Read zoom with a one-time tip to turn the phone sideways. The settings screen and presenter guide are responsive.
+
+## Multiple presentations
+`src/decks/registry.ts` lists the presentations (Outcome Workshop, Platform Tour). The settings screen opens with a chooser; each deck keeps its own agenda (`agendas` in the saved settings). `?deck=workshop|tour` selects one directly and the QR/team link carries it. `DEFAULT_DECK` is the one opened when nothing is chosen (currently the Platform Tour, to switch to the Outcome Workshop once that deck is complete). Add a deck by adding an entry to `decks` with a `build()` that returns its slides.

@@ -8,6 +8,11 @@ export interface Agenda {
 
 export const defaultAgenda: Agenda = { mode: 'full', minutes: 30, ids: [] }
 
+/** Each presentation keeps its own agenda. The old single `agenda` setting belongs to the Platform Tour. */
+export function agendaFor(cfg: { agenda?: Agenda; agendas?: Record<string, Agenda> }, deckId: string): Agenda {
+  return cfg.agendas?.[deckId] ?? (deckId === 'tour' ? cfg.agenda : undefined) ?? defaultAgenda
+}
+
 export const totalSecs = (slides: { secs: number }[]) => slides.reduce((a, s) => a + s.secs, 0)
 
 export function fmtTime(secs: number) {

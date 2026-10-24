@@ -3,6 +3,8 @@ import { industries } from '../profiles/industries'
 import { defaultPains, resolvePains } from '../profiles/pains'
 import type { DeckCtx, Presenter } from './context'
 import type { Config } from './Launcher'
+import { agendaFor } from './agenda'
+import { resolveDeckId } from '../decks/registry'
 
 /** Link encoded in the QR code; optionally carries the personalisation so the client's team sees the same deck. */
 function qrLink(cfg: Config): string | undefined {
@@ -20,7 +22,8 @@ function qrLink(cfg: Config): string | undefined {
       if (cfg.pains?.length) p.set('pains', cfg.pains.join(','))
       if (cfg.customPain?.trim()) p.set('customPain', cfg.customPain.trim())
       if (cfg.theme === 'light') p.set('theme', 'light')
-      const a = cfg.agenda
+      p.set('deck', resolveDeckId(cfg.deck))
+      const a = agendaFor(cfg, resolveDeckId(cfg.deck))
       if (a?.mode === 'auto') p.set('agenda', String(a.minutes))
       else if (a?.mode === 'manual' && a.ids.length) p.set('slides', a.ids.join(','))
     }

@@ -5,8 +5,8 @@ import { Launcher, emptyConfig, loadConfig, saveConfig, type Config } from './en
 import { PrintView } from './engine/PrintView'
 import { Guide } from './engine/Guide'
 import { buildCtx } from './engine/buildCtx'
-import { defaultAgenda, pickSlides } from './engine/agenda'
-import { buildSlides } from './slides/slides'
+import { agendaFor, defaultAgenda, pickSlides } from './engine/agenda'
+import { getDeckSlides, resolveDeckId } from './decks/registry'
 
 type Mode = 'launcher' | 'show' | 'print' | 'guide'
 
@@ -17,11 +17,15 @@ function initial(): { cfg: Config; mode: Mode; auto: boolean; clientView: boolea
   // The client view must never pick up the presenter's saved settings.
   const saved = clientView ? emptyConfig : loadConfig()
   if (q.has('guide')) return { cfg: saved, mode: 'guide', auto: true, clientView: false }
-  const keys = ['country', 'industry', 'client', 'headcount', 'hrTeam', 'pains', 'agenda', 'slides', 'print', 'view', 'pco']
+  const keys = ['country', 'industry', 'client', 'headcount', 'hrTeam', 'pains', 'agenda', 'slides', 'print', 'view', 'pco', 'deck']
   if (!keys.some(k => q.has(k))) return { cfg: saved, mode: 'launcher', auto: true, clientView: false }
   const agendaParam = q.get('agenda')
+  const deck = resolveDeckId(q.get('deck') ?? saved.deck)
+  const urlAgenda = q.get('slides') ? { ...defaultAgenda, mode: 'manual' as const, ids: q.get('slides')!.split(',').filter(Boolean) } : agendaParam ? { ...defaultAgenda, mode: 'auto' as const, minutes: Number(agendaParam) || 30 } : undefined
   const cfg: Config = {
     ...saved,
+    deck,
+    agendas: urlAgenda ? { ...(saved.agendas ?? {}), [deck]: urlAgenda } : saved.agendas,
     country: q.get('country') ?? saved.country,
     industry: q.get('industry') ?? saved.industry,
     client: q.get('client') ?? '',
@@ -30,7 +34,6 @@ function initial(): { cfg: Config; mode: Mode; auto: boolean; clientView: boolea
     pains: q.has('pains') ? q.get('pains')!.split(',').filter(Boolean) : saved.pains,
     customPain: q.get('customPain') ?? saved.customPain,
     qrUrl: q.get('qr') ?? saved.qrUrl,
-    agenda: q.get('slides') ? { ...defaultAgenda, mode: 'manual', ids: q.get('slides')!.split(',').filter(Boolean) } : agendaParam ? { ...defaultAgenda, mode: 'auto', minutes: Number(agendaParam) || 30 } : saved.agenda,
     logo: q.get('logo') ?? saved.logo,
     presenter: q.has('pco') || q.has('pname') ? { company: q.get('pco') ?? '', name: q.get('pname') ?? '', title: q.get('ptitle') ?? '', email: q.get('pemail') ?? '', phone: q.get('pphone') ?? '', web: q.get('pweb') ?? '' } : saved.presenter,
     theme: q.get('theme') === 'light' ? 'light' : q.get('theme') === 'dark' ? 'dark' : saved.theme,
@@ -47,13 +50,15 @@ export default function App() {
   }, [])
   const [cfg, setCfg] = useState(init.cfg)
   const [mode, setMode] = useState<Mode>(init.mode)
-  const allSlides = useMemo(() => buildSlides(), [])
+  const deckId = resolveDeckId(cfg.deck)
+  const allSlides = useMemo(() => getDeckSlides(deckId), [deckId])
   const ctx = useMemo(() => buildCtx(cfg, mode === 'print'), [cfg, mode])
-  const visible = useMemo(() => pickSlides(allSlides, cfg.agenda ?? defaultAgenda, ctx), [allSlides, cfg.agenda, ctx])
+  const agenda = agendaFor(cfg, deckId)
+  const visible = useMemo(() => pickSlides(allSlides, agenda, ctx), [allSlides, agenda, ctx])
 
   if (mode === 'launcher') {
     document.documentElement.dataset.theme = cfg.theme
-    return <Launcher initial={cfg} slides={allSlides} onStart={c => { saveConfig(c); setCfg(c); setMode('show') }} onExport={c => { saveConfig(c); setCfg(c); setMode('print') }} onGuide={() => setMode('guide')} />
+    return <Launcher initial={cfg} onStart={c => { saveConfig(c); setCfg(c); setMode('show') }} onExport={c => { saveConfig(c); setCfg(c); setMode('print') }} onGuide={() => setMode('guide')} />
   }
   if (mode === 'guide') return <Guide onClose={() => { history.replaceState(null, '', location.pathname); setMode('launcher') }} />
   if (mode === 'print') {
@@ -64,11 +69,10 @@ export default function App() {
       </DeckContext.Provider>
     )
   }
-  const agenda = cfg.agenda ?? defaultAgenda
   return (
     <DeckContext.Provider value={ctx}>
       <Deck
-        key={`${cfg.country}-${cfg.industry}-${cfg.client}-${cfg.logo?.length ?? 0}-${cfg.headcount}-${cfg.hrTeam}-${cfg.pains?.join()}-${cfg.customPain}-${agenda.mode}-${agenda.minutes}-${agenda.ids.join()}-${cfg.qrUrl}`}
+        key={`${deckId}-${cfg.country}-${cfg.industry}-${cfg.client}-${cfg.logo?.length ?? 0}-${cfg.headcount}-${cfg.hrTeam}-${cfg.pains?.join()}-${cfg.customPain}-${agenda.mode}-${agenda.minutes}-${agenda.ids.join()}-${cfg.qrUrl}`}
         slides={visible} allSlides={allSlides} ctx={ctx} theme={cfg.theme} showTimer={agenda.mode !== 'full' && !init.clientView} clientView={init.clientView}
         onConfigure={init.clientView ? undefined : () => { history.replaceState(null, '', location.pathname); setMode('launcher') }}
         onExport={init.clientView ? undefined : () => setMode('print')}

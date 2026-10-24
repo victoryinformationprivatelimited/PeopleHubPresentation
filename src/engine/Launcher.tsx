@@ -3,11 +3,13 @@ import { countries } from '../profiles/countries'
 import { industries } from '../profiles/industries'
 import { painOptions } from '../profiles/pains'
 import { IndustryArt } from '../ui/IndustryArt'
-import { defaultAgenda, fmtTime, pickSlides, totalSecs, type Agenda } from './agenda'
+import { agendaFor, fmtTime, pickSlides, totalSecs, type Agenda } from './agenda'
+import { DeckThumb } from '../ui/DeckThumb'
+import { decks, getDeckSlides, resolveDeckId } from '../decks/registry'
 import { buildCtx } from './buildCtx'
 import type { SlideDef } from './context'
 
-export interface Config { country: string; industry: string; client: string; theme: 'dark' | 'light'; logo?: string; headcount?: number; hrTeam?: number; pains?: string[]; customPain?: string; agenda?: Agenda; qrUrl?: string; qrPersonalise?: boolean; qrClientView?: boolean; qrLogoUrl?: string; presenter?: PresenterConfig }
+export interface Config { country: string; industry: string; client: string; theme: 'dark' | 'light'; logo?: string; headcount?: number; hrTeam?: number; pains?: string[]; customPain?: string; agenda?: Agenda; agendas?: Record<string, Agenda>; deck?: string; qrUrl?: string; qrPersonalise?: boolean; qrClientView?: boolean; qrLogoUrl?: string; presenter?: PresenterConfig }
 
 /** Presenter / partner details typed on the settings screen. Blank company = Victory Information defaults. */
 export interface PresenterConfig { company?: string; name?: string; title?: string; email?: string; phone?: string; web?: string; logo?: string }
@@ -48,13 +50,15 @@ function Tile({ active, title, sub, onClick }: { active: boolean; title: string;
   )
 }
 
-export function Launcher({ initial, slides, onStart, onExport, onGuide }: { initial: Config; slides: SlideDef[]; onStart: (c: Config) => void; onExport: (c: Config) => void; onGuide: () => void }) {
+export function Launcher({ initial, onStart, onExport, onGuide }: { initial: Config; onStart: (c: Config) => void; onExport: (c: Config) => void; onGuide: () => void }) {
   const [c, setC] = useState<Config>(initial)
   const set = (p: Partial<Config>) => { const n = { ...c, ...p }; setC(n); if (p.theme) document.documentElement.dataset.theme = p.theme }
   const co = countries[c.country], ind = industries[c.industry]
-  const agenda = c.agenda ?? defaultAgenda
+  const deckId = resolveDeckId(c.deck)
+  const slides = getDeckSlides(deckId)
+  const agenda = agendaFor(c, deckId)
   const visible = pickSlides(slides, agenda, buildCtx(c))
-  const setAgenda = (a: Partial<Agenda>) => set({ agenda: { ...agenda, ...a } })
+  const setAgenda = (a: Partial<Agenda>) => set({ agendas: { ...(c.agendas ?? {}), [deckId]: { ...agenda, ...a } } })
   const pr = c.presenter ?? {}
   const setPresenter = (p: Partial<PresenterConfig>) => set({ presenter: { ...pr, ...p } })
   const manualIds = agenda.ids
@@ -82,6 +86,29 @@ export function Launcher({ initial, slides, onStart, onExport, onGuide }: { init
           <div className="flex-1"><div className="serif text-[24px] sm:text-[32px] font-bold leading-tight">PeopleHub HRIS</div><div style={{ color: 'var(--mute)' }}>Sales presentation · configure before you present</div></div>
           <button onClick={onGuide} className="rounded-xl px-5 py-3 text-[15px] font-bold" style={{ background: 'var(--card)', border: '1.5px solid var(--line)' }}>📖 Presenter guide</button>
         </div>
+
+        <section className="mb-6">
+          <h2 className="text-[13px] tracking-[0.2em] uppercase font-bold mb-3" style={{ color: 'var(--brand2)' }}>Choose presentation <span className="normal-case tracking-normal font-normal" style={{ color: 'var(--mute)' }}>— each one keeps its own duration and slide selection</span></h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {decks.map(d => {
+              const ds = getDeckSlides(d.id), on = d.id === deckId
+              return (
+                <button key={d.id} onClick={() => set({ deck: d.id })} className="card text-left p-4 flex gap-4 items-center transition hover:brightness-110"
+                  style={{ outline: on ? '2px solid var(--brand2)' : 'none', background: on ? 'color-mix(in srgb, var(--brand) 18%, var(--card))' : undefined }}>
+                  <div className="w-[120px] h-[84px] flex-none rounded-lg overflow-hidden" style={{ background: 'var(--bg2)', border: '1px solid var(--line)' }}><DeckThumb id={d.id} /></div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex flex-wrap items-center gap-2"><b className="text-[18px]">{d.name}</b>
+                      {d.badge && <span className="rounded-full px-2 py-0.5 text-[11px] font-bold" style={{ background: 'color-mix(in srgb, var(--warn) 22%, transparent)', color: 'var(--warn)' }}>{d.badge}</span>}
+                      {on && <span className="rounded-full px-2 py-0.5 text-[11px] font-bold" style={{ background: 'color-mix(in srgb, var(--ok) 22%, transparent)', color: 'var(--ok)' }}>✓ Selected</span>}
+                    </div>
+                    <div className="text-[13.5px] mt-0.5" style={{ color: 'var(--mute)' }}>{d.tagline}</div>
+                    <div className="text-[12.5px] mt-1.5" style={{ color: 'var(--mute)' }}><b style={{ color: 'var(--ink)' }}>Best for:</b> {d.bestFor} · {ds.length} slides · about {Math.round(totalSecs(ds) / 60)} min in full</div>
+                  </div>
+                </button>
+              )
+            })}
+          </div>
+        </section>
 
         <section className="card p-6 mb-6">
           <div className="flex items-start justify-between gap-4 mb-3">
@@ -224,6 +251,7 @@ export function Launcher({ initial, slides, onStart, onExport, onGuide }: { init
             <ul className="text-[15px] leading-relaxed flex-1" style={{ color: 'var(--mute)' }}>
               <li><b style={{ color: 'var(--ink)' }}>Country:</b> {co.name} ({co.currency}, {co.taxName})</li>
               <li><b style={{ color: 'var(--ink)' }}>Industry:</b> {ind.name}</li>
+              <li><b style={{ color: 'var(--ink)' }}>Presentation:</b> {decks.find(d => d.id === deckId)?.name}</li>
               <li><b style={{ color: 'var(--ink)' }}>Presenter:</b> {pr.company?.trim() || co.contact.company}{pr.name ? ` · ${pr.name}` : ''}</li>
               <li><b style={{ color: 'var(--ink)' }}>Client:</b> {c.client || '— none —'}{c.logo ? ' (logo added)' : ''}</li>
               <li><b style={{ color: 'var(--ink)' }}>Spotlight modules:</b> {ind.focusModules.join(', ')}</li>
