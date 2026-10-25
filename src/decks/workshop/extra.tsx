@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { poss, useDeck, useNav, useSession } from '../../engine/context'
-import { painOptions } from '../../profiles/pains'
+import { painsFor } from '../../profiles/pains'
 import { Badge, Counter, fade } from '../../ui/primitives'
 import { Section } from '../../slides/layouts'
 import { OIcon, OIconBody, OIconDefs } from '../../ui/OutcomeIcons'
@@ -68,19 +68,22 @@ export function HeroBuild() {
 /* ───────── What's holding you back? (pain picker) ───────── */
 export function PainsPickSlide() {
   const { pains, togglePain, customPain, setCustomPain } = useSession()
+  const { country, industry } = useDeck()
+  const options = painsFor(country.id, industry.id)
   const n = pains.length + (customPain.trim() ? 1 : 0)
   return (
-    <Section eyebrow="What’s holding you back?" title="Tap the pains you want gone." sub="Pick as many as you like — for each one we’ll show exactly how PeopleHub removes it." zoom={1.18}>
+    <Section eyebrow="What’s holding you back?" title="Tap the pains you want gone." sub={`Pick as many as you like — shown first: what ${industry.name.split(' & ')[0]} teams in ${country.name} tell us. For each one we’ll show exactly how PeopleHub removes it.`} zoom={options.length > 15 ? 0.98 : 1.1}>
       <div className="grid grid-cols-5 gap-4 mt-3">
-        {painOptions.map((p, k) => {
+        {options.map(({ pain: p, tag }, k) => {
           const on = pains.includes(p.id)
           const by = momentName(PAIN_MOMENTS[p.id]?.[0] ?? '')
           return (
-            <motion.button key={p.id} {...fade(0.05 * k)} onClick={() => togglePain(p.id)} whileTap={{ scale: 0.96 }} className="card p-5 text-left relative transition-colors" style={{ minHeight: 215, borderColor: on ? 'var(--ok)' : undefined, background: on ? mix('var(--ok)', 12) : undefined, boxShadow: on ? '0 0 36px -10px var(--ok)' : undefined }}>
-              <div className="text-[44px] leading-none">{p.icon}</div>
-              <div className="text-[21px] font-semibold leading-snug mt-3" style={{ textDecoration: on ? 'line-through' : 'none', textDecorationColor: 'var(--bad)', opacity: on ? 0.7 : 1 }}>{p.label}</div>
+            <motion.button key={p.id} {...fade(0.05 * k)} onClick={() => togglePain(p.id)} whileTap={{ scale: 0.96 }} className="card p-4 text-left relative transition-colors" style={{ minHeight: 168, borderColor: on ? 'var(--ok)' : undefined, background: on ? mix('var(--ok)', 12) : undefined, boxShadow: on ? '0 0 36px -10px var(--ok)' : undefined }}>
+              <div className="flex items-start justify-between"><div className="text-[38px] leading-none">{p.icon}</div>
+                {tag && <span className="text-[12px] font-bold tracking-wider uppercase rounded-full px-2.5 py-0.5" style={{ color: 'var(--accent)', background: mix('var(--accent)', 16) }}>{tag === 'country' ? country.name : industry.name.split(' & ')[0]}</span>}</div>
+              <div className="text-[19px] font-semibold leading-snug mt-2.5" style={{ textDecoration: on ? 'line-through' : 'none', textDecorationColor: 'var(--bad)', opacity: on ? 0.7 : 1 }}>{p.label}</div>
               <AnimatePresence>{on && (
-                <motion.div key="s" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="mt-2 text-[16px] font-bold leading-snug" style={{ color: 'var(--ok)' }}>✓ Solved by {by}</motion.div>
+                <motion.div key="s" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="mt-1.5 text-[15px] font-bold leading-snug" style={{ color: 'var(--ok)' }}>✓ Solved by {by}</motion.div>
               )}</AnimatePresence>
             </motion.button>
           )

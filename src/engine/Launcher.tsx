@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { countries } from '../profiles/countries'
 import { industries } from '../profiles/industries'
-import { painOptions } from '../profiles/pains'
+import { painsFor } from '../profiles/pains'
 import { IndustryArt } from '../ui/IndustryArt'
 import { agendaFor, fmtTime, pickSlides, totalSecs, type Agenda } from './agenda'
 import { DeckThumb } from '../ui/DeckThumb'
@@ -201,10 +201,10 @@ export function Launcher({ initial, onStart, onExport, onGuide }: { initial: Con
           <section className="card p-6 md:col-span-2">
             <h2 className="text-[13px] tracking-[0.2em] uppercase font-bold mb-3" style={{ color: 'var(--brand2)' }}>7 · Client pain points <span className="normal-case tracking-normal font-normal" style={{ color: 'var(--mute)' }}>— pick up to 4; they are tracked through the modules</span></h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              {painOptions.map(p => {
+              {painsFor(c.country, c.industry).map(({ pain: p, tag }) => {
                 const on = (c.pains ?? []).includes(p.id)
                 const full = (c.pains ?? []).length >= 4
-                return <Tile key={p.id} active={on} title={`${p.icon} ${p.label}`} onClick={() => { if (!on && full) return; set({ pains: on ? (c.pains ?? []).filter(x => x !== p.id) : [...(c.pains ?? []), p.id] }) }} />
+                return <Tile key={p.id} active={on} title={`${p.icon} ${p.label}`} sub={tag ? `${tag === 'country' ? co.name : ind.name} specific` : undefined} onClick={() => { if (!on && full) return; set({ pains: on ? (c.pains ?? []).filter(x => x !== p.id) : [...(c.pains ?? []), p.id] }) }} />
               })}
             </div>
             <input value={c.customPain ?? ''} onChange={e => set({ customPain: e.target.value })} placeholder="Another pain point in the client's own words (optional)"

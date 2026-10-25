@@ -1,4 +1,5 @@
 import type { DeckCtx } from '../../engine/context'
+import { contextPains } from '../../profiles/pains'
 
 /** The ten business outcomes the client chooses from. Each is a chapter of the Outcome Workshop. */
 export interface Moment { key: string; name: string }
@@ -78,13 +79,13 @@ export const ROLES: Role[] = [
 export const roleById = Object.fromEntries(ROLES.map(r => [r.id, r])) as Record<string, Role>
 
 /** Pain-point ids (profiles/pains.ts) → outcomes. */
-export const PAIN_OUTCOME: Record<string, string[]> = {
+const PAIN_OUTCOME_CORE: Record<string, string[]> = {
   attendance: ['time'], payroll: ['pay'], leave: ['leave'], data: ['know'], hiring: ['hire'],
   compliance: ['data', 'secure'], insight: ['data'], attrition: ['grow'], queries: ['serve'], training: ['grow'],
 }
 
 /** Slides (moments) that answer each pain point — used for the animated “this will solve your pain” banner. */
-export const PAIN_MOMENTS: Record<string, string[]> = {
+const PAIN_MOMENTS_CORE: Record<string, string[]> = {
   attendance: ['time-capture', 'time-manual', 'time-policy', 'time-process'],
   payroll: ['pay-engine', 'pay-payslips', 'pay-advance'],
   leave: ['leave-types', 'leave-apply', 'leave-calendar'],
@@ -96,6 +97,9 @@ export const PAIN_MOMENTS: Record<string, string[]> = {
   queries: ['serve-ess', 'serve-kb', 'serve-chat', 'serve-tickets'],
   training: ['grow-learn'],
 }
+
+export const PAIN_OUTCOME: Record<string, string[]> = { ...PAIN_OUTCOME_CORE, ...Object.fromEntries(contextPains.map(p => [p.id, p.outcomes ?? []])) }
+export const PAIN_MOMENTS: Record<string, string[]> = { ...PAIN_MOMENTS_CORE, ...Object.fromEntries(contextPains.map(p => [p.id, p.moments ?? []])) }
 
 /** Outcomes pre-ticked on the discovery wall: the client's pains, else the industry's focus modules. */
 export function defaultOutcomes(ctx: Pick<DeckCtx, 'pains' | 'industry'>): string[] {
