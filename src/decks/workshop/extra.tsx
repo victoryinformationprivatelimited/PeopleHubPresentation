@@ -103,33 +103,86 @@ export function ToolkitSlide() {
   const { jump, goTo } = useNav()
   const painSlides = new Set(pains.flatMap(id => PAIN_MOMENTS[id] ?? []))
   const first = outcomes[0] ?? OUTCOMES[0].id
+  const [sel, setSel] = useState(Math.max(0, OUTCOMES.findIndex(o => o.id === first)))
+  const [touched, setTouched] = useState(false)
+  const [tick, setTick] = useState(0)
+  const STEP = 7000
+
+  // gentle auto-tour through the outcomes until the presenter or client takes over
+  useEffect(() => {
+    if (touched) return
+    const t = setTimeout(() => { setSel(s => (s + 1) % OUTCOMES.length); setTick(k => k + 1) }, STEP)
+    return () => clearTimeout(t)
+  }, [sel, touched, tick])
+
+  const o = OUTCOMES[sel]
+  const pick = (k: number) => { setTouched(true); setSel(k) }
   return (
     <div className="absolute inset-0">
-      <Section eyebrow="Your PeopleHub toolkit" title="Everything PeopleHub can do for you." sub="Tap any capability to see it live — then come straight back here." zoom={1}>
-        <div className="grid grid-cols-5 gap-3 mt-1">
-          {OUTCOMES.map((o, k) => {
-            const on = outcomes.includes(o.id)
+      <div className="absolute left-20 top-[84px]">
+        <motion.div {...fade(0)} className="text-[22px] tracking-[0.24em] uppercase font-bold mb-2" style={{ color: 'var(--brand2)' }}>Your PeopleHub toolkit</motion.div>
+        <motion.h2 {...fade(0.08)} className="serif text-[72px] leading-[1.02] font-bold">Everything PeopleHub can do.</motion.h2>
+      </div>
+      <div className="absolute right-20 top-[96px] flex flex-col gap-3 w-[520px]">
+        <motion.button {...fade(0.3)} whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} onClick={() => goTo(chapterSlideId(first))} className="rounded-2xl px-7 py-4 text-[26px] font-bold text-left" style={{ background: 'var(--card)', border: '2px solid var(--brand2)' }}>▶ Walk me through my blueprint</motion.button>
+        <motion.button {...fade(0.4)} whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} onClick={() => goTo('ws-solved')} className="glow rounded-2xl px-7 py-4 text-[26px] font-bold text-white text-left" style={{ background: 'linear-gradient(90deg,var(--brand),var(--accent))' }}>✔ Done exploring — next step ➜</motion.button>
+      </div>
+
+      <div className="absolute left-20 right-20 top-[262px] bottom-[84px] flex gap-8">
+        {/* outcome rail */}
+        <div className="w-[560px] flex-none flex flex-col gap-[7px]">
+          {OUTCOMES.map((x, k) => {
+            const on = k === sel, mine = outcomes.includes(x.id)
             return (
-              <motion.div key={o.id} {...fade(0.05 * k)} className="rounded-2xl p-3" style={{ background: mix(o.color, on ? 20 : 11), border: `${on ? 2.5 : 1}px solid ${on ? o.color : 'var(--line)'}` }}>
-                <div className="flex items-center gap-2.5 mb-2"><OIcon id={o.id} size={38} color={o.color} /><b className="text-[17px] leading-tight">{o.name}</b></div>
-                <div className="flex flex-col gap-1.5">
-                  {o.moments.map(m => {
-                    const id = momentSlideId(o.id, m.key), hot = painSlides.has(id)
-                    return (
-                      <button key={m.key} onClick={() => jump(id)} className="rounded-lg px-2.5 py-1.5 text-left text-[15.5px] leading-tight transition hover:brightness-125 hover:translate-x-0.5" style={{ background: 'var(--card)', border: `1px solid ${hot ? 'var(--ok)' : 'var(--line)'}` }}>
-                        {hot && <span style={{ color: 'var(--ok)' }}>⚡ </span>}{m.name}
-                      </button>
-                    )
-                  })}
-                </div>
-              </motion.div>
+              <motion.button key={x.id} initial={{ opacity: 0, x: -40 }} animate={{ opacity: 1, x: on ? 14 : 0 }} transition={{ delay: on ? 0 : 0.05 * k, type: 'spring', stiffness: 220, damping: 22 }}
+                onClick={() => pick(k)} onMouseEnter={() => pick(k)} whileTap={{ scale: 0.97 }}
+                className="relative flex-1 min-h-0 rounded-2xl pl-4 pr-5 flex items-center gap-4 text-left overflow-hidden"
+                style={{ background: on ? mix(x.color, 26) : 'var(--card)', border: `${on ? 2.5 : 1}px solid ${on ? x.color : 'var(--line)'}`, boxShadow: on ? `0 0 44px -12px ${x.color}` : 'none' }}>
+                <motion.div animate={on ? { scale: [1, 1.12, 1] } : { scale: 1 }} transition={{ duration: 1.6, repeat: on ? Infinity : 0 }}><OIcon id={x.id} size={52} color={x.color} /></motion.div>
+                <span className="text-[28px] font-bold leading-tight flex-1">{x.name}</span>
+                {mine && <span className="text-[17px] font-bold rounded-full px-3 py-1" style={{ color: 'var(--ok)', background: mix('var(--ok)', 16) }}>✓ yours</span>}
+                {on && !touched && <motion.i key={`${sel}-${tick}`} className="absolute left-0 bottom-0 h-[4px]" style={{ background: x.color }} initial={{ width: 0 }} animate={{ width: '100%' }} transition={{ duration: STEP / 1000, ease: 'linear' }} />}
+              </motion.button>
             )
           })}
         </div>
-      </Section>
-      <div className="absolute right-20 top-[96px] flex flex-col gap-2.5 w-[430px]">
-        <motion.button {...fade(0.4)} onClick={() => goTo(chapterSlideId(first))} className="rounded-2xl px-6 py-3 text-[20px] font-bold text-left" style={{ background: 'var(--card)', border: '1.5px solid var(--brand2)' }}>▶ Walk me through my blueprint</motion.button>
-        <motion.button {...fade(0.5)} onClick={() => goTo('ws-solved')} className="rounded-2xl px-6 py-3 text-[20px] font-bold text-white text-left" style={{ background: 'linear-gradient(90deg,var(--brand),var(--accent))' }}>✔ Done exploring — next step ➜</motion.button>
+
+        {/* selected outcome: its capabilities */}
+        <AnimatePresence mode="wait">
+          <motion.div key={o.id} initial={{ opacity: 0, x: 60 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -40 }} transition={{ duration: 0.35 }}
+            className="flex-1 min-w-0 rounded-3xl p-8 flex flex-col relative overflow-hidden" style={{ background: mix(o.color, 11), border: `2px solid ${mix(o.color, 55)}` }}>
+            <motion.div className="absolute -right-24 -top-24 w-[420px] h-[420px] rounded-full pointer-events-none" style={{ background: `radial-gradient(circle, ${mix(o.color, 38)}, transparent 68%)` }} animate={{ scale: [1, 1.18, 1] }} transition={{ duration: 5, repeat: Infinity }} />
+            <div className="relative flex items-center gap-6 mb-5">
+              <motion.div initial={{ scale: 0, rotate: -40 }} animate={{ scale: 1, rotate: 0 }} transition={{ type: 'spring', stiffness: 200, damping: 14 }}><OIcon id={o.id} size={104} color={o.color} /></motion.div>
+              <div className="flex-1 min-w-0">
+                <div className="serif text-[50px] leading-[1.05] font-bold">{o.name}</div>
+                <div className="text-[25px] leading-snug mt-1" style={{ color: 'var(--mute)' }}>{o.promise}</div>
+              </div>
+              <div className="text-center flex-none pl-4">
+                <div className="serif text-[64px] leading-none font-bold" style={{ color: o.color }}><Counter key={o.id} to={o.kpi.value} suffix={o.kpi.suffix} duration={1.2} /></div>
+                <div className="text-[16px] max-w-[170px] leading-tight mt-1" style={{ color: 'var(--mute)' }}>{o.kpi.label}</div>
+              </div>
+            </div>
+            <div className="relative grid grid-cols-2 gap-3 auto-rows-fr flex-1 min-h-0">
+              {o.moments.map((m, k) => {
+                const id = momentSlideId(o.id, m.key), hot = painSlides.has(id)
+                return (
+                  <motion.button key={m.key} initial={{ opacity: 0, y: 26, scale: 0.94 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ delay: 0.12 + 0.07 * k, type: 'spring', stiffness: 240, damping: 20 }}
+                    whileHover={{ scale: 1.03, y: -3 }} whileTap={{ scale: 0.97 }} onClick={() => jump(id)}
+                    className="rounded-2xl px-5 py-3 text-left flex items-center gap-4 relative" style={{ background: 'var(--card)', border: `${hot ? 2 : 1}px solid ${hot ? 'var(--ok)' : 'var(--line)'}`, boxShadow: hot ? '0 0 30px -10px var(--ok)' : 'none' }}>
+                    <span className="w-11 h-11 rounded-xl grid place-items-center text-[22px] font-bold flex-none text-white" style={{ background: o.color }}>{k + 1}</span>
+                    <span className="text-[26px] font-semibold leading-tight flex-1">{m.name}</span>
+                    {hot && <motion.span animate={{ scale: [1, 1.3, 1] }} transition={{ duration: 1.4, repeat: Infinity }} className="text-[26px]" style={{ color: 'var(--ok)' }}>⚡</motion.span>}
+                    <span className="text-[26px] flex-none" style={{ color: o.color }}>▶</span>
+                  </motion.button>
+                )
+              })}
+            </div>
+            <div className="relative text-[19px] mt-3" style={{ color: 'var(--mute)' }}>
+              Tap any capability to see it live, then use <b>Back</b> to return here{painSlides.size ? ' · ⚡ answers a pain you picked' : ''}{touched ? '' : ' · touring automatically — tap to take over'}
+            </div>
+          </motion.div>
+        </AnimatePresence>
       </div>
     </div>
   )
