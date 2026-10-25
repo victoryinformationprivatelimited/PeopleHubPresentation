@@ -5,6 +5,7 @@ import { OUTCOMES, chapterSlideId } from './data'
 import { MOMENTS_P3, momentSlide } from './moments'
 import { MOMENTS_P4 } from './moments4'
 import { BlueprintSlide, ChapterCard, DaySlide, DetailsSlide, FabricSlide, RecapSlide, RolesSlide, WallSlide, WavesSlide } from './slides'
+import { AboutSlide, ClientsSlide } from '../../slides/about'
 import { HeroBuild, JourneySlide, PainsPickSlide, ToolkitSlide } from './extra'
 
 /**
@@ -27,6 +28,7 @@ export function buildWorkshopSlides(): SlideDef[] {
 
   return [
     mk('open', 'Open', 'Welcome', 30, 3, 'Confident start: the platform assembles itself around the ten outcomes. Say: "Today we are not going to walk you through screens. We will build your blueprint together." Personalise with the client name; mention web, Android and iPhone.', () => <HeroBuild />),
+    mk('ws-about', 'Open', 'Who we are', 60, 2, 'Short credibility moment, 45 seconds. Victory Information: 14+ years, 600+ clients island-wide, transparent and quality-led. Land the point that HR and payroll technology is our focus — PeopleHub is not a side project. Do not read the slide; let the numbers count up and move on.', () => <AboutSlide />),
     mk('ws-roles', 'Open', 'Who is in the room', 45, 3, 'Ask who is here and tap their roles. Each role gets a one-line promise. The picks tint the discovery wall and the order we suggest. Keep it light: 30 seconds.', () => <RolesSlide />),
     mk('ws-day', 'Open', 'A day at your company', 75, 2, 'Walk the day from 07:55 to 17:30. Names and roles come from the client’s industry and country. Tap a tag to jump into that outcome, Backspace to return. Do not linger — this is the unifying story.', () => <DaySlide />),
     mk('ws-pains-pick', 'Open', 'What’s holding you back', 90, 3, 'Let the client tap the pains that hurt. Pre-ticked from what we learned before the meeting; add anything in their own words. Each pick shows what will solve it, and later slides replay it as an animated "this will solve your pain" moment. Ask why for each pain and capture the answers.', () => <PainsPickSlide />),
@@ -37,6 +39,7 @@ export function buildWorkshopSlides(): SlideDef[] {
     ...chapters,
     reuse('pains', { id: 'ws-solved', section: 'Close', title: 'Your challenges, solved' }),
     mk('ws-recap', 'Close', 'Your blueprint recap', 45, 2, 'Read back their blueprint and the package that fits. Packages are cumulative; any module can be added à la carte. No prices on screen.', () => <RecapSlide />),
+    mk('ws-clients', 'Close', 'Trusted by 600+ clients', 45, 2, 'Social proof. Point at logos from the client’s own industry if you see one. The wall scrolls on its own; hover to pause. Only mention references we are permitted to name — logos are shown, not case-study claims.', () => <ClientsSlide />),
     reuse('why', { section: 'Close' }),
     reuse('versus', { section: 'Close' }),
     mk('ws-waves', 'Close', 'Rollout waves', 45, 2, 'Three waves, their priorities first. Do not give dates here — dates come after the discovery workshop and scoping.', () => <WavesSlide />),

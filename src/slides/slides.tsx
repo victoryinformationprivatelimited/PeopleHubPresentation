@@ -12,6 +12,7 @@ import * as A from './demosA'
 import * as B from './demosB'
 import { NotifRulesDemo } from './demosC'
 import type { Mod } from './modules'
+import { AboutSlide, ClientsSlide } from './about'
 import { BeforeAfter, Challenge, PainsSolved, Roi, Versus } from './sales'
 
 const demos: Record<string, () => ReactNode> = {
@@ -299,6 +300,7 @@ export function buildSlides(): SlideDef[] {
   const part = (pillar: string) => mods.filter(x => modules.find(m => m.id === x.id)!.pillar === pillar)
   const all: SlideDef[] = [
     s('open', 'Open', 'Welcome', 'Greet, thank the audience, set the agenda: challenge → platform → modules → IT view → packages → next steps. Personalise using the client name.', Opener),
+    s('about', 'Open', 'Who we are', 'Short credibility moment: Victory Information, 14+ years, 600+ clients island-wide; HR and payroll technology is our focus. Let the numbers count up and move on.', AboutSlide),
     s('challenge', 'Open', 'The challenge', 'Ask the room which of these hurts most. Capture answers — you will come back to them at each module.', Challenge),
     s('beforeafter', 'Open', 'Before & after', 'Walk down the day: left is today, right is with PeopleHub. Ask which row hurts most. The weekly-hours figure is illustrative (assumes ~4 admin hours a day per HR person).', BeforeAfter),
     s('constellation', 'Open', 'One platform', 'Pulsing items are the modules most relevant for this industry. Say you will focus there but cover everything.', Constellation),
@@ -309,6 +311,7 @@ export function buildSlides(): SlideDef[] {
     s('it-sec', 'IT Deep-Dive', 'Security', 'Capabilities only; do not claim certifications unless confirmed. Offer a security questionnaire response under NDA.', ItSecurity),
     s('it-int', 'IT Deep-Dive', 'Integration & APIs', 'Ask which ERP, biometric devices and BI tools they run.', ItIntegration),
     s('story', 'Close', 'Connected journey', 'Walk through the journey and tie it back to modules shown.', Story),
+    s('clients', 'Close', 'Trusted by 600+ clients', 'Social proof. Point at logos from the client’s own industry. Hover pauses the scroll. Only name references we are permitted to.', ClientsSlide),
     s('why', 'Close', 'Why PeopleHub', 'Summarise differentiators; link to the pains from slide 2.', Why),
     s('versus', 'Close', 'Why switch', 'Do not bash competitors by name. Frame the comparison as spreadsheets vs patchwork tools vs one connected platform. Partial ticks mean the alternative can do part of it with effort.', Versus),
     s('pains', 'Close', 'Your challenges solved', 'Recap each pain point the client gave us and the modules that solve it. If none were chosen, this shows typical priorities for the industry — ask them to confirm.', PainsSolved),
@@ -322,7 +325,7 @@ export function buildSlides(): SlideDef[] {
   const meta: Record<string, [number, number]> = {
     open: [30, 3], challenge: [60, 3], beforeafter: [60, 2], constellation: [45, 3], glance: [30, 1],
     'it-arch': [60, 0], 'it-tenancy': [45, 0], 'it-sec': [45, 0], 'it-int': [45, 0],
-    story: [45, 2], why: [45, 2], versus: [60, 2], pains: [45, 3], packages: [60, 3], implementation: [45, 2], roi: [60, 2], next: [30, 3], contact: [20, 3],
+    about: [45, 2], clients: [45, 2], story: [45, 2], why: [45, 2], versus: [60, 2], pains: [45, 3], packages: [60, 3], implementation: [45, 2], roi: [60, 2], next: [30, 3], contact: [20, 3],
   }
   return all.map(sl => (meta[sl.id] ? { ...sl, secs: meta[sl.id][0], tier: meta[sl.id][1] } : sl))
 }
