@@ -28,7 +28,7 @@ export const OUTCOMES: Outcome[] = [
   { id: 'time', name: 'Time you can trust', short: 'Attendance', icon: '🕒', color: '#0ea5e9', pillar: 'ops', modules: ['attendance'],
     promise: 'Every punch captured, every rule applied, every exception visible — across sites and shifts.',
     kpi: { value: 90, suffix: '%', label: 'less attendance reconciliation' },
-    moments: [{ key: 'capture', name: 'Capture: biometric, mobile & geofence' }, { key: 'manual', name: 'Manual attendance & uploads' }, { key: 'roster', name: 'Rosters & shifts' }, { key: 'policy', name: 'Policy & formula engine' }, { key: 'process', name: 'Holidays, process & reports' }] },
+    moments: [{ key: 'capture', name: 'Capture: biometric, mobile & geofence' }, { key: 'manual', name: 'Manual attendance & uploads' }, { key: 'roster', name: 'Rosters & shifts' }, { key: 'policy', name: 'Policy & formula engine' }, { key: 'process', name: 'Holidays, process & reports' }, { key: 'meal', name: 'Meal management' }] },
   { id: 'leave', name: 'Leave without the chase', short: 'Leave', icon: '🌴', color: '#34d399', pillar: 'ops', modules: ['leave'],
     promise: 'Policies that enforce themselves, approvals that happen on the phone.',
     kpi: { value: 75, suffix: '%', label: 'faster leave approvals' },

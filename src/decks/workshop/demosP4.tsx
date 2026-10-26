@@ -252,3 +252,51 @@ export function ArchitectureDemo() {
     </Window>
   )
 }
+
+/* ───────── Meal management ───────── */
+export function MealDemo() {
+  const { country, industry, company } = useDeck()
+  const [meal, setMeal] = useState(1)
+  const meals = ['Breakfast', 'Lunch', 'Dinner']
+  const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+  const plan = [[120, 310, 90], [118, 322, 88], [125, 318, 95], [121, 305, 84], [130, 330, 99], [60, 180, 40]]
+  const max = 340
+  const people = country.sampleNames.slice(0, 5)
+  return (
+    <Window title={`${company} · Meal management`}>
+      <div className="grid grid-cols-2 gap-5">
+        <div>
+          <div className="flex gap-2 mb-3">
+            {meals.map((m, k) => <button key={m} onClick={() => setMeal(k)} className="px-4 py-1.5 rounded-full text-[15px] font-bold" style={meal === k ? { background: 'var(--brand)', color: '#fff' } : { background: 'var(--card)', border: '1px solid var(--line)' }}>{m}</button>)}
+          </div>
+          <div className="text-[13px] tracking-widest uppercase mb-2" style={{ color: 'var(--mute)' }}>Tokens generated today · {meals[meal]}</div>
+          <div className="flex flex-col gap-2">
+            {people.map((n, k) => (
+              <motion.div key={n + meal} {...fade(0.08 * k)} className="card px-4 py-2.5 flex items-center gap-3">
+                <Avatar name={n} size={34} />
+                <div className="flex-1 min-w-0"><div className="font-semibold text-[16px] truncate">{n}</div><div className="text-[12.5px]" style={{ color: 'var(--mute)' }}>{industry.departments[k % industry.departments.length]} · checked in {7 + (k % 3)}:{10 + k * 7}</div></div>
+                <span className="font-mono font-bold text-[15px] px-2.5 py-1 rounded-lg" style={{ background: 'var(--line)' }}>#{meal + 1}{String(412 + k * 17).padStart(3, '0')}</span>
+              </motion.div>
+            ))}
+          </div>
+          <div className="mt-3"><Badge tone="ok">✓ Token only for employees who punched in today</Badge></div>
+        </div>
+        <div>
+          <div className="text-[13px] tracking-widest uppercase mb-2" style={{ color: 'var(--mute)' }}>Meal plan · this week · headcount</div>
+          <div className="flex items-end gap-3 h-[250px]">
+            {days.map((d, i) => (
+              <div key={d} className="flex-1 flex flex-col items-center gap-1.5">
+                <div className="w-full flex items-end gap-1 h-[210px]">
+                  {plan[i].map((v, j) => <motion.div key={j} className="flex-1 rounded-t" style={{ background: ['#f59e0b', '#3b6be0', '#a78bfa'][j] }} initial={{ height: 0 }} animate={{ height: `${(v / max) * 100}%` }} transition={{ delay: 0.1 * i + 0.05 * j, duration: 0.7 }} />)}
+                </div>
+                <div className="text-[13px]" style={{ color: 'var(--mute)' }}>{d}</div>
+              </div>
+            ))}
+          </div>
+          <div className="flex gap-4 text-[13px] mt-3" style={{ color: 'var(--mute)' }}>{meals.map((m, j) => <span key={m} className="flex items-center gap-1.5"><i className="w-3 h-3 rounded" style={{ background: ['#f59e0b', '#3b6be0', '#a78bfa'][j] }} />{m}</span>)}</div>
+          <div className="text-[14px] mt-3" style={{ color: 'var(--mute)' }}>Canteen sees tomorrow’s numbers from attendance and leave — {country.name === 'Sri Lanka' ? 'no more guessing the rice' : 'no more over-cooking'}.</div>
+        </div>
+      </div>
+    </Window>
+  )
+}

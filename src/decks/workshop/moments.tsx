@@ -7,6 +7,7 @@ import { PainBanner } from '../../ui/PainBanner'
 import { SkipBar } from './extra'
 import { OIcon } from '../../ui/OutcomeIcons'
 import { AttendanceDemo, BenefitsDemo, EmployeeDemo, LifecycleDemo, OrgDemo, PayrollDemo, RecruitmentDemo, TasksDemo } from '../../slides/demosA'
+import { MealDemo } from './demosP4'
 import { AdvanceDemo, BulkDemo, ClaimsDemo, FinanceDemo, LeaveCalendarDemo, LeavePhoneDemo, LeaveTypesDemo, LettersDemo, LiveDemo, ManualAttDemo, PayslipPhoneDemo, PolicyDemo, ProcessDemo, RosterDemo } from './demosP3'
 import { PAIN_MOMENTS, momentSlideId, outcomeById } from './data'
 
@@ -143,6 +144,12 @@ export const MOMENTS_P3: MomentDef[] = [
     results: ['Per-shift processing with leave and holidays applied', 'Exceptions listed for review', 'Reports comparing real and counted punches'],
     included: ['Holiday calendars', 'Per-employee holidays', 'Attendance reports', 'Migration'], demo: () => <ProcessDemo />,
     notes: 'Click Process attendance.\nReadiness (private): LIVE for processing and reports. Overtime is calculated, but there is no overtime-request workflow or OT-to-payroll pipeline yet — do not claim one.' },
+
+  { outcome: 'time', key: 'meal', title: 'Meal management', headline: 'Right meals, right numbers, zero waste.',
+    scenario: c => `At ${c.industry.site}, ${first(N(c)[1])} punches in and a meal token is generated for the shift. The canteen sees tomorrow’s headcount from attendance and leave.`,
+    results: ['Meal tokens generated from attendance', 'Meal planning by day and shift', 'Canteen numbers that match who is actually in'],
+    included: ['Token generation', 'Meal planning', 'Shift-linked', 'Headcount forecast'], demo: () => <MealDemo />,
+    notes: 'Strong for factories, hotels and hospitals with canteens.\nReadiness (private): NO CODE — added from the sales sketch; the screen is a designed preview only. Do not promise a date; say it is on the build list.' },
 
   /* ───── 4 · Leave without the chase ───── */
   { outcome: 'leave', key: 'types', title: 'Leave types, policies & entitlements', headline: 'Policies that enforce themselves.',
