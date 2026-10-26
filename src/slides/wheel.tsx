@@ -116,8 +116,7 @@ export function WheelSlide({ mode, doneTo }: { mode: 'workshop' | 'tour'; doneTo
 
         {/* hub: the logo, nothing else */}
         <motion.circle cx={C} cy={C} r="150" fill="none" stroke="#22d3ee" strokeWidth="3" animate={{ r: [138, 172], opacity: [0.7, 0] }} transition={{ duration: 2.8, repeat: Infinity }} />
-        <circle cx={C} cy={C} r="138" fill="#fff" style={{ filter: 'drop-shadow(0 0 34px rgba(59,107,224,.65))' }} />
-        <image href="./logo-black.png" x={C - 120} y={C - 120} width="240" height="240" />
+        <image href={document.documentElement.dataset.theme === 'light' ? './logo-black.png' : './logo-light.png'} x={C - 92} y={C - 92} width="184" height="184" style={{ filter: 'drop-shadow(0 0 22px rgba(59,107,224,.55))' }} />
 
         {hov !== null && hovPos && (() => {
           const name = cells[hov].m.name, w = Math.max(150, name.length * 15.5 + 44), x = Math.min(930 - w / 2, Math.max(70 + w / 2, hovPos[0])), y = Math.max(34, hovPos[1] - 86)
