@@ -30,6 +30,7 @@ Country drives currency, statutory deductions, tax, leave types, compliance repo
 ## Presenting tools
 - **Module spotlight:** on the overview slide click any module to jump to it (even if it is not in the agenda); Backspace or the button returns.
 - **Agenda & timer:** the launcher can shorten the deck to 20 / 30 / 45 / custom minutes (keeps the must-have slides, then adds the modules most relevant to the client's industry and pain points) or lets you pick and order slides manually. **D** toggles the timer with pace (ahead/behind); click it to restart.
+- **Magnifier:** **M** opens a round lens that follows the mouse and shows the slide under it enlarged (mouse wheel or **+ / −** to zoom, **M** or **Esc** to close). It works on a live copy of the slide, so animations keep moving.
 - **Pointer:** **L** cycles laser → spotlight → off. **.** gives a black screen. Works with presentation clickers (Page Up/Down, arrows).
 - **PDF leave-behind:** **E** (or the launcher button) opens a print view; choose Save as PDF (landscape, margins none, background graphics on). Add `&print=1` to the address to open it directly.
 - **QR code:** enter the private page where the deck is hosted in the launcher; the closing slide and PDF show a QR code to it (personalised with the client's settings by default). The deck itself is a static site, so host the `dist` folder somewhere access-controlled (SharePoint, Azure Static Web Apps with login, etc.).

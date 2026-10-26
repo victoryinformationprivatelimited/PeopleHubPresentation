@@ -40,6 +40,10 @@ export function Deck({ slides, allSlides, ctx, theme: initialTheme = 'dark', sho
   const [zoomIdx, setZoomIdx] = useState(0)         // mobile only: 0 = fit, 1 = read, 2 = large
   const [theme, setTheme] = useState<'dark' | 'light'>(initialTheme)
   const [pointer, setPointer] = useState<Pointer>('off')
+  const [mag, setMag] = useState(false)           // magnifier lens (M)
+  const [magZ, setMagZ] = useState(2.4)
+  const stageRef = useRef<HTMLDivElement>(null)
+  const lensRef = useRef<HTMLDivElement>(null)
   const [timer, setTimer] = useState(timerDefault)
   const [now, setNow] = useState(Date.now())
   const startRef = useRef(Date.now())
@@ -118,6 +122,31 @@ export function Deck({ slides, allSlides, ctx, theme: initialTheme = 'dark', sho
     return () => { removeEventListener('mousemove', move); cancelAnimationFrame(raf) }
   }, [pointer])
 
+  // magnifier: a round lens that follows the pointer and shows a live, enlarged copy of the slide under it
+  const LENS = Math.max(220, Math.round(Math.min(innerWidth, innerHeight) * 0.42))
+  useEffect(() => {
+    if (!mag) return
+    let raf = 0, z = magZ
+    const draw = () => {
+      const st = stageRef.current, lens = lensRef.current
+      if (!st || !lens) return
+      const r = st.getBoundingClientRect(), sc = r.width / W, R = LENS / 2, { x, y } = mouse.current
+      if (x < 0) { lens.style.display = 'none'; return }
+      lens.style.display = 'block'
+      lens.style.transform = `translate(${x - R}px, ${y - R}px)`
+      const clone = st.cloneNode(true) as HTMLElement
+      clone.style.cssText = `position:absolute;left:0;top:0;width:${W}px;height:${H}px;margin:0;flex:none;transform-origin:0 0;transform:translate(${R - (x - r.left) * z}px, ${R - (y - r.top) * z}px) scale(${sc * z});pointer-events:none;`
+      lens.firstElementChild?.replaceChildren(clone)
+    }
+    const move = (e: MouseEvent) => { mouse.current = { x: e.clientX, y: e.clientY }; cancelAnimationFrame(raf); raf = requestAnimationFrame(draw) }
+    const wheel = (e: WheelEvent) => { e.preventDefault(); z = Math.min(5, Math.max(1.4, z * (e.deltaY < 0 ? 1.12 : 1 / 1.12))); setMagZ(z); draw() }
+    const key = (e: KeyboardEvent) => { if (e.key === '+' || e.key === '=') { z = Math.min(5, z * 1.15); setMagZ(z); draw() } else if (e.key === '-' || e.key === '_') { z = Math.max(1.4, z / 1.15); setMagZ(z); draw() } }
+    const tick = setInterval(draw, 700)   // keep animations moving while the pointer rests
+    addEventListener('mousemove', move); addEventListener('wheel', wheel, { passive: false }); addEventListener('keydown', key)
+    draw()
+    return () => { removeEventListener('mousemove', move); removeEventListener('wheel', wheel); removeEventListener('keydown', key); clearInterval(tick); cancelAnimationFrame(raf) }
+  }, [mag]) // eslint-disable-line react-hooks/exhaustive-deps
+
   const toggleFullscreen = useCallback(() => {
     if (document.fullscreenElement) document.exitFullscreen(); else document.documentElement.requestFullscreen?.()
   }, [])
@@ -133,12 +162,13 @@ export function Deck({ slides, allSlides, ctx, theme: initialTheme = 'dark', sho
       else if (k === 'Home') go(0)
       else if (k === 'End') go(order.length - 1)
       else if (k === 'g' || k === 'G') setGrid(g => !g)
-      else if (k === 'Escape') { setGrid(false); setHelp(false); setPointer('off') }
+      else if (k === 'Escape') { setGrid(false); setHelp(false); setPointer('off'); setMag(false) }
+      else if (k === 'm' || k === 'M') { setPointer('off'); setMag(v => !v) }
       else if (k === 'n' || k === 'N') setNotes(v => !v)
       else if (k === 'c' || k === 'C') onConfigure?.()
       else if (k === 'e' || k === 'E') onExport?.()
       else if (k === 'd' || k === 'D') setTimer(v => !v)
-      else if (k === 'l' || k === 'L') setPointer(p => (p === 'off' ? 'laser' : p === 'laser' ? 'spot' : 'off'))
+      else if (k === 'l' || k === 'L') { setMag(false); setPointer(p => (p === 'off' ? 'laser' : p === 'laser' ? 'spot' : 'off')) }
       else if (k === '.') setBlack(v => !v)
       else if (k === '?') setHelp(v => !v)
       else if (k === 't' || k === 'T') setTheme(t => (t === 'dark' ? 'light' : 'dark'))
@@ -211,7 +241,7 @@ export function Deck({ slides, allSlides, ctx, theme: initialTheme = 'dark', sho
     <div className="absolute inset-0 z-[60] grid place-items-center" style={{ background: 'color-mix(in srgb, var(--bg) 92%, transparent)' }} onClick={() => setHelp(false)}>
       <div className="card p-10 text-[22px] leading-loose" style={{ background: 'var(--bg2)' }}>
         <div className="serif text-[38px] mb-3">Shortcuts</div>
-        {[['← / → / click edges / clicker', 'Previous / next'], ['G', 'Slide grid (and hidden slides)'], ['N', 'Presenter notes'], ['D', 'Timer & pace (click it to restart)'], ['L', 'Pointer: laser → spotlight → off'], ['.', 'Black screen'], ['Backspace', 'Return from a module jump'], ['T', 'Light / dark'], ['F', 'Fullscreen'], ['E', 'Export PDF leave-behind'], ['C', 'Back to settings']].filter(([k]) => !clientView || !['N', 'D', 'E', 'C'].includes(k)).map(([k, v]) => (
+        {[['← / → / click edges / clicker', 'Previous / next'], ['G', 'Slide grid (and hidden slides)'], ['N', 'Presenter notes'], ['D', 'Timer & pace (click it to restart)'], ['L', 'Pointer: laser → spotlight → off'], ['M', 'Magnifier lens (mouse wheel or + / − to zoom, M to close)'], ['.', 'Black screen'], ['Backspace', 'Return from a module jump'], ['T', 'Light / dark'], ['F', 'Fullscreen'], ['E', 'Export PDF leave-behind'], ['C', 'Back to settings']].filter(([k]) => !clientView || !['N', 'D', 'E', 'C'].includes(k)).map(([k, v]) => (
           <div key={k} className="flex gap-8"><b className="w-[360px]" style={{ color: 'var(--brand2)' }}>{k}</b><span>{v}</span></div>
         ))}
       </div>
@@ -219,7 +249,7 @@ export function Deck({ slides, allSlides, ctx, theme: initialTheme = 'dark', sho
   )
 
   const stage = (
-    <div style={{ width: W, height: H, transform: `scale(${s})`, transformOrigin: mobile ? 'top left' : undefined, flex: 'none' }} className="relative overflow-hidden">
+    <div ref={stageRef} style={{ width: W, height: H, transform: `scale(${s})`, transformOrigin: mobile ? 'top left' : undefined, flex: 'none' }} className="relative overflow-hidden">
       <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse at 20% 0%, color-mix(in srgb, var(--brand) 22%, transparent), transparent 55%), radial-gradient(ellipse at 90% 100%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 50%), var(--bg)' }} />
       <div className="absolute inset-0 grid-bg opacity-40" />
       <div className="bg-blob b1" /><div className="bg-blob b2" />
@@ -286,7 +316,7 @@ export function Deck({ slides, allSlides, ctx, theme: initialTheme = 'dark', sho
 
   return (
     <NavContext.Provider value={{ jump, goTo, has: (id: string) => byId.has(id) }}>
-      <div className={mobile ? 'fixed inset-0 flex flex-col' : 'fixed inset-0 flex items-center justify-center overflow-hidden'} style={{ background: 'var(--bg)', cursor: pointer === 'off' ? undefined : 'none' }}>
+      <div className={mobile ? 'fixed inset-0 flex flex-col' : 'fixed inset-0 flex items-center justify-center overflow-hidden'} style={{ background: 'var(--bg)', cursor: pointer === 'off' && !mag ? undefined : 'none' }}>
         {mobile ? (
           <div ref={scroller} className="flex-1 min-h-0 overflow-auto" style={{ WebkitOverflowScrolling: 'touch', overscrollBehavior: 'contain' }} onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
             <div className="min-h-full flex">
@@ -319,6 +349,14 @@ export function Deck({ slides, allSlides, ctx, theme: initialTheme = 'dark', sho
         {pointer === 'laser' && <div className="fixed z-[100] pointer-events-none rounded-full" style={{ left: px - 14, top: py - 14, width: 28, height: 28, background: 'radial-gradient(circle, #fff 0 18%, #ff2d2d 30%, rgba(255,45,45,.35) 60%, transparent 72%)', boxShadow: '0 0 24px 6px rgba(255,45,45,.55)' }} />}
         {pointer === 'spot' && <div className="fixed inset-0 z-[100] pointer-events-none" style={{ background: `radial-gradient(circle 170px at ${px}px ${py}px, transparent 0, transparent 150px, rgba(0,0,0,.72) 230px)` }} />}
         {pointer !== 'off' && <div className="fixed bottom-16 left-1/2 -translate-x-1/2 z-[101] rounded-full px-4 py-1 text-[13px] pointer-events-none" style={{ background: 'var(--card)', color: 'var(--mute)', border: '1px solid var(--line)' }}>{pointer === 'laser' ? 'Laser pointer' : 'Spotlight'} · L to change</div>}
+        {mag && (
+          <>
+            <div ref={lensRef} className="fixed left-0 top-0 z-[100] pointer-events-none rounded-full overflow-hidden" style={{ width: LENS, height: LENS, display: 'none', border: '5px solid var(--brand2)', background: 'var(--bg)', boxShadow: '0 20px 70px rgba(0,0,0,.65), 0 0 0 2px rgba(255,255,255,.25)' }}>
+              <div className="absolute inset-0" />
+            </div>
+            <div className="fixed bottom-16 left-1/2 -translate-x-1/2 z-[101] rounded-full px-4 py-1 text-[13px] pointer-events-none" style={{ background: 'var(--card)', color: 'var(--mute)', border: '1px solid var(--line)' }}>Magnifier ×{magZ.toFixed(1)} · wheel or + / − to zoom · M to close</div>
+          </>
+        )}
         {black && <div className="fixed inset-0 z-[200] bg-black" onClick={() => setBlack(false)} />}
       </div>
     </NavContext.Provider>

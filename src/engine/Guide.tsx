@@ -11,6 +11,7 @@ const keys: [string, string][] = [
   ['N', 'Presenter notes + planned time for the current slide'],
   ['D', 'Timer with pace (ahead / behind). Click the timer to restart it'],
   ['L', 'Pointer: laser → spotlight → off (for projectors)'],
+  ['M', 'Magnifier lens that follows the mouse — wheel or + / − to zoom, M or Esc to close'],
   ['.', 'Black screen (any key returns)'],
   ['T', 'Light / dark theme'],
   ['F', 'Fullscreen'],
