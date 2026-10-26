@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useNav } from '../engine/context'
 import { fade } from '../ui/primitives'
@@ -6,6 +6,7 @@ import { LANDSCAPE, GROUPS, type Mod } from './landscape'
 
 const mix = (c: string, p: number) => `color-mix(in srgb, ${c} ${p}%, transparent)`
 const C = 500
+const RING = [196, 306, 416]
 
 /** Three layers, innermost first: the core, then what runs and grows the business, then experience and insight. */
 const LAYERS = [
@@ -33,10 +34,6 @@ const SHORT: Record<string, string> = {
 }
 
 const pt = (r: number, deg: number) => { const a = ((deg - 90) * Math.PI) / 180; return [C + r * Math.cos(a), C + r * Math.sin(a)] as const }
-const seg = (r0: number, r1: number, a0: number, a1: number) => {
-  const [x0, y0] = pt(r1, a0), [x1, y1] = pt(r1, a1), [x2, y2] = pt(r0, a1), [x3, y3] = pt(r0, a0)
-  return `M${x0} ${y0} A${r1} ${r1} 0 0 1 ${x1} ${y1} L${x2} ${y2} A${r0} ${r0} 0 0 0 ${x3} ${y3} Z`
-}
 
 interface Cell { m: Mod; i: number; layer: number; a0: number; a1: number }
 const cells: Cell[] = LAYERS.flatMap((L, layer) => {
@@ -50,6 +47,15 @@ export function WheelSlide({ mode, doneTo }: { mode: 'workshop' | 'tour'; doneTo
   const { jump, goTo, has } = useNav()
   const [sel, setSel] = useState(0)
   const [hov, setHov] = useState<number | null>(null)
+  const [hovPos, setHovPos] = useState<[number, number] | null>(null)
+  const svgRef = useRef<SVGSVGElement>(null)
+  const paused = hov !== null
+  // where the hovered node is, in the wheel's own 1000×1000 space (rotation pauses on hover, so it stays put)
+  const hoverNode = (i: number, el: SVGGElement) => {
+    const r = el.getBoundingClientRect(), v = svgRef.current?.getBoundingClientRect()
+    if (v) setHovPos([((r.left + r.width / 2 - v.left) / v.width) * 1000, ((r.top + r.height / 2 - v.top) / v.height) * 1000])
+    setHov(i)
+  }
   const [touched, setTouched] = useState(false)
   const [tick, setTick] = useState(0)
   const STEP = 4200
@@ -74,42 +80,62 @@ export function WheelSlide({ mode, doneTo }: { mode: 'workshop' | 'tour'; doneTo
       </div>
       {doneTo && <motion.button {...fade(0.3)} whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }} onClick={() => goTo(doneTo)} className="glow absolute right-14 top-[76px] rounded-xl px-6 py-3 text-[21px] font-bold text-white" style={{ background: 'linear-gradient(90deg,var(--brand),var(--accent))' }}>✔ Done — next step ➜</motion.button>}
 
-      <motion.svg viewBox="0 0 1000 1000" className="absolute left-8 top-[150px]" style={{ width: 830, height: 830, overflow: 'visible' }} initial={{ opacity: 0, scale: 0.8, rotate: -25 }} animate={{ opacity: 1, scale: 1, rotate: 0 }} transition={{ duration: 0.9, ease: 'easeOut' }}>
-        {cells.map(c => {
-          const L0 = LAYERS[c.layer], on = c.i === sel, mid = (c.a0 + c.a1) / 2, col = GROUPS[c.m.group].color
-          const [dx, dy] = [Math.cos(((mid - 90) * Math.PI) / 180) * 16, Math.sin(((mid - 90) * Math.PI) / 180) * 16]
-          const [tx, ty] = pt((L0.r0 + L0.r1) / 2, mid), big = c.i === hov || on
+      <motion.svg ref={svgRef} onMouseLeave={() => setHov(null)} viewBox="0 0 1000 1000" className="absolute left-8 top-[150px]" style={{ width: 830, height: 830, overflow: 'visible' }} initial={{ opacity: 0, scale: 0.7 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.9, ease: 'easeOut' }}>
+        <defs>
+          <radialGradient id="wh-glow"><stop offset="0" stopColor="#3b6be0" stopOpacity=".5" /><stop offset=".6" stopColor="#22d3ee" stopOpacity=".12" /><stop offset="1" stopColor="#22d3ee" stopOpacity="0" /></radialGradient>
+          <radialGradient id="wh-shine" cx="32%" cy="26%" r="80%"><stop offset="0" stopColor="#fff" stopOpacity=".55" /><stop offset=".5" stopColor="#fff" stopOpacity="0" /><stop offset="1" stopColor="#000" stopOpacity=".3" /></radialGradient>
+        </defs>
+        {/* ambient glow + slow outer ring */}
+        <motion.circle cx={C} cy={C} r="500" fill="url(#wh-glow)" animate={{ opacity: [0.55, 1, 0.55] }} transition={{ duration: 5, repeat: Infinity }} />
+        <circle cx={C} cy={C} r="488" fill="none" stroke="var(--line)" strokeWidth="2" strokeDasharray="3 14" style={{ transformOrigin: `${C}px ${C}px`, animation: 'wheelSpin 240s linear infinite', animationPlayState: paused ? 'paused' : 'running' }} />
+
+        {/* three orbit layers — each turns at its own slow pace; hovering pauses them so every node is easy to hit */}
+        {LAYERS.map((L0, li) => {
+          const r = RING[li], ring = cells.filter(c => c.layer === li), dur = [150, 200, 260][li], dir = li === 1 ? 'reverse' : 'normal'
+          const selHere = cells[sel].layer === li
           return (
-            <motion.g key={c.m.name} animate={{ x: on || c.i === hov ? dx : 0, y: on || c.i === hov ? dy : 0 }} transition={{ type: 'spring', stiffness: 240, damping: 18 }}
-              onClick={() => pick(c.i)} onMouseEnter={() => setHov(c.i)} onMouseLeave={() => setHov(h => (h === c.i ? null : h))} style={{ cursor: 'pointer' }}>
-              <motion.path d={seg(L0.r0, L0.r1, c.a0, c.a1)} fill={col} initial={{ opacity: 0 }} animate={{ opacity: on || c.i === hov ? 1 : 0.7 }} transition={{ delay: 0.012 * c.i, duration: 0.5 }}
-                stroke={on ? '#fff' : 'none'} strokeWidth="3" style={{ filter: on || c.i === hov ? `drop-shadow(0 0 22px ${col})` : 'none' }} />
-              <g transform={`translate(${tx} ${ty})`} style={{ pointerEvents: 'none' }}>
-                <motion.g animate={{ scale: big ? 1.55 : 1 }} transition={{ type: 'spring', stiffness: 260, damping: 16 }}>
-                  <circle r={L0.font + 9} fill="rgba(255,255,255,.2)" />
-                  <text textAnchor="middle" dominantBaseline="central" fontSize={L0.font + 9} y="2">{ICON[c.m.name] ?? '•'}</text>
-                </motion.g>
+            <g key={L0.name}>
+              <circle cx={C} cy={C} r={r} fill="none" stroke="rgba(148,163,192,.28)" strokeWidth="2" />
+              <circle cx={C} cy={C} r={r} fill="none" stroke={selHere ? GROUPS[cells[sel].m.group].color : 'transparent'} strokeWidth="4" opacity=".5" style={{ filter: 'blur(5px)' }} />
+              <g style={{ transformOrigin: `${C}px ${C}px`, animation: `wheelSpin ${dur}s linear infinite ${dir}`, animationPlayState: paused ? 'paused' : 'running' }}>
+                {ring.map(c => {
+                  const ang = (c.a0 + c.a1) / 2 + (li === 1 ? 180 / ring.length : 0), [x, y] = pt(r, ang), on = c.i === sel, hv = c.i === hov, col = GROUPS[c.m.group].color, nr = [44, 40, 42][li]
+                  return (
+                    <g key={c.m.name} transform={`translate(${x} ${y})`}>
+                      {on && <line x1={0} y1={0} x2={C - x} y2={C - y} stroke={col} strokeWidth="3" strokeDasharray="2 9" strokeLinecap="round" opacity=".8" />}
+                      <g style={{ transformOrigin: '0 0', animation: `wheelSpin ${dur}s linear infinite ${dir === 'reverse' ? 'normal' : 'reverse'}`, animationPlayState: paused ? 'paused' : 'running' }}>
+                        <motion.g animate={{ scale: hv ? 1.55 : on ? 1.35 : 1 }} transition={{ type: 'spring', stiffness: 260, damping: 15 }} style={{ cursor: 'pointer' }}
+                          onClick={() => pick(c.i)} onMouseEnter={e => hoverNode(c.i, e.currentTarget)} onMouseLeave={() => setHov(h => (h === c.i ? null : h))}>
+                          {on && <motion.circle r={nr + 12} fill="none" stroke={col} strokeWidth="3" animate={{ r: [nr + 8, nr + 22], opacity: [0.8, 0] }} transition={{ duration: 1.8, repeat: Infinity }} />}
+                          <circle r={nr + 5} fill="rgba(255,255,255,.14)" />
+                          <circle r={nr} fill={col} style={{ filter: on || hv ? `drop-shadow(0 0 18px ${col})` : `drop-shadow(0 4px 8px rgba(0,0,0,.45))` }} />
+                          <circle r={nr} fill="url(#wh-shine)" />
+                          <circle r={nr - 3} fill="none" stroke="#fff" strokeOpacity={on ? 0.9 : 0.35} strokeWidth="2" />
+                          <text textAnchor="middle" dominantBaseline="central" fontSize={nr * 0.95} y="2" style={{ pointerEvents: 'none' }}>{ICON[c.m.name] ?? '•'}</text>
+                        </motion.g>
+                      </g>
+                    </g>
+                  )
+                })}
               </g>
-            </motion.g>
+            </g>
           )
         })}
-        {hov !== null && (() => {
-          const c = cells[hov], L0 = LAYERS[c.layer], mid = (c.a0 + c.a1) / 2, [px, py] = pt((L0.r0 + L0.r1) / 2, mid)
-          const name = c.m.name, w = Math.max(150, name.length * 15.5 + 44), x = Math.min(930 - w / 2, Math.max(70 + w / 2, px)), y = Math.max(34, py - 78)
+
+        {/* hub: the logo, nothing else */}
+        <motion.circle cx={C} cy={C} r="150" fill="none" stroke="#22d3ee" strokeWidth="3" animate={{ r: [138, 172], opacity: [0.7, 0] }} transition={{ duration: 2.8, repeat: Infinity }} />
+        <circle cx={C} cy={C} r="138" fill="#fff" style={{ filter: 'drop-shadow(0 0 34px rgba(59,107,224,.65))' }} />
+        <image href="./logo-black.png" x={C - 120} y={C - 120} width="240" height="240" />
+
+        {hov !== null && hovPos && (() => {
+          const name = cells[hov].m.name, w = Math.max(150, name.length * 15.5 + 44), x = Math.min(930 - w / 2, Math.max(70 + w / 2, hovPos[0])), y = Math.max(34, hovPos[1] - 86)
           return (
             <g transform={`translate(${x} ${y})`} style={{ pointerEvents: 'none' }}>
-              <rect x={-w / 2} y="-26" width={w} height="52" rx="26" fill="var(--bg2)" stroke={GROUPS[c.m.group].color} strokeWidth="3" />
+              <rect x={-w / 2} y="-26" width={w} height="52" rx="26" fill="var(--bg2)" stroke={GROUPS[cells[hov].m.group].color} strokeWidth="3" style={{ filter: 'drop-shadow(0 8px 18px rgba(0,0,0,.5))' }} />
               <text textAnchor="middle" dominantBaseline="central" fontSize="25" fontWeight="800" fill="var(--ink)">{name}</text>
             </g>
           )
         })()}
-        {/* hub — everything stacked on the exact centre */}
-        <circle cx={C} cy={C} r="126" fill="var(--bg2)" stroke="var(--line)" strokeWidth="2" />
-        <motion.circle cx={C} cy={C} r="126" fill="none" stroke={g.color} strokeWidth="5" strokeDasharray="90 702" key={sel} initial={{ strokeDashoffset: 0 }} animate={{ strokeDashoffset: -792 }} transition={{ duration: touched ? 1 : STEP / 1000, ease: 'linear' }} style={{ transformOrigin: `${C}px ${C}px`, transform: 'rotate(-90deg)' }} />
-        <circle cx={C} cy={C - 28} r="66" fill="#fff" />
-        <image href="./logo-black.png" x={C - 62} y={C - 90} width="124" height="124" />
-        <text x={C} y={C + 62} textAnchor="middle" fontSize="34" fontWeight="800" fill="var(--ink)" fontFamily="Fraunces, serif">HRIS</text>
-        <text x={C} y={C + 92} textAnchor="middle" fontSize="17" fill="var(--mute)">3 layers · {cells.length} modules</text>
       </motion.svg>
 
       {/* the selected module */}
