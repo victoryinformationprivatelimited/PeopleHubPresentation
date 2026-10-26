@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { PHLogo } from '../ui/PHLogo'
 import { motion } from 'framer-motion'
 import type { ReactNode } from 'react'
 import { useDeck, useNav, money, poss, type SlideDef } from '../engine/context'
@@ -33,7 +34,7 @@ function Opener() {
       {!print && <Hero3D className="absolute right-[-120px] top-0 w-[1100px] h-[1000px] opacity-40" />}
       <motion.div {...fade(0.3)} className="absolute right-12 top-[150px] w-[820px]"><IndustryArt id={industry.id} className="w-full" /></motion.div>
       <div className="absolute left-20 top-24 w-[1000px]">
-        <motion.div {...fade(0)} className="flex items-center gap-6 mb-10"><img src="./logo-black.png" alt="PeopleHub" className="h-28 w-28 rounded-full bg-white p-1" />{logo && <><span className="text-[40px]" style={{ color: 'var(--mute)' }}>×</span><img src={logo} alt={client} className="h-28 max-w-[320px] object-contain rounded-2xl bg-white px-4 py-2" /></>}</motion.div>
+        <motion.div {...fade(0)} className="flex items-center gap-6 mb-10"><PHLogo className="h-28 w-28" />{logo && <><span className="text-[40px]" style={{ color: 'var(--mute)' }}>×</span><img src={logo} alt={client} className="h-28 max-w-[320px] object-contain rounded-2xl bg-white px-4 py-2" /></>}</motion.div>
         <motion.div {...fade(0.1)} className="text-[16px] tracking-[0.3em] uppercase font-bold mb-5" style={{ color: 'var(--accent)' }}>Intelligent Human Capital Platform</motion.div>
         <motion.h1 {...fade(0.2)} className="serif text-[98px] leading-[1.02] font-bold">{industry.headline}</motion.h1>
         <motion.p {...fade(0.35)} className="text-[28px] mt-8 max-w-[860px]" style={{ color: 'var(--mute)' }}>{industry.subhead}</motion.p>
@@ -254,7 +255,7 @@ function Contact() {
     <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
       {print ? <IndustryArt id={industry.id} className="absolute right-10 bottom-16 w-[620px] opacity-20" /> : <Hero3D className="absolute inset-0 opacity-40" />}
       <div className="relative">
-        <motion.div {...fade(0)} className="flex items-center justify-center gap-6 mb-8"><img src="./logo-black.png" alt="PeopleHub" className="h-32 w-32 rounded-full bg-white p-1" />{logo && <><span className="text-[44px]" style={{ color: 'var(--mute)' }}>×</span><img src={logo} alt={client} className="h-32 max-w-[360px] object-contain rounded-2xl bg-white px-5 py-2" /></>}</motion.div>
+        <motion.div {...fade(0)} className="flex items-center justify-center gap-6 mb-8"><PHLogo className="h-32 w-32" />{logo && <><span className="text-[44px]" style={{ color: 'var(--mute)' }}>×</span><img src={logo} alt={client} className="h-32 max-w-[360px] object-contain rounded-2xl bg-white px-5 py-2" /></>}</motion.div>
         <motion.h1 {...fade(0.1)} className="serif text-[96px] font-bold leading-tight">Thank you{client ? `, ${client}` : ''}.</motion.h1>
         <motion.div {...fade(0.25)} className="text-[30px] mt-4 grad-text font-semibold">Transforming human capital through intelligent workforce management</motion.div>
         <div className="flex items-stretch justify-center gap-8 mt-10">

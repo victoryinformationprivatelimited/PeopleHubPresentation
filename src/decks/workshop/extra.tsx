@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { PHLogo, logoSrc } from '../../ui/PHLogo'
 import { AnimatePresence, motion } from 'framer-motion'
 import { poss, useDeck, useNav, useSession } from '../../engine/context'
 import { painsFor } from '../../profiles/pains'
@@ -22,7 +23,7 @@ export function HeroBuild() {
     <div className="absolute inset-0">
       <div className="absolute left-20 top-[92px] w-[1000px]">
         <motion.div {...fade(0)} className="flex items-center gap-6 mb-10">
-          <img src="./logo-black.png" alt="PeopleHub" className="h-24 w-24 rounded-full bg-white p-1" />
+          <PHLogo className="h-24 w-24" />
           {logo && <><span className="text-[40px]" style={{ color: 'var(--mute)' }}>×</span><img src={logo} alt={client} className="h-24 max-w-[300px] object-contain rounded-2xl bg-white px-4 py-2" /></>}
         </motion.div>
         <motion.div {...fade(0.1)} className="text-[20px] tracking-[0.3em] uppercase font-bold mb-5" style={{ color: 'var(--accent)' }}>PeopleHub HRIS{client ? ` · Prepared for ${client}` : ''}</motion.div>
@@ -45,8 +46,8 @@ export function HeroBuild() {
         <motion.circle cx={C} cy={C} r="120" fill="none" stroke="var(--accent)" strokeWidth="2" initial={{ opacity: 0.6, scale: 1 }} animate={{ opacity: 0, scale: 1.7 }} transition={{ repeat: Infinity, duration: 3.2, ease: 'easeOut' }} style={{ transformOrigin: `${C}px ${C}px` }} />
         <motion.g initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.3, type: 'spring', stiffness: 120 }} style={{ transformOrigin: `${C}px ${C}px` }}>
           <circle cx={C} cy={C} r="118" fill="url(#hubg)" />
-          <circle cx={C} cy={C} r="100" fill="#fff" />
-          <image href="./logo-black.png" x={C - 92} y={C - 92} width="184" height="184" />
+          <circle cx={C} cy={C} r="100" fill="var(--bg2)" />
+          <image href={logoSrc()} x={C - 78} y={C - 78} width="156" height="156" />
         </motion.g>
         {nodes.map((n, k) => (
           <g key={n.o.id} transform={`translate(${n.x} ${n.y})`}>

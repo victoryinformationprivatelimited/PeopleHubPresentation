@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { PHLogo } from '../ui/PHLogo'
 import { countries } from '../profiles/countries'
 import { industries } from '../profiles/industries'
 import { painsFor } from '../profiles/pains'
@@ -91,7 +92,7 @@ export function Launcher({ initial, onStart, onExport, onGuide }: { initial: Con
     <div className="fixed inset-0 overflow-auto" style={{ background: 'radial-gradient(ellipse at 15% 0%, color-mix(in srgb, var(--brand) 25%, transparent), transparent 55%), var(--bg)' }}>
       <div className="max-w-[1100px] mx-auto px-4 sm:px-8 py-6 sm:py-10">
         <div className="flex flex-wrap items-center gap-4 mb-6 sm:mb-8">
-          <img src="./logo-black.png" alt="PeopleHub" className="h-16 w-16 rounded-full bg-white p-0.5" />
+          <PHLogo className="h-16 w-16" />
           <div className="flex-1"><div className="serif text-[24px] sm:text-[32px] font-bold leading-tight">PeopleHub HRIS</div><div style={{ color: 'var(--mute)' }}>Sales presentation · configure before you present</div></div>
           <button onClick={onGuide} className="rounded-xl px-5 py-3 text-[15px] font-bold" style={{ background: 'var(--card)', border: '1.5px solid var(--line)' }}>📖 Presenter guide</button>
         </div>
