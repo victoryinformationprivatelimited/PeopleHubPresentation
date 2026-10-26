@@ -10,7 +10,7 @@ import { defaultOutcomes } from '../decks/workshop/data'
 import { buildCtx } from './buildCtx'
 import type { SlideDef } from './context'
 
-export interface Config { country: string; industry: string; client: string; theme: 'dark' | 'light'; logo?: string; headcount?: number; hrTeam?: number; pains?: string[]; customPain?: string; agenda?: Agenda; agendas?: Record<string, Agenda>; deck?: string; qrUrl?: string; qrPersonalise?: boolean; qrClientView?: boolean; qrLogoUrl?: string; presenter?: PresenterConfig }
+export interface Config { country: string; industry: string; client: string; theme: 'dark' | 'light'; logo?: string; headcount?: number; hrTeam?: number; pains?: string[]; customPain?: string; agenda?: Agenda; agendas?: Record<string, Agenda>; deck?: string; nav?: string; qrUrl?: string; qrPersonalise?: boolean; qrClientView?: boolean; qrLogoUrl?: string; presenter?: PresenterConfig }
 
 /** Presenter / partner details typed on the settings screen. Blank company = Victory Information defaults. */
 export interface PresenterConfig { company?: string; name?: string; title?: string; email?: string; phone?: string; web?: string; logo?: string }
@@ -62,7 +62,7 @@ export function Launcher({ initial, onStart, onExport, onGuide }: { initial: Con
   const chapterDefs = deckDef.chapters
   const previewCtx = buildCtx(c)
   const previewOutcomes = defaultOutcomes(previewCtx)
-  const visible = pickSlides(arrangeFor(deckId, slides, previewOutcomes), agenda, { ...previewCtx, outcomes: previewOutcomes })
+  const visible = pickSlides(arrangeFor(deckId, slides, previewOutcomes, c.nav), agenda, { ...previewCtx, outcomes: previewOutcomes })
   const chapterIds = agenda.chapters ?? chapterDefs?.map(ch => ch.id) ?? []
   const chapterRows = chapterDefs ? [...chapterIds.map(id => chapterDefs.find(ch => ch.id === id)).filter((ch): ch is { id: string; name: string } => !!ch), ...chapterDefs.filter(ch => !chapterIds.includes(ch.id))] : []
   const toggleChapter = (id: string) => setAgenda({ mode: 'chapters', chapters: chapterIds.includes(id) ? chapterIds.filter(x => x !== id) : [...chapterIds, id] })
@@ -118,6 +118,18 @@ export function Launcher({ initial, onStart, onExport, onGuide }: { initial: Con
             })}
           </div>
         </section>
+
+        {deckDef.navs && (
+          <section className="mb-6">
+            <h2 className="text-[13px] tracking-[0.2em] uppercase font-bold mb-3" style={{ color: 'var(--brand2)' }}>Navigation screen <span className="normal-case tracking-normal font-normal" style={{ color: 'var(--mute)' }}>— how the client explores the modules; only this one is shown</span></h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              {[...deckDef.navs, { id: 'all', name: 'Show all of them', desc: 'Keep every navigation screen in the deck and decide on the day' }].map(n => {
+                const on = (c.nav ?? deckDef.defaultNav) === n.id
+                return <Tile key={n.id} active={on} title={n.name} sub={n.desc} onClick={() => set({ nav: n.id })} />
+              })}
+            </div>
+          </section>
+        )}
 
         <section className="card p-6 mb-6">
           <div className="flex items-start justify-between gap-4 mb-3">

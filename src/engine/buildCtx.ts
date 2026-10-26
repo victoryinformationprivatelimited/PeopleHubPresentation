@@ -26,6 +26,7 @@ function qrLink(cfg: Config, session?: Live): string | undefined {
       if (cp?.trim()) p.set('customPain', cp.trim())
       if (cfg.theme === 'light') p.set('theme', 'light')
       p.set('deck', resolveDeckId(cfg.deck))
+      if (cfg.nav) p.set('nav', cfg.nav)
       if (session?.outcomes.length) p.set('outcomes', session.outcomes.join(','))
       if (session?.roles.length) p.set('roles', session.roles.join(','))
       const a = agendaFor(cfg, resolveDeckId(cfg.deck))

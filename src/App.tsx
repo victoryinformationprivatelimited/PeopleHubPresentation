@@ -18,7 +18,7 @@ function initial(): { cfg: Config; mode: Mode; auto: boolean; clientView: boolea
   // The client view must never pick up the presenter's saved settings.
   const saved = clientView ? emptyConfig : loadConfig()
   if (q.has('guide')) return { cfg: saved, mode: 'guide', auto: true, clientView: false }
-  const keys = ['country', 'industry', 'client', 'headcount', 'hrTeam', 'pains', 'agenda', 'slides', 'print', 'view', 'pco', 'deck']
+  const keys = ['country', 'industry', 'client', 'headcount', 'hrTeam', 'pains', 'agenda', 'slides', 'print', 'view', 'pco', 'deck', 'nav']
   if (!keys.some(k => q.has(k))) return { cfg: saved, mode: 'launcher', auto: true, clientView: false }
   const agendaParam = q.get('agenda')
   const deck = resolveDeckId(q.get('deck') ?? saved.deck)
@@ -26,6 +26,7 @@ function initial(): { cfg: Config; mode: Mode; auto: boolean; clientView: boolea
   const cfg: Config = {
     ...saved,
     deck,
+    nav: q.get('nav') ?? saved.nav,
     agendas: urlAgenda ? { ...(saved.agendas ?? {}), [deck]: urlAgenda } : saved.agendas,
     country: q.get('country') ?? saved.country,
     industry: q.get('industry') ?? saved.industry,
@@ -78,7 +79,7 @@ export default function App() {
   }), [session])
   const ctx = useMemo(() => buildCtx(cfg, mode === 'print', session), [cfg, mode, session])
   const agenda = agendaFor(cfg, deckId)
-  const arranged = useMemo(() => arrangeFor(deckId, allSlides, session.outcomes), [deckId, allSlides, session.outcomes])
+  const arranged = useMemo(() => arrangeFor(deckId, allSlides, session.outcomes, cfg.nav), [deckId, allSlides, session.outcomes, cfg.nav])
   const visible = useMemo(() => pickSlides(arranged, agenda, { ...ctx, outcomes: session.outcomes }), [arranged, agenda, ctx, session.outcomes])
 
   // starting a different client / deck / set of pains begins a fresh workshop; re-entering the same one keeps the wall
