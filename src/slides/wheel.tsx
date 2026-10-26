@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useNav } from '../engine/context'
 import { fade } from '../ui/primitives'
+import { MIcon, ModuleIconBody } from '../ui/ModuleIcons'
 import { LANDSCAPE, GROUPS, type Mod } from './landscape'
 
 const mix = (c: string, p: number) => `color-mix(in srgb, ${c} ${p}%, transparent)`
@@ -14,15 +15,6 @@ const LAYERS = [
   { name: 'Layer 2 · Operate & grow', groups: ['ops', 'talent'], r0: 242, r1: 354, font: 17 },
   { name: 'Layer 3 · Experience & insight', groups: ['exp', 'intel'], r0: 360, r1: 482, font: 19 },
 ] as const
-
-/** One recognisable icon per module — the wheel shows pictures; names appear on hover and in the panel. */
-const ICON: Record<string, string> = {
-  'Organization': '🏢', 'Employee master 360': '🪪', 'Life cycle': '🔄', 'Recruitment & onboarding': '🧲', 'Letter generator': '📝', 'Tasks & checklists': '📋', 'Termination & exit': '🚪',
-  'Time & attendance': '🕒', 'Mobile app': '📱', 'Leave management': '🌴', 'Meal management': '🍽️', 'Payroll': '💰', 'Staff loans & advances': '🏦', 'Benefits & claims': '🎁', 'Salary banking': '🏧',
-  'Performance': '🎯', 'Learning & development': '🎓', 'Succession planning': '🌱', 'Engagement': '💬',
-  'Self-service portal': '🙋', 'Grievance reporting': '📣', 'Service desk': '🎧', 'Asset tracker': '💻', 'Knowledge base': '📚', 'Chat & AI assistant': '🤖', 'News broadcasting': '📰', 'Approvals': '✅', 'Notifications': '🔔',
-  'Analytics & reports': '📊', 'Compliance & statutory': '🛡️', 'Security & audit': '🔐', 'Integrations & ERP': '🔌',
-}
 
 /** Short wheel labels (the full names live on the cards and slides). */
 const SHORT: Record<string, string> = {
@@ -111,7 +103,7 @@ export function WheelSlide({ mode, doneTo }: { mode: 'workshop' | 'tour'; doneTo
                           <circle r={nr} fill={col} style={{ filter: on || hv ? `drop-shadow(0 0 18px ${col})` : `drop-shadow(0 4px 8px rgba(0,0,0,.45))` }} />
                           <circle r={nr} fill="url(#wh-shine)" />
                           <circle r={nr - 3} fill="none" stroke="#fff" strokeOpacity={on ? 0.9 : 0.35} strokeWidth="2" />
-                          <text textAnchor="middle" dominantBaseline="central" fontSize={nr * 0.95} y="2" style={{ pointerEvents: 'none' }}>{ICON[c.m.name] ?? '•'}</text>
+                          <g transform={`scale(${(nr * 1.18) / 48}) translate(-24 -24)`} style={{ pointerEvents: 'none' }}><ModuleIconBody name={c.m.name} stroke={3.4} /></g>
                         </motion.g>
                       </g>
                     </g>
@@ -144,7 +136,7 @@ export function WheelSlide({ mode, doneTo }: { mode: 'workshop' | 'tour'; doneTo
           <motion.div key={m.name} initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }} transition={{ duration: 0.3 }} className="h-full rounded-3xl p-8 flex flex-col relative overflow-hidden" style={{ background: mix(g.color, 11), border: `2px solid ${mix(g.color, 55)}` }}>
             <motion.div className="absolute -right-24 -top-24 w-[400px] h-[400px] rounded-full pointer-events-none" style={{ background: `radial-gradient(circle, ${mix(g.color, 36)}, transparent 68%)` }} animate={{ scale: [1, 1.18, 1] }} transition={{ duration: 5, repeat: Infinity }} />
             <div className="relative text-[19px] tracking-[0.2em] uppercase font-bold" style={{ color: g.color }}>{L.name}{L.groups.length > 1 ? ` · ${g.name}` : ''}</div>
-            <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} className="relative serif text-[62px] leading-[1.03] font-bold mt-2 flex items-center gap-5"><span className="text-[64px] leading-none">{ICON[m.name]}</span>{m.name}</motion.div>
+            <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} className="relative serif text-[62px] leading-[1.03] font-bold mt-2 flex items-center gap-5"><MIcon name={m.name} size={76} color={g.color} />{m.name}</motion.div>
             <ul className="relative mt-6 flex flex-col gap-3.5">
               {m.feats.map((f, k) => (
                 <motion.li key={f} initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.12 + 0.1 * k }} className="flex items-center gap-4 text-[32px] font-semibold leading-snug">
