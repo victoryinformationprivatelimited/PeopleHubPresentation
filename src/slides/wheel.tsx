@@ -14,6 +14,15 @@ const LAYERS = [
   { name: 'Layer 3 · Experience & insight', groups: ['exp', 'intel'], r0: 360, r1: 482, font: 19 },
 ] as const
 
+/** One recognisable icon per module — the wheel shows pictures; names appear on hover and in the panel. */
+const ICON: Record<string, string> = {
+  'Organization': '🏢', 'Employee master 360': '🪪', 'Life cycle': '🔄', 'Recruitment & onboarding': '🧲', 'Letter generator': '📝', 'Tasks & checklists': '📋', 'Termination & exit': '🚪',
+  'Time & attendance': '🕒', 'Mobile app': '📱', 'Leave management': '🌴', 'Meal management': '🍽️', 'Payroll': '💰', 'Staff loans & advances': '🏦', 'Benefits & claims': '🎁', 'Salary banking': '🏧',
+  'Performance': '🎯', 'Learning & development': '🎓', 'Succession planning': '🌱', 'Engagement': '💬',
+  'Self-service portal': '🙋', 'Grievance reporting': '📣', 'Service desk': '🎧', 'Asset tracker': '💻', 'Knowledge base': '📚', 'Chat & AI assistant': '🤖', 'News broadcasting': '📰', 'Approvals': '✅', 'Notifications': '🔔',
+  'Analytics & reports': '📊', 'Compliance & statutory': '🛡️', 'Security & audit': '🔐', 'Integrations & ERP': '🔌',
+}
+
 /** Short wheel labels (the full names live on the cards and slides). */
 const SHORT: Record<string, string> = {
   'Organization': 'Org chart', 'Employee master 360': 'Employees', 'Life cycle': 'Life cycle', 'Recruitment & onboarding': 'Hiring', 'Letter generator': 'Letters', 'Tasks & checklists': 'Tasks', 'Termination & exit': 'Exit',
@@ -40,6 +49,7 @@ const cells: Cell[] = LAYERS.flatMap((L, layer) => {
 export function WheelSlide({ mode, doneTo }: { mode: 'workshop' | 'tour'; doneTo?: string }) {
   const { jump, goTo, has } = useNav()
   const [sel, setSel] = useState(0)
+  const [hov, setHov] = useState<number | null>(null)
   const [touched, setTouched] = useState(false)
   const [tick, setTick] = useState(0)
   const STEP = 4200
@@ -68,15 +78,31 @@ export function WheelSlide({ mode, doneTo }: { mode: 'workshop' | 'tour'; doneTo
         {cells.map(c => {
           const L0 = LAYERS[c.layer], on = c.i === sel, mid = (c.a0 + c.a1) / 2, col = GROUPS[c.m.group].color
           const [dx, dy] = [Math.cos(((mid - 90) * Math.PI) / 180) * 16, Math.sin(((mid - 90) * Math.PI) / 180) * 16]
-          const [tx, ty] = pt((L0.r0 + L0.r1) / 2, mid), rot = mid - 90 + (mid > 180 ? 180 : 0)
+          const [tx, ty] = pt((L0.r0 + L0.r1) / 2, mid), big = c.i === hov || on
           return (
-            <motion.g key={c.m.name} animate={{ x: on ? dx : 0, y: on ? dy : 0 }} transition={{ type: 'spring', stiffness: 240, damping: 18 }} onClick={() => pick(c.i)} style={{ cursor: 'pointer' }}>
-              <motion.path d={seg(L0.r0, L0.r1, c.a0, c.a1)} fill={col} initial={{ opacity: 0 }} animate={{ opacity: on ? 1 : 0.66 }} transition={{ delay: 0.012 * c.i, duration: 0.5 }}
-                stroke={on ? '#fff' : 'none'} strokeWidth="3" style={{ filter: on ? `drop-shadow(0 0 22px ${col})` : 'none' }} />
-              <text transform={`translate(${tx} ${ty}) rotate(${rot})`} textAnchor="middle" dominantBaseline="central" fontSize={L0.font} fontWeight="800" fill="#fff" style={{ pointerEvents: 'none' }}>{SHORT[c.m.name] ?? c.m.name}</text>
+            <motion.g key={c.m.name} animate={{ x: on || c.i === hov ? dx : 0, y: on || c.i === hov ? dy : 0 }} transition={{ type: 'spring', stiffness: 240, damping: 18 }}
+              onClick={() => pick(c.i)} onMouseEnter={() => setHov(c.i)} onMouseLeave={() => setHov(h => (h === c.i ? null : h))} style={{ cursor: 'pointer' }}>
+              <motion.path d={seg(L0.r0, L0.r1, c.a0, c.a1)} fill={col} initial={{ opacity: 0 }} animate={{ opacity: on || c.i === hov ? 1 : 0.7 }} transition={{ delay: 0.012 * c.i, duration: 0.5 }}
+                stroke={on ? '#fff' : 'none'} strokeWidth="3" style={{ filter: on || c.i === hov ? `drop-shadow(0 0 22px ${col})` : 'none' }} />
+              <g transform={`translate(${tx} ${ty})`} style={{ pointerEvents: 'none' }}>
+                <motion.g animate={{ scale: big ? 1.55 : 1 }} transition={{ type: 'spring', stiffness: 260, damping: 16 }}>
+                  <circle r={L0.font + 9} fill="rgba(255,255,255,.2)" />
+                  <text textAnchor="middle" dominantBaseline="central" fontSize={L0.font + 9} y="2">{ICON[c.m.name] ?? '•'}</text>
+                </motion.g>
+              </g>
             </motion.g>
           )
         })}
+        {hov !== null && (() => {
+          const c = cells[hov], L0 = LAYERS[c.layer], mid = (c.a0 + c.a1) / 2, [px, py] = pt((L0.r0 + L0.r1) / 2, mid)
+          const name = c.m.name, w = Math.max(150, name.length * 15.5 + 44), x = Math.min(930 - w / 2, Math.max(70 + w / 2, px)), y = Math.max(34, py - 78)
+          return (
+            <g transform={`translate(${x} ${y})`} style={{ pointerEvents: 'none' }}>
+              <rect x={-w / 2} y="-26" width={w} height="52" rx="26" fill="var(--bg2)" stroke={GROUPS[c.m.group].color} strokeWidth="3" />
+              <text textAnchor="middle" dominantBaseline="central" fontSize="25" fontWeight="800" fill="var(--ink)">{name}</text>
+            </g>
+          )
+        })()}
         {/* hub — everything stacked on the exact centre */}
         <circle cx={C} cy={C} r="126" fill="var(--bg2)" stroke="var(--line)" strokeWidth="2" />
         <motion.circle cx={C} cy={C} r="126" fill="none" stroke={g.color} strokeWidth="5" strokeDasharray="90 702" key={sel} initial={{ strokeDashoffset: 0 }} animate={{ strokeDashoffset: -792 }} transition={{ duration: touched ? 1 : STEP / 1000, ease: 'linear' }} style={{ transformOrigin: `${C}px ${C}px`, transform: 'rotate(-90deg)' }} />
@@ -92,7 +118,7 @@ export function WheelSlide({ mode, doneTo }: { mode: 'workshop' | 'tour'; doneTo
           <motion.div key={m.name} initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }} transition={{ duration: 0.3 }} className="h-full rounded-3xl p-8 flex flex-col relative overflow-hidden" style={{ background: mix(g.color, 11), border: `2px solid ${mix(g.color, 55)}` }}>
             <motion.div className="absolute -right-24 -top-24 w-[400px] h-[400px] rounded-full pointer-events-none" style={{ background: `radial-gradient(circle, ${mix(g.color, 36)}, transparent 68%)` }} animate={{ scale: [1, 1.18, 1] }} transition={{ duration: 5, repeat: Infinity }} />
             <div className="relative text-[19px] tracking-[0.2em] uppercase font-bold" style={{ color: g.color }}>{L.name}{L.groups.length > 1 ? ` · ${g.name}` : ''}</div>
-            <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} className="relative serif text-[62px] leading-[1.03] font-bold mt-2">{m.name}</motion.div>
+            <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} className="relative serif text-[62px] leading-[1.03] font-bold mt-2 flex items-center gap-5"><span className="text-[64px] leading-none">{ICON[m.name]}</span>{m.name}</motion.div>
             <ul className="relative mt-6 flex flex-col gap-3.5">
               {m.feats.map((f, k) => (
                 <motion.li key={f} initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.12 + 0.1 * k }} className="flex items-center gap-4 text-[32px] font-semibold leading-snug">
