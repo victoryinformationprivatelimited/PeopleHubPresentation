@@ -6,8 +6,8 @@ import { fade } from '../ui/primitives'
 
 const mix = (c: string, p: number) => `color-mix(in srgb, ${c} ${p}%, transparent)`
 
-type Group = 'core' | 'ops' | 'talent' | 'exp' | 'intel'
-const GROUPS: Record<Group, { name: string; color: string }> = {
+export type Group = 'core' | 'ops' | 'talent' | 'exp' | 'intel'
+export const GROUPS: Record<Group, { name: string; color: string }> = {
   core: { name: 'Core HR', color: '#3b6be0' },
   ops: { name: 'Workforce operations', color: '#0ea5e9' },
   talent: { name: 'Talent', color: '#a78bfa' },
@@ -16,7 +16,7 @@ const GROUPS: Record<Group, { name: string; color: string }> = {
 }
 
 /** One card = one module and its headline features. `w` = the Workshop slide it opens, `t` = the Platform Tour slide. */
-interface Mod { name: string; group: Group; feats: string[]; w: string; t: string }
+export interface Mod { name: string; group: Group; feats: string[]; w: string; t: string }
 export const LANDSCAPE: Mod[] = [
   // Core HR
   { name: 'Organization', group: 'core', feats: ['Hierarchy & org chart', 'Units & reporting lines', 'Bulk upload'], w: 'know-org', t: 'org' },
@@ -48,7 +48,8 @@ export const LANDSCAPE: Mod[] = [
   { name: 'Knowledge base', group: 'exp', feats: ['Searchable policies', 'Acknowledgements', 'Versioned documents'], w: 'serve-kb', t: 'kb' },
   { name: 'Chat & AI assistant', group: 'exp', feats: ['Answers before the question', 'HR chat', 'Policy-aware'], w: 'serve-chat', t: 'chat' },
   { name: 'News broadcasting', group: 'exp', feats: ['Company announcements', 'Targeted audiences', 'Read tracking'], w: 'serve-news', t: 'notifications' },
-  { name: 'Approvals & notifications', group: 'exp', feats: ['Workflow builder', 'Higher authorization', 'Email · SMS · WhatsApp · in-app'], w: 'approve-builder', t: 'notifications' },
+  { name: 'Approvals', group: 'exp', feats: ['Workflow builder', 'Higher authorization', 'Manager approvals inbox'], w: 'approve-builder', t: 'notifications' },
+  { name: 'Notifications', group: 'exp', feats: ['Email · SMS · WhatsApp · in-app', 'Choose who is told', 'Timing & reminders'], w: 'approve-rules', t: 'notif-rules' },
   // Intelligence & control
   { name: 'Analytics & reports', group: 'intel', feats: ['Live dashboards', 'Build-your-own reports', 'Pin & share'], w: 'data-dash', t: 'analytics' },
   { name: 'Compliance & statutory', group: 'intel', feats: ['Government portal reporting', 'Statutory returns', 'Audit-ready'], w: 'data-compliance', t: 'compliance' },
@@ -66,7 +67,8 @@ export function LandscapeSlide({ mode, doneTo }: { mode: 'workshop' | 'tour'; do
     <div className="absolute inset-0">
       <div className="absolute left-14 right-14 top-[64px] flex items-end justify-between gap-8">
         <div>
-          <motion.div {...fade(0)} className="text-[19px] tracking-[0.24em] uppercase font-bold mb-1" style={{ color: 'var(--brand2)' }}>PeopleHub landscape</motion.div>
+          <motion.div {...fade(0)} className="flex items-center gap-6 mb-1"><span className="text-[19px] tracking-[0.24em] uppercase font-bold" style={{ color: 'var(--brand2)' }}>PeopleHub landscape</span>
+            <span className="flex gap-4 text-[15px]">{(Object.keys(GROUPS) as Group[]).map(g => <span key={g} className="flex items-center gap-1.5"><i className="w-2.5 h-2.5 rounded-full" style={{ background: GROUPS[g].color }} />{GROUPS[g].name}</span>)}</span></motion.div>
           <motion.h2 {...fade(0.06)} className="serif text-[52px] leading-none font-bold">Every module. Every feature. One screen.</motion.h2>
         </div>
         <div className="flex items-center gap-3 flex-none pb-1">
