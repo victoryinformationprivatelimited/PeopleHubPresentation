@@ -20,6 +20,7 @@ export interface MomentDef {
   results: string[]
   included: string[]
   demo: () => ReactNode
+  wide?: boolean              // give the demo more room (a dense, real screen)
   notes: string               // talk track + private readiness line (shown only in presenter notes)
   secs?: number
 }
@@ -32,12 +33,12 @@ function MomentSlide({ def }: { def: MomentDef }) {
   const hit = ctx.pains.filter(p => PAIN_MOMENTS[p.id]?.includes(id))
   return (
     <div className="absolute inset-0 px-16 pt-14 pb-24 grid grid-cols-12 gap-10 items-center">
-      <div className="col-span-5 flex flex-col gap-4">
+      <div className={`${def.wide ? 'col-span-4' : 'col-span-5'} flex flex-col gap-4`}>
         <div>
           <motion.div {...fade(0)} className="text-[18px] tracking-[0.2em] uppercase font-bold mb-2 flex items-center gap-2" style={{ color: o.color }}>
             <OIcon id={o.id} size={38} color={o.color} />{o.name} · {idx + 1}/{o.moments.length}
           </motion.div>
-          <motion.h2 {...fade(0.06)} className="serif text-[58px] leading-[1.04] font-bold mb-2">{def.title}</motion.h2>
+          <motion.h2 {...fade(0.06)} className={`serif ${def.wide ? 'text-[46px]' : 'text-[58px]'} leading-[1.04] font-bold mb-2`}>{def.title}</motion.h2>
           <motion.div {...fade(0.12)} className="text-[28px] font-semibold grad-text leading-snug">{def.headline}</motion.div>
         </div>
         {hit.length > 0 && <PainBanner pains={hit} solver={def.title} />}
@@ -51,7 +52,7 @@ function MomentSlide({ def }: { def: MomentDef }) {
         </motion.div>
         {hit.length === 0 && <motion.div {...fade(0.4)} className="flex flex-wrap gap-2">{def.included.map(x => <Badge key={x} tone="mute">{x}</Badge>)}</motion.div>}
       </div>
-      <motion.div className="col-span-7" initial={{ opacity: 0, scale: 0.94, x: 40 }} animate={{ opacity: 1, scale: 1, x: 0 }} transition={{ delay: 0.15, duration: 0.6, ease: 'easeOut' }}>
+      <motion.div className={def.wide ? 'col-span-8' : 'col-span-7'} initial={{ opacity: 0, scale: 0.94, x: 40 }} animate={{ opacity: 1, scale: 1, x: 0 }} transition={{ delay: 0.15, duration: 0.6, ease: 'easeOut' }}>
         <FitDemo maxHeight={860}>{def.demo()}</FitDemo>
       </motion.div>
       <SkipBar />
@@ -81,7 +82,7 @@ export const MOMENTS_P3: MomentDef[] = [
   { outcome: 'know', key: 'emp', title: 'Employee master 360', headline: 'One record. 26 sections. Full history.',
     scenario: c => `Before the annual review, ${first(N(c)[3])} opens ${first(N(c)[1])}’s record: contracts, certificates, skills, visas, disciplinary history — and every change ever made.`,
     results: ['26 profile sections with documents', 'Change history on every field', 'Archive and restore — never lose a record'],
-    included: ['Payroll accounts', 'Attendance locations', 'Policy acknowledgements', 'Health & insurance'], demo: () => <EmployeeDemo />,
+    included: ['Payroll accounts', 'Attendance locations', 'Policy acknowledgements', 'Health & insurance'], demo: () => <EmployeeDemo />, wide: true,
     notes: 'The backbone. Emphasise a single source of truth and the change history.\nReadiness (private): LIVE.' },
   { outcome: 'know', key: 'live', title: 'Workforce Live', headline: 'The state of your workforce, live.',
     scenario: c => `${first(N(c)[0])} (owner) opens the dashboard between meetings: headcount trend, who may leave, which certificates expire this month.`,
