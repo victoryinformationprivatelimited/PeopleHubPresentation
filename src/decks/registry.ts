@@ -22,7 +22,7 @@ export interface DeckDef {
 export interface NavOption { id: string; name: string; desc: string; slideId: string; more?: string[] }   // `more` = extra slides of a multi-slide navigation screen
 
 /** Fresh Harvest = the Outcome Workshop (every navigation screen shown) minus these slides, by their number in that full list. */
-const FRESH_DROP_NUMBERS = [6, 7, 8, 9, 10, 11, 12, 13, 14, 71, 75, 77, 78, 79, 81]
+const FRESH_DROP_NUMBERS = [6, 7, 8, 9, 10, 11, 12, 13, 14, 69, 71, 75, 77, 78, 79, 81]
 
 export const decks: DeckDef[] = [
   {
