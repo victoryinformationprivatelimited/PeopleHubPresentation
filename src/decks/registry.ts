@@ -15,6 +15,7 @@ export interface DeckDef {
   arrange?: (slides: SlideDef[], outcomes: string[]) => SlideDef[]           // reorder using live choices (e.g. discovery wall)
   navs?: NavOption[]                                                          // interchangeable “navigation screens” — the presenter keeps one
   defaultNav?: string
+  home?: string                  // slide the Home button returns to (when the deck has no navigation options)
 }
 
 /** A screen the client uses to explore the product and jump into modules. Only the chosen one is kept in the deck. */
@@ -36,6 +37,21 @@ export const decks: DeckDef[] = [
       { id: 'lenses', name: 'Three lenses: Operational · Strategic · Enablement', desc: 'Three slides that group the modules by what they do for the business, in a clear flow, with the sales story, a question to ask and every feature', slideId: 'ws-pillar-ops', more: ['ws-pillar-strat', 'ws-pillar-comp'] },
     ],
     defaultNav: 'wall',
+  },
+  {
+    id: 'fresh',
+    name: 'Fresh Harvest Workshop',
+    tagline: 'The Outcome Workshop for Fresh Harvest: welcome, who we are, one working day, every module on one screen, then every chapter to the close.',
+    bestFor: 'The Fresh Harvest visit — set the client name and details in the control panel',
+    build: () => {
+      const all = buildWorkshopSlides()
+      const at = (id: string) => all.find(s => s.id === id)!
+      const after = all.slice(all.findIndex(s => s.id === 'ws-landscape') + 1).filter(s => !s.id.startsWith('ws-pillar-'))
+      return [at('open'), at('ws-about'), at('ws-day'), at('ws-landscape'), ...after]
+    },
+    chapters: OUTCOMES.map(o => ({ id: o.id, name: `${o.icon} ${o.name}` })),
+    arrange: arrangeWorkshop,
+    home: 'ws-landscape',
   },
   {
     id: 'tour',

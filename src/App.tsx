@@ -103,7 +103,7 @@ export default function App() {
   }
   // “Home” = the navigation screen this presentation was set up with (falls back to the first slide)
   const navSlides = (getDeck(deckId).navs ?? []).filter(n => (cfg.nav ?? getDeck(deckId).defaultNav) === 'all' || n.id === (cfg.nav ?? getDeck(deckId).defaultNav)).map(n => n.slideId)
-  const homeId = visible.find(sl => navSlides.includes(sl.id))?.id ?? visible[0]?.id
+  const homeId = visible.find(sl => navSlides.includes(sl.id))?.id ?? visible.find(sl => sl.id === getDeck(deckId).home)?.id ?? visible[0]?.id
   return (
     <SessionContext.Provider value={sessionApi}><DeckContext.Provider value={ctx}>
       <Deck
