@@ -18,7 +18,7 @@ export interface DeckDef {
 }
 
 /** A screen the client uses to explore the product and jump into modules. Only the chosen one is kept in the deck. */
-export interface NavOption { id: string; name: string; desc: string; slideId: string }
+export interface NavOption { id: string; name: string; desc: string; slideId: string; more?: string[] }   // `more` = extra slides of a multi-slide navigation screen
 
 export const decks: DeckDef[] = [
   {
@@ -33,6 +33,7 @@ export const decks: DeckDef[] = [
       { id: 'wall', name: 'Discovery wall', desc: 'The client taps the outcomes that matter most — best for co-design sessions', slideId: 'ws-wall' },
       { id: 'wheel', name: 'Module wheel', desc: 'An animated wheel of the platform; tap a segment, open any module', slideId: 'ws-wheel' },
       { id: 'landscape', name: 'Module & feature landscape', desc: 'Every module and its features on one screen; tap a card to open it', slideId: 'ws-landscape' },
+      { id: 'lenses', name: 'Three lenses: Operational · Strategic · Complementary', desc: 'Three slides that group the modules by what they do for the business, with the sales story, a question to ask and every feature', slideId: 'ws-pillar-ops', more: ['ws-pillar-strat', 'ws-pillar-comp'] },
     ],
     defaultNav: 'wall',
   },
@@ -45,6 +46,7 @@ export const decks: DeckDef[] = [
     navs: [
       { id: 'landscape', name: 'Module & feature landscape', desc: 'Every module and its features on one screen; tap a card to open it', slideId: 'landscape' },
       { id: 'wheel', name: 'Module wheel', desc: 'An animated wheel of the platform; tap a segment, open any module', slideId: 'wheel' },
+      { id: 'lenses', name: 'Three lenses: Operational · Strategic · Complementary', desc: 'Three slides that group the modules by what they do for the business, with the sales story, a question to ask and every feature', slideId: 'pillar-ops', more: ['pillar-strat', 'pillar-comp'] },
       { id: 'constellation', name: 'One-platform constellation', desc: 'The original animated map of all modules', slideId: 'constellation' },
     ],
     defaultNav: 'landscape',
@@ -63,7 +65,7 @@ export function applyNav(id: string | undefined, slides: SlideDef[], nav?: strin
   if (!d.navs?.length) return slides
   const chosen = nav ?? d.defaultNav
   if (chosen === 'all') return slides
-  const drop = new Set(d.navs.filter(n => n.id !== chosen).map(n => n.slideId))
+  const drop = new Set(d.navs.filter(n => n.id !== chosen).flatMap(n => [n.slideId, ...(n.more ?? [])]))
   return slides.filter(s => !drop.has(s.id))
 }
 

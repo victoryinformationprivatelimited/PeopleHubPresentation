@@ -192,11 +192,10 @@ export function ToolkitSlide() {
 /* Small buttons on every capability slide: open the toolkit, or finish and move on */
 export function SkipBar() {
   const { jump, goTo, has } = useNav()
-  if (!has('ws-toolkit')) return null
   const btn = 'rounded-full px-6 py-3 text-[19px] font-bold shadow-lg transition hover:brightness-125'
   return (
     <div className="absolute right-20 bottom-[66px] z-30 flex gap-3">
-      <button onClick={() => jump('ws-toolkit')} className={btn} style={{ background: 'var(--bg2)', border: '1.5px solid var(--brand2)' }}>▦ Toolkit</button>
+      {has('ws-toolkit') && <button onClick={() => jump('ws-toolkit')} className={btn} style={{ background: 'var(--bg2)', border: '1.5px solid var(--brand2)' }}>▦ Toolkit</button>}
       <button onClick={() => goTo('ws-solved')} className={`${btn} text-white`} style={{ background: 'linear-gradient(90deg,var(--brand),var(--accent))' }}>✔ Done — next step ➜</button>
     </div>
   )

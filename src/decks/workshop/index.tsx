@@ -8,6 +8,7 @@ import { BlueprintSlide, ChapterCard, DaySlide, DetailsSlide, FabricSlide, Recap
 import { AboutSlide, ClientsSlide } from '../../slides/about'
 import { LandscapeSlide } from '../../slides/landscape'
 import { WheelSlide } from '../../slides/wheel'
+import { PillarSlide, LENSES, lensIds } from '../../slides/pillars'
 import { HeroBuild, JourneySlide, PainsPickSlide, ToolkitSlide } from './extra'
 
 /**
@@ -37,6 +38,7 @@ export function buildWorkshopSlides(): SlideDef[] {
     mk('ws-wall', 'Co-design', 'Discovery wall', 120, 3, 'This is the heart of the session. Hand over: "Tap what matters most." Pre-ticked from their pain points and industry. Order matters — number 1 is what we start with. Ask why for each choice and capture the answers.', () => <WallSlide />),
     mk('ws-wheel', 'Co-design', 'Module wheel', 90, 2, 'The platform as an animated wheel: it tours the ten outcomes on its own; tap a segment to take over, then tap any module to open it and use Back to return. A visual alternative to the discovery wall and the landscape — choose the navigation screen on the setup screen.', () => <WheelSlide mode="workshop" doneTo="ws-solved" />),
     mk('ws-landscape', 'Co-design', 'Every module & feature', 90, 2, 'Alternative to the discovery wall for clients who want the full picture first: all modules and their features on one screen, grouped by colour. Tap any card to open its page, then use Back. Hover to enlarge. Cards with ⚡ solve a pain the client picked; coloured borders are outcomes they chose on the wall. Use the wall for co-design sessions and this screen for executives who say "just show me everything" — hide whichever you do not need in the agenda.', () => <LandscapeSlide mode="workshop" doneTo="ws-solved" />),
+    ...(['ops', 'strat', 'comp'] as const).map(k => mk(lensIds('ws-')[k], 'Co-design', `${LENSES[k].name} modules`, 90, 2, LENSES[k].notes, () => <PillarSlide lens={k} mode="workshop" ids={lensIds('ws-')} doneTo="ws-solved" />)),
     mk('ws-blueprint', 'Co-design', 'Your blueprint, live', 60, 3, 'Their choices become a blueprint. Read it back: "So we start with… then…". Lit modules show what is in scope. Tap an outcome to open its chapter.', () => <BlueprintSlide />),
     mk('ws-fabric', 'Co-design', 'The PeopleHub fabric', 45, 2, 'The whole system on one page: experiences on top, outcomes in the middle, the shared foundation underneath. Use it to answer "what else is there?".', () => <FabricSlide />),
     mk('ws-toolkit', 'Co-design', 'Your PeopleHub toolkit', 90, 3, 'The explorer: every capability in one place. Let the client choose what to see — tap one, show it, then use the Back button to return here. When they have seen enough, press "Done exploring — next step" to jump to the wrap-up, or "Walk me through my blueprint" for the guided chapters.', () => <ToolkitSlide />),

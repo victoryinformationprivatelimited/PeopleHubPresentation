@@ -12,6 +12,7 @@ import { modules, pillars } from './modules'
 import * as A from './demosA'
 import * as B from './demosB'
 import { NotifRulesDemo } from './demosC'
+import { PillarSlide, LENSES, lensIds } from './pillars'
 import type { Mod } from './modules'
 import { AboutSlide, ClientsSlide } from './about'
 import { LandscapeSlide } from './landscape'
@@ -309,6 +310,7 @@ export function buildSlides(): SlideDef[] {
     s('constellation', 'Open', 'One platform', 'Pulsing items are the modules most relevant for this industry. Say you will focus there but cover everything.', Constellation),
     s('glance', 'Open', 'At a glance', 'Keep short for HR/C-level; IT Manager deep-dive follows later.', Glance),
     s('landscape', 'Open', 'Every module & feature', 'All modules and their features on one screen. Tap a card to open that module, then Back. Good for clients who want the whole picture before the walkthrough.', () => <LandscapeSlide mode="tour" />),
+    ...(['ops', 'strat', 'comp'] as const).map(k => s(lensIds('')[k], 'Open', `${LENSES[k].name} modules`, LENSES[k].notes, () => <PillarSlide lens={k} mode="tour" ids={lensIds('')} doneTo="it-arch" />)),
     s('wheel', 'Open', 'Module wheel', 'The platform as an animated wheel: tap a segment, then any module to open it; Back returns here.', () => <WheelSlide mode="tour" />),
     ...part('core'), ...part('ops'), ...part('talent'), ...part('exp').flatMap(sl => (sl.id === 'notifications' ? [sl, notifRules] : [sl])), ...part('intel'),
     s('it-arch', 'IT Deep-Dive', 'Architecture', 'For the IT Manager: layered architecture. Invite questions on stack, hosting and DR. Confirm the PostgreSQL / Azure Storage positioning before presenting.', Architecture),
@@ -330,7 +332,7 @@ export function buildSlides(): SlideDef[] {
   const meta: Record<string, [number, number]> = {
     open: [30, 3], challenge: [60, 3], beforeafter: [60, 2], constellation: [45, 3], glance: [30, 1],
     'it-arch': [60, 0], 'it-tenancy': [45, 0], 'it-sec': [45, 0], 'it-int': [45, 0],
-    about: [45, 2], clients: [45, 2], landscape: [90, 2], wheel: [90, 2], story: [45, 2], why: [45, 2], versus: [60, 2], pains: [45, 3], packages: [60, 3], implementation: [45, 2], roi: [60, 2], next: [30, 3], contact: [20, 3],
+    about: [45, 2], clients: [45, 2], landscape: [90, 2], wheel: [90, 2], 'pillar-ops': [90, 2], 'pillar-strat': [90, 2], 'pillar-comp': [90, 2], story: [45, 2], why: [45, 2], versus: [60, 2], pains: [45, 3], packages: [60, 3], implementation: [45, 2], roi: [60, 2], next: [30, 3], contact: [20, 3],
   }
   return all.map(sl => (meta[sl.id] ? { ...sl, secs: meta[sl.id][0], tier: meta[sl.id][1] } : sl))
 }
