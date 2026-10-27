@@ -3,6 +3,7 @@ import { motion } from 'framer-motion'
 import { useDeck, type DeckCtx, type SlideDef } from '../../engine/context'
 import { Badge, fade } from '../../ui/primitives'
 import { FitDemo } from '../../ui/FitDemo'
+import { AutoPlay } from '../../ui/AutoPlay'
 import { PainBanner } from '../../ui/PainBanner'
 import { SkipBar } from './extra'
 import { OIcon } from '../../ui/OutcomeIcons'
@@ -54,7 +55,7 @@ function MomentSlide({ def }: { def: MomentDef }) {
         {hit.length === 0 && <motion.div {...fade(0.4)} className="flex flex-wrap gap-2">{def.included.map(x => <Badge key={x} tone="mute">{x}</Badge>)}</motion.div>}
       </div>
       <motion.div className={def.wide ? 'col-span-8' : 'col-span-7'} initial={{ opacity: 0, scale: 0.94, x: 40 }} animate={{ opacity: 1, scale: 1, x: 0 }} transition={{ delay: 0.15, duration: 0.6, ease: 'easeOut' }}>
-        <FitDemo maxHeight={860}>{def.demo()}</FitDemo>
+        <FitDemo maxHeight={860}><AutoPlay id={def.key}>{def.demo()}</AutoPlay></FitDemo>
       </motion.div>
       <SkipBar />
     </div>

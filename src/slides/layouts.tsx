@@ -5,6 +5,7 @@ import { pillarById } from './modules'
 import { fade } from '../ui/primitives'
 import { useDeck } from '../engine/context'
 import { PainBanner } from '../ui/PainBanner'
+import { AutoPlay } from '../ui/AutoPlay'
 
 export function ModuleSlide({ mod, demo }: { mod: Mod; demo: ReactNode }) {
   const p = pillarById[mod.pillar]
@@ -35,7 +36,7 @@ export function ModuleSlide({ mod, demo }: { mod: Mod; demo: ReactNode }) {
           </motion.div>
         )}
       </div>
-      <div className="col-span-7" style={{ zoom: 1.22 }}>{demo}</div>
+      <div className="col-span-7" style={{ zoom: 1.22 }}><AutoPlay id={mod.id}>{demo}</AutoPlay></div>
     </div>
   )
 }
