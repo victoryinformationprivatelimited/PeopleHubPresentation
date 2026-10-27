@@ -19,10 +19,11 @@ export const LENSES: Record<Lens, { n: number; name: string; short: string; colo
     gains: ['One record per employee, one source of truth', 'Payroll from live attendance — nothing re-keyed', 'Employees self-serve; managers approve anywhere', 'Everyone told on time, every action audited'],
     ask: 'How many phone calls and chases does it take to get attendance and approvals ready for payroll?',
     stages: [
-      ['People', ['Organization', 'Employee master 360', 'Life cycle', 'Termination & exit']],
+      ['People', ['Organization', 'Employee master 360', 'Life cycle']],
       ['Time', ['Time & attendance', 'Mobile app', 'Leave management', 'Meal management']],
       ['Pay', ['Staff loans & advances', 'Benefits & claims', 'Payroll', 'Salary banking']],
       ['Control', ['Self-service portal', 'Approvals', 'Notifications', 'Security & audit']],
+      ['Exit', ['Termination & exit']],
     ],
     notes: 'Lens 1 of 3 — the administrative engine, including self-service, approvals, notifications and security that keep it running safely. Lead with the pain: re-keying, late payroll, approvals chased by phone, disputes. Ask the question on the left and let the client answer before you open anything. The card that is highlighted tours on its own until you hover or tap; tap any card to open that module, then use Back to return here. Press "Done" when the client has seen enough and you want to move on. Keep it to the two or three modules that match what they said.',
   },
