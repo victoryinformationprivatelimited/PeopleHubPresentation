@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { LeaveDemo } from '../../slides/demosPilot'
 import { motion } from 'framer-motion'
 import { money, useDeck } from '../../engine/context'
 import Chart from '../../ui/LazyChart'
@@ -193,25 +194,7 @@ export function ProcessDemo() {
 }
 
 /* ───────── Leave types & policies ───────── */
-export function LeaveTypesDemo() {
-  const { country, company } = useDeck()
-  const rules = ['Granted each January', 'Pro-rated for joiners', 'Needs medical certificate after 2 days', 'Carry forward up to 5 days']
-  return (
-    <Window title={`${company} · Leave policies`}>
-      <div className="grid grid-cols-2 gap-3">
-        {country.leaveTypes.map(([n, , t], k) => (
-          <motion.div key={n} {...fade(0.12 * k)} className="card p-3">
-            <div className="flex justify-between items-center"><b className="text-[16px]">{n}</b><Badge tone="ok">{t} days / yr</Badge></div>
-            <div className="text-[12.5px] mt-1.5" style={{ color: 'var(--mute)' }}>{rules[k % rules.length]}</div>
-            <div className="flex gap-1.5 mt-2 flex-wrap"><Badge tone="mute">Notice: {k === 0 ? '3 days' : k === 1 ? '1 day' : 'none'}</Badge><Badge tone="mute">All categories</Badge></div>
-          </motion.div>
-        ))}
-        <div className="card p-3 grid place-items-center text-[14px] font-bold" style={{ border: '1px dashed var(--brand2)', color: 'var(--brand2)' }}>＋ New leave type</div>
-      </div>
-      <div className="flex gap-2 mt-3 flex-wrap">{['Entitlements by category', 'Lieu-leave generation', 'Unused-leave expiry', 'Covering person', 'Cancel approved leave'].map(x => <Badge key={x} tone="mute">{x}</Badge>)}</div>
-    </Window>
-  )
-}
+export const LeaveTypesDemo = () => <LeaveDemo start={1} />
 
 /* ───────── Apply for leave on the phone ───────── */
 export function LeavePhoneDemo() {
