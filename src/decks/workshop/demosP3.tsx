@@ -3,7 +3,7 @@ import { LeaveDemo } from '../../slides/demosPilot'
 import { motion } from 'framer-motion'
 import { money, useDeck } from '../../engine/context'
 import Chart from '../../ui/LazyChart'
-import { Avatar, Badge, Bar, Counter, Phone, Window, fade } from '../../ui/primitives'
+import { Avatar, Badge, Counter, Phone, Window, fade } from '../../ui/primitives'
 
 const mix = (c: string, p: number) => `color-mix(in srgb, ${c} ${p}%, transparent)`
 const chartBase = { chart: { toolbar: { show: false }, background: 'transparent', foreColor: '#94a3c0', animations: { enabled: true, speed: 900 } }, grid: { borderColor: 'rgba(148,163,192,.18)' }, theme: { mode: 'dark' as const }, tooltip: { theme: 'dark' as const } }
@@ -74,24 +74,6 @@ export function LettersDemo() {
 }
 
 /* ───────── Bulk upload & custom fields ───────── */
-export function BulkDemo() {
-  const { country, industry, headcount, company } = useDeck()
-  const total = headcount ?? 1000
-  const rows = [[country.sampleNames[0], industry.departments[1], 'ok'], [country.sampleNames[1], industry.departments[2], 'ok'], [country.sampleNames[2], industry.departments[3], 'warn'], [country.sampleNames[3], industry.departments[4], 'ok'], [country.sampleNames[4], '— missing —', 'bad']]
-  return (
-    <Window title={`${company} · Bulk upload`}>
-      <div className="flex items-center gap-3 mb-3 text-[14px]">{['1 Upload', '2 Validate', '3 Import'].map((s, k) => <span key={s} className="rounded-full px-3 py-1 font-bold" style={k <= 1 ? { background: 'var(--brand)', color: '#fff' } : { background: 'var(--card)', color: 'var(--mute)' }}>{s}</span>)}<Badge tone="mute">📄 employees.xlsx</Badge></div>
-      <div className="flex flex-col gap-1.5 mb-3">
-        {rows.map(([n, dpt, st], k) => (
-          <motion.div key={n} {...fade(0.12 * k)} className="card px-3 py-2 grid grid-cols-[1fr_1fr_90px] items-center text-[14px]"><span className="font-semibold">{n}</span><span style={{ color: st === 'bad' ? 'var(--bad)' : 'var(--mute)' }}>{dpt}</span><Badge tone={st === 'ok' ? 'ok' : st === 'warn' ? 'warn' : 'bad'}>{st === 'ok' ? '✓ valid' : st === 'warn' ? 'duplicate ID' : 'missing'}</Badge></motion.div>
-        ))}
-      </div>
-      <div className="card p-3 flex items-center justify-between mb-3"><span className="text-[15px]"><b style={{ color: 'var(--ok)' }}>{total - 3}</b> valid · <b style={{ color: 'var(--warn)' }}>3</b> need fixing</span><button className="rounded-lg px-4 py-1.5 text-[13px] font-bold text-white" style={{ background: 'var(--ok)', color: '#06281c' }}>Import {total - 3}</button></div>
-      <div className="text-[12px] tracking-widest uppercase mb-1.5" style={{ color: 'var(--mute)' }}>Custom fields</div>
-      <div className="flex flex-wrap gap-2">{['Safety badge', 'Union member', 'Uniform size', 'Blood group'].map(f => <span key={f} className="rounded-lg px-3 py-1.5 text-[13px]" style={{ background: mix('var(--accent)', 18), border: '1px solid var(--line)' }}>＋ {f}</span>)}<span className="rounded-lg px-3 py-1.5 text-[13px] font-bold" style={{ border: '1px dashed var(--brand2)', color: 'var(--brand2)' }}>＋ Add field</span></div>
-    </Window>
-  )
-}
 
 /* ───────── Manual attendance ───────── */
 export function ManualAttDemo() {
@@ -222,29 +204,6 @@ export function LeavePhoneDemo() {
 }
 
 /* ───────── Team calendar & unused leave ───────── */
-export function LeaveCalendarDemo() {
-  const { country, company } = useDeck()
-  const colors = ['#3b6be0', '#22d3ee', '#a78bfa', '#f59e0b']
-  const bars: [number, number, number, string][] = [[0, 3, 5, 'Annual'], [1, 8, 9, 'Casual'], [2, 10, 14, 'Annual'], [3, 17, 18, 'Medical'], [0, 22, 23, 'Lieu day']]
-  return (
-    <Window title={`${company} · Team leave calendar · November`}>
-      <div className="grid grid-cols-7 gap-1 text-[12px] mb-2">{['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(d => <span key={d} className="text-center" style={{ color: 'var(--mute)' }}>{d}</span>)}
-        {[...Array(28)].map((_, k) => {
-          const hit = bars.filter(b => k + 1 >= b[1] && k + 1 <= b[2])
-          return <div key={k} className="rounded-md h-[44px] p-1 relative" style={{ background: 'var(--card)', border: '1px solid var(--line)' }}>
-            <span style={{ color: 'var(--mute)' }}>{k + 1}</span>
-            {hit.slice(0, 2).map((b, j) => <div key={j} className="absolute left-1 right-1 h-[6px] rounded-full" style={{ bottom: 4 + j * 8, background: colors[b[0]] }} />)}
-          </div>
-        })}
-      </div>
-      <div className="flex flex-wrap gap-3 mb-3 text-[12.5px]">{country.sampleNames.slice(0, 4).map((n, k) => <span key={n} className="flex items-center gap-1.5"><i className="w-3 h-3 rounded-full" style={{ background: colors[k] }} />{n.split(' ')[0]}</span>)}</div>
-      <div className="grid grid-cols-2 gap-3">
-        <div className="card p-3 text-[13.5px]"><Badge tone="warn">Expiring</Badge><div className="mt-1.5">Unused leave expires in 30 days — <b>3 employees</b> notified</div></div>
-        <div className="card p-3 text-[13.5px]"><Badge tone="ok">Lieu leave</Badge><div className="mt-1.5">{country.sampleNames[0].split(' ')[0]} worked a holiday — <b>1 lieu day</b> generated automatically</div></div>
-      </div>
-    </Window>
-  )
-}
 
 /* ───────── Payslips on the phone ───────── */
 export function PayslipPhoneDemo() {
@@ -273,44 +232,8 @@ export function PayslipPhoneDemo() {
 }
 
 /* ───────── Reimbursements & claims ───────── */
-export function ClaimsDemo() {
-  const { country, company } = useDeck()
-  const [step, setStep] = useState(0)
-  useEffect(() => { const t = setInterval(() => setStep(s => (s < 3 ? s + 1 : s)), 1100); return () => clearInterval(t) }, [])
-  const amt = Math.round(country.salary * 0.04)
-  return (
-    <Window title={`${company} · New claim`}>
-      <div className="grid grid-cols-2 gap-3 mb-4">
-        {[['Claim type', 'Travel'], ['Amount', money(country, amt)], ['Date', '21 Oct 2026'], ['Receipt', '📎 taxi_receipt.jpg']].map(([a, b]) => <div key={a} className="card p-3"><div className="text-[12px]" style={{ color: 'var(--mute)' }}>{a}</div><div className="font-bold text-[16px]">{b}</div></div>)}
-      </div>
-      <div className="flex items-center gap-2">
-        {['Submitted', 'Manager approved', 'Finance checked', 'Paid with payroll'].map((s, k) => (
-          <div key={s} className="contents">
-            <div className="card px-3 py-2.5 text-center text-[13px] flex-1" style={{ opacity: step >= k ? 1 : 0.35, borderColor: step >= k ? 'var(--ok)' : undefined }}><div style={{ color: step >= k ? 'var(--ok)' : 'var(--mute)' }}>{step >= k ? '✓' : '○'}</div>{s}</div>
-            {k < 3 && <span style={{ color: 'var(--brand2)' }}>➜</span>}
-          </div>
-        ))}
-      </div>
-      <div className="flex gap-2 mt-4 flex-wrap">{['Receipt attachments', 'Policy limits', 'Multi-level approval', 'Paid in next payroll'].map(x => <Badge key={x} tone="mute">{x}</Badge>)}</div>
-    </Window>
-  )
-}
 
 /* ───────── Finance: GL, cost centres, banking ───────── */
-export function FinanceDemo() {
-  const { country, industry, headcount, company } = useDeck()
-  const total = country.salary * (headcount ?? 250)
-  const rows = [['Basic salary', '5100 · Salaries', industry.departments[1]], [industry.allowance, '5120 · Allowances', industry.departments[2]], [`${country.statutory[0].label} (employer)`, '5200 · Statutory', 'All'], ['Overtime', '5130 · Overtime', industry.departments[3]]]
-  return (
-    <Window title={`${company} · Payroll finance`}>
-      <div className="text-[12px] tracking-widest uppercase mb-1.5" style={{ color: 'var(--mute)' }}>GL mapping rules</div>
-      <div className="flex flex-col gap-1.5 mb-3">{rows.map(([a, b, c], k) => <motion.div key={a} {...fade(0.1 * k)} className="card px-3 py-2 grid grid-cols-3 text-[13.5px]"><span>{a}</span><span style={{ color: 'var(--accent)' }}>{b}</span><span style={{ color: 'var(--mute)' }}>{c}</span></motion.div>)}</div>
-      <div className="text-[12px] tracking-widest uppercase mb-1.5" style={{ color: 'var(--mute)' }}>Cost by department</div>
-      <div className="flex flex-col gap-1.5 mb-3">{industry.departments.slice(0, 4).map((d, k) => <div key={d} className="grid grid-cols-[130px_1fr] items-center gap-2 text-[13px]"><span>{d}</span><Bar pct={[44, 26, 18, 12][k]} delay={0.1 * k} /></div>)}</div>
-      <div className="card p-3 flex items-center justify-between"><span className="text-[14px]">🏦 Bank file <b>salary_oct.txt</b> ready · {money(country, Math.round(total * 0.88))}</span><Badge tone="ok">Journal posted</Badge></div>
-    </Window>
-  )
-}
 
 /* ───────── Salary advance & loans ───────── */
 export function AdvanceDemo() {
@@ -328,3 +251,4 @@ export function AdvanceDemo() {
     </Window>
   )
 }
+export { LeaveCalendarDemo, FinanceDemo, ClaimsDemo, BulkDemo } from '../../slides/demosPhase2'
