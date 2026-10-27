@@ -21,6 +21,21 @@ export interface DeckDef {
 /** A screen the client uses to explore the product and jump into modules. Only the chosen one is kept in the deck. */
 export interface NavOption { id: string; name: string; desc: string; slideId: string; more?: string[] }   // `more` = extra slides of a multi-slide navigation screen
 
+/** Fresh Harvest: the system screens (Workshop scenario slides) grouped by module — Operational, Strategic, Enablement, then platform screens. */
+export const FRESH_ORDER: [string, string[]][] = [
+  ['Organization', ['know-org']], ['Employee master 360', ['know-emp', 'know-live', 'know-bulk']], ['Life cycle', ['know-life']],
+  ['Time & attendance', ['time-capture', 'time-manual', 'time-roster', 'time-policy', 'time-process']], ['Mobile app', ['serve-mobile']],
+  ['Leave management', ['leave-types', 'leave-apply', 'leave-calendar']], ['Meal management', ['time-meal']], ['Staff loans & advances', ['pay-advance']],
+  ['Benefits & claims', ['pay-claims', 'pay-benefits']], ['Payroll', ['pay-engine', 'pay-payslips']], ['Salary banking', ['pay-finance']],
+  ['Self-service portal', ['serve-ess']], ['Approvals', ['approve-builder', 'approve-higher', 'approve-inbox']], ['Notifications', ['approve-rules']],
+  ['Security & audit', ['secure-sec', 'data-audit']], ['Termination & exit', ['grow-exit']],
+  ['Recruitment & onboarding', ['hire-recruit']], ['Performance', ['grow-perf']], ['Learning & development', ['grow-learn']], ['Succession planning', ['grow-succ']],
+  ['Engagement', ['grow-engage', 'grow-recog']], ['Grievance reporting', ['serve-grievance']], ['Analytics & reports', ['data-dash']], ['Compliance & statutory', ['data-compliance']],
+  ['Letter generator', ['hire-letters']], ['Tasks & checklists', ['hire-onboard']], ['Service desk', ['serve-tickets']], ['Asset tracker', ['serve-assets']],
+  ['Knowledge base', ['serve-kb']], ['Chat & AI assistant', ['serve-chat']], ['News broadcasting', ['serve-news']], ['Integrations & ERP', ['secure-integ']],
+  ['Platform', ['secure-tenancy', 'secure-billing', 'secure-arch']],
+]
+
 export const decks: DeckDef[] = [
   {
     id: 'workshop',
@@ -40,18 +55,14 @@ export const decks: DeckDef[] = [
   },
   {
     id: 'fresh',
-    name: 'Fresh Harvest Workshop',
-    tagline: 'The Outcome Workshop for Fresh Harvest: welcome, who we are, one working day, every module on one screen, then every chapter to the close.',
+    name: 'Fresh Harvest · System screens',
+    tagline: 'Only the live system screens, grouped by module in the order Operational, Strategic, then Enablement — ready to be reorganised.',
     bestFor: 'The Fresh Harvest visit — set the client name and details in the control panel',
     build: () => {
       const all = buildWorkshopSlides()
-      const at = (id: string) => all.find(s => s.id === id)!
-      const after = all.slice(all.findIndex(s => s.id === 'ws-landscape') + 1).filter(s => !s.id.startsWith('ws-pillar-'))
-      return [at('open'), at('ws-about'), at('ws-day'), at('ws-landscape'), ...after]
+      const ids = FRESH_ORDER.flatMap(([, list]) => list)
+      return ids.map(id => all.find(s => s.id === id)!)
     },
-    chapters: OUTCOMES.map(o => ({ id: o.id, name: `${o.icon} ${o.name}` })),
-    arrange: arrangeWorkshop,
-    home: 'ws-landscape',
   },
   {
     id: 'tour',
