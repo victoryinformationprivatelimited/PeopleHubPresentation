@@ -14,11 +14,11 @@ export const LENSES: Record<Lens, { n: number; name: string; short: string; colo
   ops: {
     n: 1, name: 'Operational HR', short: 'Operational', color: '#0ea5e9',
     tagline: 'Run every day without chasing paper.',
-    why: 'The daily engine of HR: people records, time, leave and pay — accurate, on time and audit-ready, because every step feeds the next.',
-    gains: ['One record per employee, one source of truth', 'Payroll built from live attendance and leave — nothing re-keyed', 'Statutory deductions and bank files without spreadsheets'],
-    ask: 'How many people touch attendance and leave before payroll can close today?',
-    mods: ['Organization', 'Employee master 360', 'Life cycle', 'Letter generator', 'Tasks & checklists', 'Termination & exit', 'Time & attendance', 'Mobile app', 'Leave management', 'Meal management', 'Payroll', 'Staff loans & advances', 'Benefits & claims', 'Salary banking'],
-    notes: 'Lens 1 of 3 — the administrative engine. Lead with the pain: re-keying, late payroll, disputes. Ask the question on the left and let the client answer before you open anything. The card that is highlighted tours on its own until you hover or tap; tap any card to open that module, then use Back to return here. Press "Done" when the client has seen enough and you want to move on. Keep it to the two or three modules that match what they said.',
+    why: 'The daily engine of HR: people records, time, leave and pay, run through self-service, approvals and notifications under role-based security — accurate, on time and audit-ready.',
+    gains: ['One record per employee, one source of truth', 'Payroll from live attendance — nothing re-keyed', 'Employees self-serve; managers approve anywhere', 'Everyone told on time, every action audited'],
+    ask: 'How many phone calls and chases does it take to get attendance and approvals ready for payroll?',
+    mods: ['Organization', 'Employee master 360', 'Life cycle', 'Termination & exit', 'Time & attendance', 'Mobile app', 'Leave management', 'Meal management', 'Payroll', 'Staff loans & advances', 'Benefits & claims', 'Salary banking', 'Self-service portal', 'Approvals', 'Notifications', 'Security & audit'],
+    notes: 'Lens 1 of 3 — the administrative engine, including self-service, approvals, notifications and security that keep it running safely. Lead with the pain: re-keying, late payroll, approvals chased by phone, disputes. Ask the question on the left and let the client answer before you open anything. The card that is highlighted tours on its own until you hover or tap; tap any card to open that module, then use Back to return here. Press "Done" when the client has seen enough and you want to move on. Keep it to the two or three modules that match what they said.',
   },
   strat: {
     n: 2, name: 'Strategic HR', short: 'Strategic', color: '#a78bfa',
@@ -31,12 +31,12 @@ export const LENSES: Record<Lens, { n: number; name: string; short: string; colo
   },
   comp: {
     n: 3, name: 'Complementary', short: 'Complementary', color: '#34d399',
-    tagline: 'Make HR effortless for everyone else.',
-    why: 'The experience and control layer around the core: employees help themselves, managers approve from anywhere, and IT keeps security and integrations under control.',
-    gains: ['Fewer HR queries — answers before the question is asked', 'Every request tracked and approved on any device', 'Secure by design and connected to your ERP and devices'],
-    ask: 'How many HR questions reach you by phone or WhatsApp every day?',
-    mods: ['Self-service portal', 'Service desk', 'Asset tracker', 'Knowledge base', 'Chat & AI assistant', 'News broadcasting', 'Approvals', 'Notifications', 'Security & audit', 'Integrations & ERP'],
-    notes: 'Lens 3 of 3 — the adoption and control layer. Speak to the HR team (time saved), managers (approvals anywhere) and the IT Manager (security, integrations). Self-service, Approvals and Integrations are the usual favourites. Tap any card to open that module, Back returns here. Finish with "Done" to move on to the next part of the session.',
+    tagline: 'The extras that save time every single day.',
+    why: 'The helpers around the core: letters and tasks that run themselves, requests, assets and policies in one place, an assistant that answers first, and a connection to your ERP and devices.',
+    gains: ['Letters and checklists that run themselves', 'Fewer HR queries — answers before the question is asked', 'Every request and asset tracked', 'Connects to your ERP and devices'],
+    ask: 'How long does it take to issue an employment letter, or recover every asset at exit?',
+    mods: ['Letter generator', 'Tasks & checklists', 'Service desk', 'Asset tracker', 'Knowledge base', 'Chat & AI assistant', 'News broadcasting', 'Integrations & ERP'],
+    notes: 'Lens 3 of 3 — the time-savers around the core. Speak to the HR team (letters, tasks, fewer queries) and the IT Manager (integrations). Letters with AI drafting, the service desk and Integrations are the usual favourites. Tap any card to open that module, Back returns here. Finish with "Done" to move on to the next part of the session.',
   },
 }
 const ORDER: Lens[] = ['ops', 'strat', 'comp']
@@ -92,8 +92,8 @@ export function PillarSlide({ lens, mode, ids, doneTo }: { lens: Lens; mode: 'wo
   const { jump, goTo, has } = useNav()
   const mods = L.mods.map(byName)
   const dense = mods.length > 12
-  const cols = dense ? 5 : mods.length > 8 ? 5 : 4
-  const compact = cols === 5
+  const cols = 4
+  const compact = dense
   const [focus, setFocus] = useState(0)
   const [touched, setTouched] = useState(false)
   const target = (m: Mod) => (mode === 'workshop' ? m.w : m.t)
@@ -146,7 +146,7 @@ export function PillarSlide({ lens, mode, ids, doneTo }: { lens: Lens; mode: 'wo
       </div>
 
       {/* right: every module with its features */}
-      <div className="absolute left-[560px] right-14 top-[236px] grid gap-3" style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`, gridAutoRows: dense ? '218px' : '308px' }}>
+      <div className="absolute left-[560px] right-14 top-[236px] grid gap-3" style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`, gridAutoRows: dense ? '150px' : '308px' }}>
         {mods.map((m, k) => {
           const on = focus === k, ok = has(target(m))
           return (
@@ -159,7 +159,7 @@ export function PillarSlide({ lens, mode, ids, doneTo }: { lens: Lens; mode: 'wo
                 <span className={`${compact ? 'text-[18.5px]' : 'text-[21px]'} font-bold leading-tight`}>{m.name}</span>
               </div>
               <div className="px-3.5 py-2.5 flex flex-col gap-1.5 flex-1 min-h-0">
-                <div className={`${compact ? 'text-[15.5px]' : 'text-[19px]'} italic leading-snug`} style={{ color: 'var(--mute)' }}>{SELL[m.name]}</div>
+                {!dense && <div className="text-[19px] italic leading-snug" style={{ color: 'var(--mute)' }}>{SELL[m.name]}</div>}
                 <ul className={`flex flex-col gap-1 ${compact ? 'text-[16px]' : 'text-[20px]'} leading-snug`}>
                   {m.feats.map(f => <li key={f} className="flex gap-1.5"><span style={{ color: L.color }}>•</span><span>{f}</span></li>)}
                 </ul>
