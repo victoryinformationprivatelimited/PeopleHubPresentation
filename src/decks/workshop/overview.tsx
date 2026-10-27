@@ -152,11 +152,11 @@ function DemoTitle() {
         <motion.div initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: 'spring', stiffness: 110, damping: 14 }} className="grid place-items-center rounded-full glow" style={{ width: 250, height: 250, background: 'var(--bg2)', border: '3px solid var(--brand2)' }}>
           <PHLogo className="h-[170px] w-[170px]" />
         </motion.div>
-        <motion.div {...fade(0.5)} className="text-[24px] tracking-[0.42em] uppercase font-bold mt-12" style={{ color: 'var(--accent)' }}>PeopleHub demonstration</motion.div>
-        <motion.h1 {...fade(0.65)} className="serif text-[128px] leading-[1.02] font-bold mt-3">Now, let’s see</motion.h1>
-        <motion.h1 {...fade(0.85)} className="serif text-[128px] leading-[1.02] font-bold shimmer-text">PeopleHub.</motion.h1>
+        <motion.div {...fade(0.5)} className="text-[24px] tracking-[0.42em] uppercase font-bold mt-12" style={{ color: 'var(--accent)' }}>PeopleHub walkthrough</motion.div>
+        <motion.h1 {...fade(0.65)} className="serif text-[128px] leading-[1.02] font-bold mt-3">PeopleHub,</motion.h1>
+        <motion.h1 {...fade(0.85)} className="serif text-[128px] leading-[1.02] font-bold shimmer-text">screen by screen.</motion.h1>
         <motion.p {...fade(1.1)} className="text-[31px] mt-9 max-w-[1250px] leading-snug" style={{ color: 'var(--mute)' }}>
-          A live walk through {client ? `${company}’s` : 'your'} working day — every screen is real and clickable. Operational, strategic and enablement, one module at a time.
+          A guided tour of the system screens {client ? `for ${company}` : 'for your team'} — operational, strategic and enablement, one module at a time.
         </motion.p>
         <motion.div {...fade(1.4)} className="mt-10 rounded-full px-8 py-3 text-[23px] font-bold flex items-center gap-3" style={{ background: 'var(--card)', border: '1.5px solid var(--brand2)' }}>
           <motion.span animate={{ x: [0, 8, 0] }} transition={{ duration: 1.4, repeat: Infinity }}>▶</motion.span>Press → to begin
@@ -169,10 +169,10 @@ function DemoTitle() {
 export function overviewSlides(): SlideDef[] {
   return [
     { id: 'ws-overview-1', section: 'Overview', title: 'PeopleHub overview: the whole journey', secs: 75, tier: 2, render: () => <OverviewJourney />,
-      notes: 'Overview 1 of 2. Walk left to right: hire, know, time and leave, pay, grow, serve — the highlight tours on its own, tap a stage to hold it. Then the three foundations underneath (approvals, data and compliance, security and integrations). Message: one platform, one source of truth, the same record from hiring to leaving. Keep it under a minute; the detail comes in the demonstration.' },
+      notes: 'Overview 1 of 2. Walk left to right: hire, know, time and leave, pay, grow, serve — the highlight tours on its own, tap a stage to hold it. Then the three foundations underneath (approvals, data and compliance, security and integrations). Message: one platform, one source of truth, the same record from hiring to leaving. Keep it under a minute; the detail comes in the walkthrough.' },
     { id: 'ws-overview-2', section: 'Overview', title: 'PeopleHub overview: how it helps', secs: 75, tier: 2, render: () => <OverviewHelps />,
       notes: 'Overview 2 of 2. Three jobs: Run it (operational HR: people, time, pay, control), Grow it (strategic HR: hiring, performance, succession, data) and Enable it (letters, tasks, service desk, knowledge, AI, integrations). Name who gains in each. The strip at the bottom replays the pains the client chose earlier — say each one will be solved in what we are about to see.' },
-    { id: 'ws-demo-title', section: 'Overview', title: 'PeopleHub demonstration', secs: 20, tier: 3, render: () => <DemoTitle />,
-      notes: 'Title screen: pause, then say "Now we are going to see PeopleHub." Next slide starts the live demonstration. Let the client lean in; this is the hand-over from talking to showing.' },
+    { id: 'ws-demo-title', section: 'Overview', title: 'PeopleHub walkthrough', secs: 20, tier: 3, render: () => <DemoTitle />,
+      notes: 'Title screen: pause, then say "Now let us walk through the PeopleHub screens, module by module." These are guided sample screens, not a live system, so avoid calling it a live demo. The next slide starts the walkthrough.' },
   ]
 }
