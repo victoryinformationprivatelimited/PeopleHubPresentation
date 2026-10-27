@@ -153,8 +153,8 @@ function DemoTitle() {
           <PHLogo className="h-[170px] w-[170px]" />
         </motion.div>
         <motion.div {...fade(0.5)} className="text-[24px] tracking-[0.42em] uppercase font-bold mt-12" style={{ color: 'var(--accent)' }}>PeopleHub walkthrough</motion.div>
-        <motion.h1 {...fade(0.65)} className="serif text-[128px] leading-[1.02] font-bold mt-3">PeopleHub,</motion.h1>
-        <motion.h1 {...fade(0.85)} className="serif text-[128px] leading-[1.02] font-bold shimmer-text">screen by screen.</motion.h1>
+        <motion.h1 {...fade(0.65)} className="serif text-[128px] leading-[1.02] font-bold mt-3">Your people, your day,</motion.h1>
+        <motion.h1 {...fade(0.85)} className="serif text-[128px] leading-[1.02] font-bold shimmer-text">PeopleHub.</motion.h1>
         <motion.p {...fade(1.1)} className="text-[31px] mt-9 max-w-[1250px] leading-snug" style={{ color: 'var(--mute)' }}>
           A guided tour of the system screens {client ? `for ${company}` : 'for your team'} — operational, strategic and enablement, one module at a time.
         </motion.p>
