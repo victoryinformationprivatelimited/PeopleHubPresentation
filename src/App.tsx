@@ -6,7 +6,7 @@ import { PrintView } from './engine/PrintView'
 import { Guide } from './engine/Guide'
 import { buildCtx } from './engine/buildCtx'
 import { agendaFor, defaultAgenda, pickSlides } from './engine/agenda'
-import { arrangeFor, getDeckSlides, resolveDeckId } from './decks/registry'
+import { arrangeFor, getDeck, getDeckSlides, resolveDeckId } from './decks/registry'
 import { PAIN_OUTCOME, defaultOutcomes } from './decks/workshop/data'
 
 type Mode = 'launcher' | 'show' | 'print' | 'guide'
@@ -101,11 +101,14 @@ export default function App() {
       </DeckContext.Provider></SessionContext.Provider>
     )
   }
+  // “Home” = the navigation screen this presentation was set up with (falls back to the first slide)
+  const navSlides = (getDeck(deckId).navs ?? []).filter(n => (cfg.nav ?? getDeck(deckId).defaultNav) === 'all' || n.id === (cfg.nav ?? getDeck(deckId).defaultNav)).map(n => n.slideId)
+  const homeId = visible.find(sl => navSlides.includes(sl.id))?.id ?? visible[0]?.id
   return (
     <SessionContext.Provider value={sessionApi}><DeckContext.Provider value={ctx}>
       <Deck
         key={`${deckId}-${cfg.country}-${cfg.industry}-${cfg.client}-${cfg.logo?.length ?? 0}-${cfg.headcount}-${cfg.hrTeam}-${cfg.pains?.join()}-${cfg.customPain}-${agenda.mode}-${agenda.minutes}-${agenda.ids.join()}-${cfg.qrUrl}`}
-        slides={visible} allSlides={arranged} ctx={ctx} theme={cfg.theme} showTimer={agenda.mode !== 'full' && !init.clientView} clientView={init.clientView}
+        slides={visible} allSlides={arranged} home={homeId} ctx={ctx} theme={cfg.theme} showTimer={agenda.mode !== 'full' && !init.clientView} clientView={init.clientView}
         onConfigure={init.clientView ? undefined : () => { history.replaceState(null, '', location.pathname); setMode('launcher') }}
         onExport={init.clientView ? undefined : () => setMode('print')}
       />

@@ -14,6 +14,7 @@ interface Props {
   theme?: 'dark' | 'light'
   showTimer?: boolean
   clientView?: boolean      // shared with the client's team: no presenter tools
+  home?: string             // the navigation screen: the Home button and H key return to it
   onConfigure?: () => void
   onExport?: () => void
 }
@@ -21,7 +22,7 @@ interface Props {
 type Pointer = 'off' | 'laser' | 'spot'
 const ZOOM_LABELS = ['Fit', 'Read', 'Large']
 
-export function Deck({ slides, allSlides, ctx, theme: initialTheme = 'dark', showTimer: timerDefault = false, clientView = false, onConfigure, onExport }: Props) {
+export function Deck({ slides, allSlides, home, ctx, theme: initialTheme = 'dark', showTimer: timerDefault = false, clientView = false, onConfigure, onExport }: Props) {
   const order = useMemo(() => slides.map(s => s.id), [slides])
   const byId = useMemo(() => new Map(allSlides.map(s => [s.id, s])), [allSlides])
 
@@ -55,6 +56,11 @@ export function Deck({ slides, allSlides, ctx, theme: initialTheme = 'dark', sho
   const [hint, setHint] = useState(false)       // one-time “turn your phone” tip
 
   const idx = order.indexOf(cur)
+  const goHome = useCallback(() => {
+    if (!home || cur === home) return
+    if (returnTo === home) { setDir(-1); setCur(home); setReturnTo(null); return }
+    setReturnTo(r => r ?? cur); setDir(-1); setCur(home)
+  }, [home, cur, returnTo])
   const slide = byId.get(cur)!
 
   const go = useCallback((n: number) => {
@@ -160,6 +166,7 @@ export function Deck({ slides, allSlides, ctx, theme: initialTheme = 'dark', sho
       if (['ArrowRight', 'PageDown', ' ', 'Enter'].includes(k) && !grid) { e.preventDefault(); next() }
       else if (['ArrowLeft', 'PageUp', 'Backspace'].includes(k) && !grid) { e.preventDefault(); prev() }
       else if (k === 'Home') go(0)
+      else if (k === 'h' || k === 'H') goHome()
       else if (k === 'End') go(order.length - 1)
       else if (k === 'g' || k === 'G') setGrid(g => !g)
       else if (k === 'Escape') { setGrid(false); setHelp(false); setPointer('off'); setMag(false) }
@@ -241,7 +248,7 @@ export function Deck({ slides, allSlides, ctx, theme: initialTheme = 'dark', sho
     <div className="absolute inset-0 z-[60] grid place-items-center" style={{ background: 'color-mix(in srgb, var(--bg) 92%, transparent)' }} onClick={() => setHelp(false)}>
       <div className="card p-10 text-[22px] leading-loose" style={{ background: 'var(--bg2)' }}>
         <div className="serif text-[38px] mb-3">Shortcuts</div>
-        {[['← / → / click edges / clicker', 'Previous / next'], ['G', 'Slide grid (and hidden slides)'], ['N', 'Presenter notes'], ['D', 'Timer & pace (click it to restart)'], ['L', 'Pointer: laser → spotlight → off'], ['M', 'Magnifier lens (mouse wheel or + / − to zoom, M to close)'], ['.', 'Black screen'], ['Backspace', 'Return from a module jump'], ['T', 'Light / dark'], ['F', 'Fullscreen'], ['E', 'Export PDF leave-behind'], ['C', 'Back to settings']].filter(([k]) => !clientView || !['N', 'D', 'E', 'C'].includes(k)).map(([k, v]) => (
+        {[['← / → / click edges / clicker', 'Previous / next'], ['G', 'Slide grid (and hidden slides)'], ['H', 'Home — the navigation screen (Back returns)'], ['N', 'Presenter notes'], ['D', 'Timer & pace (click it to restart)'], ['L', 'Pointer: laser → spotlight → off'], ['M', 'Magnifier lens (mouse wheel or + / − to zoom, M to close)'], ['.', 'Black screen'], ['Backspace', 'Return from a module jump'], ['T', 'Light / dark'], ['F', 'Fullscreen'], ['E', 'Export PDF leave-behind'], ['C', 'Back to settings']].filter(([k]) => !clientView || !['N', 'D', 'E', 'C'].includes(k)).map(([k, v]) => (
           <div key={k} className="flex gap-8"><b className="w-[360px]" style={{ color: 'var(--brand2)' }}>{k}</b><span>{v}</span></div>
         ))}
       </div>
@@ -268,6 +275,12 @@ export function Deck({ slides, allSlides, ctx, theme: initialTheme = 'dark', sho
       </AnimatePresence>
 
       {ctx.logo && slide.id !== 'open' && slide.id !== 'contact' && <img src={ctx.logo} alt={ctx.client} className="absolute top-6 right-10 z-30 h-14 max-w-[220px] object-contain rounded-xl bg-white px-3 py-1.5 shadow-lg" />}
+
+      {home && cur !== home && !mobile && (
+        <button onClick={goHome} title="Back to the navigation screen (H)" className="absolute top-3 left-4 z-40 flex items-center gap-2 rounded-full px-4 py-2 text-[17px] font-bold shadow-lg transition hover:brightness-125" style={{ background: 'var(--bg2)', border: '1.5px solid var(--brand2)', color: 'var(--ink)' }}>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M3 11.5 12 4l9 7.5" /><path d="M5.5 10v10h13V10" /><path d="M10 20v-6h4v6" /></svg>Home
+        </button>
+      )}
 
       {returnTo && !mobile && (
         <button onClick={back} className="absolute top-6 left-1/2 -translate-x-1/2 z-40 rounded-full px-6 py-3 text-[20px] font-bold text-white shadow-xl" style={{ background: 'linear-gradient(90deg, var(--brand), var(--accent))' }}>
@@ -329,6 +342,7 @@ export function Deck({ slides, allSlides, ctx, theme: initialTheme = 'dark', sho
           <div className="flex-none flex items-center justify-between gap-2 px-3" style={{ height: BAR + 0, paddingBottom: 'env(safe-area-inset-bottom)', background: 'var(--bg2)', borderTop: '1px solid var(--line)' }}>
             <button aria-label="Previous slide" onClick={prev} className={barBtn} style={barStyle}>◀</button>
             <button aria-label="All slides" onClick={() => setGrid(true)} className={barBtn} style={barStyle}>☰</button>
+            {home && cur !== home && <button aria-label="Home" onClick={goHome} className={barBtn} style={barStyle}>⌂</button>}
             {returnTo
               ? <button onClick={back} className={`${barBtn} text-[14px]`} style={{ background: 'linear-gradient(90deg, var(--brand), var(--accent))', color: '#fff', border: 'none' }}>↩ Back</button>
               : <span className="text-[14px] font-semibold tabular-nums" style={{ color: 'var(--mute)' }}>{idx >= 0 ? `${idx + 1} / ${order.length}` : 'extra'}</span>}

@@ -49,7 +49,7 @@ export const decks: DeckDef[] = [
       { id: 'lenses', name: 'Three lenses: Operational · Strategic · Enablement', desc: 'Three slides that group the modules by what they do for the business, in a clear flow, with the sales story, a question to ask and every feature', slideId: 'pillar-ops', more: ['pillar-strat', 'pillar-comp'] },
       { id: 'constellation', name: 'One-platform constellation', desc: 'The original animated map of all modules', slideId: 'constellation' },
     ],
-    defaultNav: 'landscape',
+    defaultNav: 'lenses',
   },
 ]
 
