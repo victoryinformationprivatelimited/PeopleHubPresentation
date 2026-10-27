@@ -3,6 +3,7 @@ import { motion } from 'framer-motion'
 import { useDeck, useNav, useSession } from '../engine/context'
 import { PAIN_MOMENTS } from '../decks/workshop/data'
 import { fade } from '../ui/primitives'
+import { StoreLogos } from '../ui/StoreLogos'
 
 const mix = (c: string, p: number) => `color-mix(in srgb, ${c} ${p}%, transparent)`
 
@@ -88,7 +89,7 @@ export function LandscapeSlide({ mode, doneTo }: { mode: 'workshop' | 'tour'; do
               onMouseEnter={() => setHover(k)} onMouseLeave={() => setHover(null)} onClick={() => ok && jump(target)} disabled={!ok}
               className="relative rounded-xl overflow-hidden text-left flex flex-col min-h-0" style={{ background: 'var(--card)', border: `${hot || mine ? 2 : 1}px solid ${hot ? 'var(--ok)' : mine ? g.color : 'var(--line)'}`, boxShadow: on ? `0 18px 50px -12px ${g.color}` : hot ? '0 0 26px -10px var(--ok)' : 'none', zIndex: on ? 5 : 0, opacity: ok ? 1 : 0.45 }}>
               <div className="px-3 py-2 text-[18.5px] font-bold leading-tight text-white flex items-start gap-1.5" style={{ background: `linear-gradient(135deg, ${g.color}, ${mix(g.color, 70)})` }}>
-                <span className="flex-1">{m.name}</span>{hot && <motion.span animate={{ scale: [1, 1.3, 1] }} transition={{ duration: 1.4, repeat: Infinity }}>⚡</motion.span>}
+                <span className="flex-1">{m.name}</span>{m.name === 'Mobile app' && <StoreLogos size={20} />}{hot && <motion.span animate={{ scale: [1, 1.3, 1] }} transition={{ duration: 1.4, repeat: Infinity }}>⚡</motion.span>}
               </div>
               <ul className="px-3 py-2 flex flex-col gap-1 text-[16.5px] leading-snug">
                 {m.feats.map(f => <li key={f} className="flex gap-1.5"><span style={{ color: g.color }}>•</span><span>{f}</span></li>)}

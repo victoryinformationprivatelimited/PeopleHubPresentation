@@ -3,6 +3,7 @@ import { motion } from 'framer-motion'
 import { useNav } from '../engine/context'
 import { fade } from '../ui/primitives'
 import { MIcon } from '../ui/ModuleIcons'
+import { StoreLogos } from '../ui/StoreLogos'
 import { LANDSCAPE, type Mod } from './landscape'
 
 const mix = (c: string, p: number) => `color-mix(in srgb, ${c} ${p}%, transparent)`
@@ -10,14 +11,19 @@ const mix = (c: string, p: number) => `color-mix(in srgb, ${c} ${p}%, transparen
 export type Lens = 'ops' | 'strat' | 'comp'
 
 /** The three lenses on the product. Every module in the landscape belongs to exactly one. */
-export const LENSES: Record<Lens, { n: number; name: string; short: string; color: string; tagline: string; why: string; gains: string[]; ask: string; mods: string[]; notes: string }> = {
+export const LENSES: Record<Lens, { n: number; name: string; short: string; color: string; tagline: string; why: string; gains: string[]; ask: string; stages: [string, string[]][]; notes: string }> = {
   ops: {
     n: 1, name: 'Operational HR', short: 'Operational', color: '#0ea5e9',
     tagline: 'Run every day without chasing paper.',
     why: 'The daily engine of HR: people records, time, leave and pay, run through self-service, approvals and notifications under role-based security — accurate, on time and audit-ready.',
     gains: ['One record per employee, one source of truth', 'Payroll from live attendance — nothing re-keyed', 'Employees self-serve; managers approve anywhere', 'Everyone told on time, every action audited'],
     ask: 'How many phone calls and chases does it take to get attendance and approvals ready for payroll?',
-    mods: ['Organization', 'Employee master 360', 'Life cycle', 'Termination & exit', 'Time & attendance', 'Mobile app', 'Leave management', 'Meal management', 'Payroll', 'Staff loans & advances', 'Benefits & claims', 'Salary banking', 'Self-service portal', 'Approvals', 'Notifications', 'Security & audit'],
+    stages: [
+      ['People', ['Organization', 'Employee master 360', 'Life cycle', 'Termination & exit']],
+      ['Time', ['Time & attendance', 'Mobile app', 'Leave management', 'Meal management']],
+      ['Pay', ['Staff loans & advances', 'Benefits & claims', 'Payroll', 'Salary banking']],
+      ['Control', ['Self-service portal', 'Approvals', 'Notifications', 'Security & audit']],
+    ],
     notes: 'Lens 1 of 3 — the administrative engine, including self-service, approvals, notifications and security that keep it running safely. Lead with the pain: re-keying, late payroll, approvals chased by phone, disputes. Ask the question on the left and let the client answer before you open anything. The card that is highlighted tours on its own until you hover or tap; tap any card to open that module, then use Back to return here. Press "Done" when the client has seen enough and you want to move on. Keep it to the two or three modules that match what they said.',
   },
   strat: {
@@ -26,16 +32,24 @@ export const LENSES: Record<Lens, { n: number; name: string; short: string; colo
     why: 'Where HR moves from administering to advising: hire the right people, grow them, keep your best and show leadership the impact with live numbers.',
     gains: ['Hire faster and onboard in days, not weeks', 'Clear goals, fair reviews and a visible succession bench', 'Decisions backed by live dashboards and statutory confidence'],
     ask: 'If your best performer resigned tomorrow, who is ready to step up — and how do you know?',
-    mods: ['Recruitment & onboarding', 'Performance', 'Learning & development', 'Succession planning', 'Engagement', 'Grievance reporting', 'Analytics & reports', 'Compliance & statutory'],
+    stages: [
+      ['Attract & grow', ['Recruitment & onboarding', 'Performance', 'Learning & development', 'Succession planning']],
+      ['Listen & decide', ['Engagement', 'Grievance reporting', 'Analytics & reports', 'Compliance & statutory']],
+    ],
     notes: 'Lens 2 of 3 — the value conversation, best for owners and C-level. Talk outcomes rather than screens: hiring speed, retention, bench strength, risk. Ask the succession question; the silence is the sales moment. Open Analytics last to show that the board gets answers without asking HR to build a report. Tap any card to open that module, Back returns here.',
   },
   comp: {
-    n: 3, name: 'Complementary', short: 'Complementary', color: '#34d399',
-    tagline: 'The extras that save time every single day.',
+    n: 3, name: 'Enablement HR', short: 'Enablement', color: '#34d399',
+    tagline: 'Tools that save everyone time, every day.',
     why: 'The helpers around the core: letters and tasks that run themselves, requests, assets and policies in one place, an assistant that answers first, and a connection to your ERP and devices.',
     gains: ['Letters and checklists that run themselves', 'Fewer HR queries — answers before the question is asked', 'Every request and asset tracked', 'Connects to your ERP and devices'],
     ask: 'How long does it take to issue an employment letter, or recover every asset at exit?',
-    mods: ['Letter generator', 'Tasks & checklists', 'Service desk', 'Asset tracker', 'Knowledge base', 'Chat & AI assistant', 'News broadcasting', 'Integrations & ERP'],
+    stages: [
+      ['Documents', ['Letter generator', 'Tasks & checklists']],
+      ['Requests', ['Service desk', 'Asset tracker']],
+      ['Knowledge', ['Knowledge base', 'Chat & AI assistant', 'News broadcasting']],
+      ['Connect', ['Integrations & ERP']],
+    ],
     notes: 'Lens 3 of 3 — the time-savers around the core. Speak to the HR team (letters, tasks, fewer queries) and the IT Manager (integrations). Letters with AI drafting, the service desk and Integrations are the usual favourites. Tap any card to open that module, Back returns here. Finish with "Done" to move on to the next part of the session.',
   },
 }
@@ -90,7 +104,8 @@ const byName = (n: string) => LANDSCAPE.find(m => m.name === n) as Mod
 export function PillarSlide({ lens, mode, ids, doneTo }: { lens: Lens; mode: 'workshop' | 'tour'; ids: Record<Lens, string>; doneTo: string }) {
   const L = LENSES[lens]
   const { jump, goTo, has } = useNav()
-  const mods = L.mods.map(byName)
+  const flow = L.stages.flatMap(([stage, names]) => names.map(n => ({ stage, m: byName(n) })))
+  const mods = flow.map(f => f.m)
   const dense = mods.length > 12
   const cols = 4
   const compact = dense
@@ -146,7 +161,7 @@ export function PillarSlide({ lens, mode, ids, doneTo }: { lens: Lens; mode: 'wo
       </div>
 
       {/* right: every module with its features */}
-      <div className="absolute left-[560px] right-14 top-[236px] grid gap-3" style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`, gridAutoRows: dense ? '150px' : '308px' }}>
+      <div className="absolute left-[560px] right-14 top-[236px] grid gap-3" style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`, gridAutoRows: dense ? '154px' : '308px' }}>
         {mods.map((m, k) => {
           const on = focus === k, ok = has(target(m))
           return (
@@ -155,8 +170,13 @@ export function PillarSlide({ lens, mode, ids, doneTo }: { lens: Lens; mode: 'wo
               className="relative rounded-2xl text-left flex flex-col overflow-hidden min-h-0"
               style={{ background: 'var(--card)', border: `${on ? 2 : 1}px solid ${on ? L.color : 'var(--line)'}`, boxShadow: on ? `0 18px 48px -14px ${L.color}` : 'none', zIndex: on ? 5 : 1 }}>
               <div className="px-3 py-2.5 flex items-center gap-2.5" style={{ background: `linear-gradient(135deg, ${mix(L.color, 38)}, ${mix(L.color, 10)})` }}>
-                <MIcon name={m.name} size={compact ? 38 : 46} color={L.color} />
-                <span className={`${compact ? 'text-[18.5px]' : 'text-[21px]'} font-bold leading-tight`}>{m.name}</span>
+                <span className="w-7 h-7 rounded-full grid place-items-center text-[14px] font-extrabold flex-none" style={{ background: L.color, color: '#fff' }}>{k + 1}</span>
+                <MIcon name={m.name} size={compact ? 36 : 44} color={L.color} />
+                <span className="flex-1 min-w-0">
+                  <span className="block text-[11.5px] tracking-[0.16em] uppercase font-bold" style={{ color: L.color }}>{flow[k].stage}</span>
+                  <span className={`block ${compact ? 'text-[17.5px]' : 'text-[20px]'} font-bold leading-tight`}>{m.name}</span>
+                </span>
+                {m.name === 'Mobile app' && <StoreLogos size={compact ? 22 : 26} />}
               </div>
               <div className="px-3.5 py-2.5 flex flex-col gap-1.5 flex-1 min-h-0">
                 {!dense && <div className="text-[19px] italic leading-snug" style={{ color: 'var(--mute)' }}>{SELL[m.name]}</div>}
@@ -174,7 +194,7 @@ export function PillarSlide({ lens, mode, ids, doneTo }: { lens: Lens; mode: 'wo
       <motion.div key={fm.name} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="absolute left-14 right-14 bottom-[74px] rounded-2xl px-6 py-3.5 flex items-center gap-5" style={{ background: mix(L.color, 16), border: `1.5px solid ${L.color}` }}>
         <MIcon name={fm.name} size={52} color={L.color} />
         <div className="flex-1 min-w-0">
-          <div className="text-[15px] tracking-[0.2em] uppercase font-bold" style={{ color: L.color }}>{fm.name}</div>
+          <div className="text-[15px] tracking-[0.2em] uppercase font-bold flex items-center gap-3" style={{ color: L.color }}>{fm.name}{fm.name === 'Mobile app' && <StoreLogos size={22} labels />}</div>
           <div className="text-[27px] font-semibold leading-snug truncate">{SELL[fm.name]}</div>
         </div>
         <button onClick={() => has(ftarget) && jump(ftarget)} className="rounded-xl px-6 py-2.5 text-[20px] font-bold text-white flex-none" style={{ background: L.color }}>Open module ▶</button>

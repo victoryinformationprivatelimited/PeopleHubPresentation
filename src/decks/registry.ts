@@ -33,7 +33,7 @@ export const decks: DeckDef[] = [
       { id: 'wall', name: 'Discovery wall', desc: 'The client taps the outcomes that matter most — best for co-design sessions', slideId: 'ws-wall' },
       { id: 'wheel', name: 'Module wheel', desc: 'An animated wheel of the platform; tap a segment, open any module', slideId: 'ws-wheel' },
       { id: 'landscape', name: 'Module & feature landscape', desc: 'Every module and its features on one screen; tap a card to open it', slideId: 'ws-landscape' },
-      { id: 'lenses', name: 'Three lenses: Operational · Strategic · Complementary', desc: 'Three slides that group the modules by what they do for the business, with the sales story, a question to ask and every feature', slideId: 'ws-pillar-ops', more: ['ws-pillar-strat', 'ws-pillar-comp'] },
+      { id: 'lenses', name: 'Three lenses: Operational · Strategic · Enablement', desc: 'Three slides that group the modules by what they do for the business, in a clear flow, with the sales story, a question to ask and every feature', slideId: 'ws-pillar-ops', more: ['ws-pillar-strat', 'ws-pillar-comp'] },
     ],
     defaultNav: 'wall',
   },
@@ -46,7 +46,7 @@ export const decks: DeckDef[] = [
     navs: [
       { id: 'landscape', name: 'Module & feature landscape', desc: 'Every module and its features on one screen; tap a card to open it', slideId: 'landscape' },
       { id: 'wheel', name: 'Module wheel', desc: 'An animated wheel of the platform; tap a segment, open any module', slideId: 'wheel' },
-      { id: 'lenses', name: 'Three lenses: Operational · Strategic · Complementary', desc: 'Three slides that group the modules by what they do for the business, with the sales story, a question to ask and every feature', slideId: 'pillar-ops', more: ['pillar-strat', 'pillar-comp'] },
+      { id: 'lenses', name: 'Three lenses: Operational · Strategic · Enablement', desc: 'Three slides that group the modules by what they do for the business, in a clear flow, with the sales story, a question to ask and every feature', slideId: 'pillar-ops', more: ['pillar-strat', 'pillar-comp'] },
       { id: 'constellation', name: 'One-platform constellation', desc: 'The original animated map of all modules', slideId: 'constellation' },
     ],
     defaultNav: 'landscape',
