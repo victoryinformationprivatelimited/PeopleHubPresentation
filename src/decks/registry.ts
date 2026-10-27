@@ -2,6 +2,7 @@ import type { SlideDef } from '../engine/context'
 import { buildSlides } from '../slides/slides'
 import { buildWorkshopSlides, arrangeWorkshop } from './workshop'
 import { OUTCOMES } from './workshop/data'
+import { overviewSlides } from './workshop/overview'
 
 /** A presentation the presenter can pick on the settings screen. Add a new entry here to add a deck. */
 export interface DeckDef {
@@ -46,7 +47,11 @@ export const decks: DeckDef[] = [
     name: 'Fresh Harvest',
     tagline: 'The full Outcome Workshop without the navigation screens, blueprint, toolkit and a few closing slides — ready to be reorganised.',
     bestFor: 'The Fresh Harvest visit — set the client name and details in the control panel',
-    build: () => buildWorkshopSlides().filter((_, i) => !FRESH_DROP_NUMBERS.includes(i + 1)),
+    build: () => {
+      const kept = buildWorkshopSlides().filter((_, i) => !FRESH_DROP_NUMBERS.includes(i + 1))
+      kept.splice(5, 0, ...overviewSlides())      // two overview screens and the demonstration title after slide 5
+      return kept
+    },
     chapters: OUTCOMES.map(o => ({ id: o.id, name: `${o.icon} ${o.name}` })),
   },
   {
