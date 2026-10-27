@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { poss, useDeck } from '../../engine/context'
+import { useDeck } from '../../engine/context'
 import Chart from '../../ui/LazyChart'
 import { Avatar, Badge, Phone, Window, fade } from '../../ui/primitives'
 
@@ -125,17 +125,6 @@ export function AndroidDemo() {
 }
 
 /* ───────── News & announcements ───────── */
-export function NewsDemo() {
-  const { country, company } = useDeck()
-  const posts = [['📌 Pinned', 'New leave policy from 1 November', 'HR', 'Read by 78%', 'warn'], ['Company', `Welcome to ${poss(company)} new ${country.mapCenter} office`, 'Admin', 'Read by 64%', 'brand'], ['Event', 'Friday quiz & team lunch', 'People team', '41 going', 'ok']] as const
-  return (
-    <Window title={`${company} · News & announcements`}>
-      <div className="flex justify-between items-center mb-3"><div className="flex gap-1.5">{['All', 'Policy', 'Events', 'Recognition'].map((t, k) => <span key={t} className="rounded-full px-3 py-1 text-[13px] font-semibold" style={k === 0 ? { background: 'var(--brand)', color: '#fff' } : { background: 'var(--card)', color: 'var(--mute)' }}>{t}</span>)}</div><button className="rounded-lg px-3 py-1.5 text-[13px] font-bold text-white" style={{ background: 'linear-gradient(90deg,var(--brand),var(--accent))' }}>＋ Post</button></div>
-      <div className="flex flex-col gap-2 mb-3">{posts.map(([c, t, by, r, tone], k) => <motion.div key={t} {...fade(0.12 * k)} className="card px-3 py-2.5"><div className="flex justify-between items-center"><Badge tone={tone}>{c}</Badge><span className="text-[12px]" style={{ color: 'var(--mute)' }}>{r}</span></div><div className="font-bold text-[16px] mt-1">{t}</div><div className="text-[12px]" style={{ color: 'var(--mute)' }}>Posted by {by}</div></motion.div>)}</div>
-      <div className="grid grid-cols-2 gap-3"><div className="card p-3 text-[13.5px]">🎂 <b>{country.sampleNames[5].split(' ')[0]}</b> and 2 others have birthdays this week</div><div className="card p-3 text-[13.5px]">🏖 Next holiday: <b>{country.holidaysLabel.split(' ')[0]}</b> · Friday</div></div>
-    </Window>
-  )
-}
 
 /* ───────── Report & dashboard builder ───────── */
 export function ReportBuilderDemo() {
@@ -227,31 +216,6 @@ export function BillingDemo() {
 }
 
 /* ───────── Architecture ───────── */
-export function ArchitectureDemo() {
-  const Box = ({ x, y, w, t, s, c }: { x: number; y: number; w: number; t: string; s?: string; c: string }) => (
-    <g><rect x={x} y={y} width={w} height="58" rx="12" fill={mix(c, 22)} stroke={c} strokeWidth="1.5" /><text x={x + w / 2} y={y + (s ? 26 : 35)} textAnchor="middle" fontSize="15" fontWeight="700" fill="var(--ink)">{t}</text>{s && <text x={x + w / 2} y={y + 44} textAnchor="middle" fontSize="11.5" fill="var(--mute)">{s}</text>}</g>
-  )
-  return (
-    <Window title="Architecture">
-      <svg viewBox="0 0 760 470" className="w-full">
-        <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="var(--brand2)" /></marker></defs>
-        {[[190, 78, 190, 100], [190, 158, 190, 180], [190, 238, 190, 260], [190, 318, 190, 340], [380, 209, 460, 209]].map(([x1, y1, x2, y2], k) => <line key={k} x1={x1} y1={y1} x2={x2} y2={y2} stroke="var(--brand2)" strokeWidth="2" className="flow-line" markerEnd="url(#arr)" />)}
-        <Box x={20} y={20} w={340} t="Web · Manager workspace · Android" s="React single-page apps" c="#22d3ee" />
-        <Box x={20} y={100} w={340} t="API layer" s=".NET 8 · JWT · MFA · SSO · rate limiting" c="#3b6be0" />
-        <Box x={20} y={180} w={340} t="Business services" s="approvals · payroll · letters · attendance · billing" c="#a78bfa" />
-        <Box x={20} y={260} w={340} t="Tenant resolution + RBAC" s="schema per company · module gating · audit" c="#34d399" />
-        <Box x={20} y={340} w={160} t="PostgreSQL" s="platform + tenant schemas" c="#fbbf24" />
-        <Box x={200} y={340} w={160} t="Azure Storage" s="documents & files" c="#fbbf24" />
-        <Box x={460} y={180} w={280} t="Azure Functions" s="notifications · billing jobs" c="#fb7185" />
-        <line x1="600" y1="238" x2="600" y2="290" stroke="var(--brand2)" strokeWidth="2" className="flow-line" markerEnd="url(#arr)" />
-        <Box x={460} y={290} w={280} t="Email · SMS · WhatsApp · In-app" s="Twilio and mail providers" c="#fb7185" />
-        <Box x={460} y={20} w={280} t="Biometric devices" s="ZKBio WDMS sync" c="#22d3ee" />
-        <line x1="600" y1="78" x2="380" y2="125" stroke="var(--brand2)" strokeWidth="2" className="flow-line" markerEnd="url(#arr)" />
-        <Box x={460} y={380} w={280} t="BI tools · ERP · accounting" s="via secure APIs" c="#a78bfa" />
-      </svg>
-    </Window>
-  )
-}
 
 /* ───────── Meal management ───────── */
 export function MealDemo() {
@@ -300,3 +264,5 @@ export function MealDemo() {
     </Window>
   )
 }
+
+export { NewsDemo, ArchitectureDemo } from '../../slides/demosPhase3'
