@@ -57,7 +57,7 @@ export const LENSES: Record<Lens, { n: number; name: string; short: string; colo
 const ORDER: Lens[] = ['ops', 'strat', 'comp']
 
 /** One line per module: why a buyer cares. Shown under the card on the big lenses and in the spotlight strip. */
-const SELL: Record<string, string> = {
+export const SELL: Record<string, string> = {
   'Organization': 'Model any group — and see every reporting line at a glance.',
   'Employee master 360': 'One trusted record for every person, from hire to exit.',
   'Life cycle': 'Probation, confirmation, promotion — nothing slips through.',
