@@ -1,3 +1,5 @@
+import newworldLogo from '../assets/newworld-logo.png'
+
 /** Tiny illustrations for the presentation chooser cards. */
 export function DeckThumb({ id }: { id: string }) {
   if (id === 'workshop') {
@@ -13,6 +15,9 @@ export function DeckThumb({ id }: { id: string }) {
         <circle cx="96" cy="64" r="7" fill="var(--ok)" /><path d="M92.5 64 l2.5 2.8 l5 -5.6" fill="none" stroke="#06281c" strokeWidth="2" strokeLinecap="round" />
       </svg>
     )
+  }
+  if (id === 'frcs') {
+    return <div className="w-full h-full grid place-items-center" style={{ background: '#fff' }}><img src={newworldLogo} alt="" className="w-[104px] object-contain" /></div>
   }
   // tour: a grid of module tiles
   return (

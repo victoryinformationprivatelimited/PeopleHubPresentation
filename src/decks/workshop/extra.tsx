@@ -33,7 +33,7 @@ export function HeroBuild() {
           From hire to retire — attendance, payroll, approvals, talent and more — in one system built for {industry.name.toLowerCase()} in {country.name}.
         </motion.p>
         <motion.div {...fade(0.75)} className="flex gap-5 mt-10">
-          {[[27, 'modules'], [10, 'outcomes']].map(([v, l]) => <div key={l as string} className="card px-6 py-4"><div className="serif text-[56px] leading-none font-bold grad-text"><Counter to={v as number} /></div><div className="text-[20px] mt-1" style={{ color: 'var(--mute)' }}>{l}</div></div>)}
+          {[[32, 'modules'], [10, 'outcomes']].map(([v, l]) => <div key={l as string} className="card px-6 py-4"><div className="serif text-[56px] leading-none font-bold grad-text"><Counter to={v as number} /></div><div className="text-[20px] mt-1" style={{ color: 'var(--mute)' }}>{l}</div></div>)}
           <div className="card px-6 py-4"><div className="serif text-[34px] leading-tight font-bold grad-text">Web · Android · iPhone</div><div className="text-[20px] mt-2" style={{ color: 'var(--mute)' }}>one source of truth</div></div>
         </motion.div>
       </div>

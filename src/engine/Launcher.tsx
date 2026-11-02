@@ -103,7 +103,7 @@ export function Launcher({ initial, onStart, onExport, onGuide }: { initial: Con
             {decks.map(d => {
               const ds = getDeckSlides(d.id), on = d.id === deckId
               return (
-                <button key={d.id} onClick={() => set({ deck: d.id })} className="card text-left p-4 flex gap-4 items-center transition hover:brightness-110"
+                <button key={d.id} onClick={() => set({ deck: d.id, ...(d.preset ?? {}) })} className="card text-left p-4 flex gap-4 items-center transition hover:brightness-110"
                   style={{ outline: on ? '2px solid var(--brand2)' : 'none', background: on ? 'color-mix(in srgb, var(--brand) 18%, var(--card))' : undefined }}>
                   <div className="w-[120px] h-[84px] flex-none rounded-lg overflow-hidden" style={{ background: 'var(--bg2)', border: '1px solid var(--line)' }}><DeckThumb id={d.id} /></div>
                   <div className="flex-1 min-w-0">

@@ -4,6 +4,9 @@ import { buildWorkshopSlides, arrangeWorkshop } from './workshop'
 import { OUTCOMES } from './workshop/data'
 import { overviewSlides } from './workshop/overview'
 import { categorySlides } from './workshop/categories'
+import { frcsClosingSlide, frcsOpeningSlides } from './workshop/frcs'
+import newworldLogo from '../assets/newworld-logo.png'
+import type { Config } from '../engine/Launcher'
 
 /** A presentation the presenter can pick on the settings screen. Add a new entry here to add a deck. */
 export interface DeckDef {
@@ -18,6 +21,7 @@ export interface DeckDef {
   navs?: NavOption[]                                                          // interchangeable “navigation screens” — the presenter keeps one
   defaultNav?: string
   home?: string                  // slide the Home button returns to (when the deck has no navigation options)
+  preset?: Partial<Config>       // settings applied when this deck is chosen (country, client, presenter…)
 }
 
 /** A screen the client uses to explore the product and jump into modules. Only the chosen one is kept in the deck. */
@@ -25,6 +29,21 @@ export interface NavOption { id: string; name: string; desc: string; slideId: st
 
 /** Fresh Harvest = the Outcome Workshop (every navigation screen shown) minus these slides, by their number in that full list. */
 const FRESH_DROP_NUMBERS = [6, 7, 8, 9, 10, 11, 12, 13, 14, 69, 71, 75, 77, 78, 79, 81]
+
+/** Fresh Harvest flow: the Workshop minus the dropped slides, with the overview, walkthrough title and five landscape pages after slide 5. */
+function buildFresh(): SlideDef[] {
+  const kept = buildWorkshopSlides().filter((_, i) => !FRESH_DROP_NUMBERS.includes(i + 1))
+  kept.splice(5, 0, ...overviewSlides(), ...categorySlides('ch-know'))
+  return kept
+}
+
+/** FRCS (Fiji): the Fresh Harvest flow, presented by Newworld Technologies — no Victory “Who we are”, client-logo wall or Victory contact slide. */
+function buildFrcs(): SlideDef[] {
+  const kept = buildFresh().filter(s => !['ws-about', 'ws-clients', 'contact'].includes(s.id))
+  kept.splice(1, 0, ...frcsOpeningSlides())
+  kept.push(frcsClosingSlide())
+  return kept
+}
 
 export const decks: DeckDef[] = [
   {
@@ -48,13 +67,19 @@ export const decks: DeckDef[] = [
     name: 'Fresh Harvest',
     tagline: 'The full Outcome Workshop without the navigation screens, blueprint, toolkit and a few closing slides — ready to be reorganised.',
     bestFor: 'The Fresh Harvest visit — set the client name and details in the control panel',
-    build: () => {
-      const kept = buildWorkshopSlides().filter((_, i) => !FRESH_DROP_NUMBERS.includes(i + 1))
-      kept.splice(5, 0, ...overviewSlides(), ...categorySlides('ch-know'))   // overview, walkthrough title, then the five landscape pages, after slide 5
-      return kept
-    },
+    build: buildFresh,
     chapters: OUTCOMES.map(o => ({ id: o.id, name: `${o.icon} ${o.name}` })),
     home: 'ws-cat-ops',
+  },
+  {
+    id: 'frcs',
+    name: 'FRCS · Fiji',
+    tagline: 'Presented by Newworld Technologies for the Fiji Revenue and Customs Service: why Newworld, the Newworld and Victory partnership, then the PeopleHub overview, landscape pages and every chapter.',
+    bestFor: 'The FRCS HRIS presentation — Fiji, Newworld as presenter, no Victory details',
+    build: buildFrcs,
+    chapters: OUTCOMES.map(o => ({ id: o.id, name: `${o.icon} ${o.name}` })),
+    home: 'ws-cat-ops',
+    preset: { country: 'fj', industry: 'generic', client: 'FRCS', presenter: { company: 'Newworld Technologies', logo: newworldLogo } },
   },
   {
     id: 'tour',
