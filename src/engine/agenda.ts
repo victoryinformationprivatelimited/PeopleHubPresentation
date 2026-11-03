@@ -33,7 +33,8 @@ export function byChapters(slides: SlideDef[], chosen: string[]): SlideDef[] {
   return [...head, ...body, ...tail]
 }
 
-export function pickSlides(slides: SlideDef[], agenda: Agenda, ctx: Pick<DeckCtx, 'industry' | 'pains'> & { outcomes?: string[] }): SlideDef[] {
+export function pickSlides(all: SlideDef[], agenda: Agenda, ctx: Pick<DeckCtx, 'industry' | 'pains'> & { outcomes?: string[] }): SlideDef[] {
+  const slides = all.filter(s => !s.sideTrip)   // side-trip slides are opened through links only
   if (agenda.mode === 'chapters' && agenda.chapters?.length) return byChapters(slides, agenda.chapters)
   if (agenda.mode === 'manual' && agenda.ids.length) {
     const byId = new Map(slides.map(s => [s.id, s]))

@@ -68,6 +68,7 @@ export interface SlideDef {
   secs: number         // planned speaking time in seconds
   tier: number         // 3 = always keep, 2 = important, 1 = normal, 0 = optional
   chapter?: string     // outcome chapter this slide belongs to (Outcome Workshop)
+  sideTrip?: boolean   // not part of the running order: only reached through a link (jump), then Back
   render: (ctx: DeckCtx) => React.ReactNode
 }
 

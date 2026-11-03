@@ -1,6 +1,8 @@
 import { useEffect, useState, type CSSProperties, type ReactNode } from 'react'
 import { motion } from 'framer-motion'
 import type { SlideDef } from '../../engine/context'
+import { useNav } from '../../engine/context'
+import { buildWorkshopSlides } from '../workshop'
 import login from '../../assets/nwfrca/login.png'
 import frcsLogo from '../../assets/nwfrca/frcs.png'
 import nw from '../../assets/nwfrca/newworld.png'
@@ -258,7 +260,24 @@ const Conn = ({ d }: { d: number }) => (
   <motion.svg {...pop(d)} width="64" height="40" viewBox="0 0 64 40" className="absolute" style={{ top: 58 }}><path d="M2 20l16-14v9h28V6l16 14-16 14v-9H18v9z" fill="#F4B183" stroke={OR} strokeWidth="2" /></motion.svg>
 )
 
-function Landscape({ title, heads, cols, foot, gold, cx = [60, 523, 996, 1469], w = 374 }: { title: ReactNode; heads: string[]; cols: ReactNode[][]; foot: ReactNode; gold?: boolean; cx?: number[]; w?: number }) {
+type Cell = ReactNode | { t: ReactNode; to: string }
+const isLink = (c: Cell): c is { t: ReactNode; to: string } => typeof c === 'object' && c !== null && 'to' in (c as object) && 't' in (c as object)
+
+/** A blue box; when it has a target slide it opens it as a side trip (Back returns here). */
+function Box({ c, d, gold, minH = 104, fs = 24 }: { c: Cell; d: number; gold?: boolean; minH?: number; fs?: number }) {
+  const { jump, has } = useNav()
+  const to = isLink(c) ? c.to : undefined, live = !!to && has(to)
+  const base: CSSProperties = { minHeight: minH, fontSize: fs, lineHeight: 1.25, padding: '10px 16px', background: BLUE, color: gold ? GOLD : '#fff', boxShadow: '0 10px 14px -8px rgba(0,0,0,.45)', position: 'relative', width: '100%' }
+  return (
+    <motion.button {...rise(d, 36)} disabled={!live} onClick={() => live && jump(to!)} whileHover={live ? { scale: 1.04, backgroundColor: '#3C8DD3' } : undefined} whileTap={live ? { scale: 0.98 } : undefined}
+      className="grid place-items-center text-center font-bold" style={{ ...base, cursor: live ? 'pointer' : 'default' }}>
+      {isLink(c) ? c.t : c}
+      {live && <span style={{ position: 'absolute', right: 8, top: 4, fontSize: 16, opacity: 0.85 }}>↗</span>}
+    </motion.button>
+  )
+}
+
+function Landscape({ title, heads, cols, foot, gold, cx = [60, 523, 996, 1469], w = 374, minH = 104 }: { title: ReactNode; heads: string[]; cols: Cell[][]; foot: ReactNode; gold?: boolean; cx?: number[]; w?: number; minH?: number }) {
   return (
     <Page bg="#fff">
       <motion.h2 {...rise(0)} className="serif absolute left-0 right-0 text-center font-extrabold" style={{ top: 38, fontSize: 70, color: '#0B2559' }}>{title}</motion.h2>
@@ -267,10 +286,8 @@ function Landscape({ title, heads, cols, foot, gold, cx = [60, 523, 996, 1469], 
           <motion.div {...pop(0.4 + i * 0.25)} className="grid place-items-center text-center font-bold text-white" style={{ height: 150, fontSize: 31, background: OR, lineHeight: 1.25, padding: '0 20px', boxShadow: '0 12px 18px -8px rgba(0,0,0,.4)' }}>{h}</motion.div>
           {i < heads.length - 1 && <div className="absolute" style={{ left: w - 16, top: 0 }}><Conn d={0.7 + i * 0.25} /></div>}
           <div style={{ marginTop: 10 }}><ArrowDown d={0.8 + i * 0.25} /></div>
-          <div className="flex flex-col gap-[22px]" style={{ marginTop: 4 }}>
-            {cols[i].map((b, k) => (
-              <motion.div key={k} {...rise(1.1 + i * 0.25 + k * 0.2, 36)} className="grid place-items-center text-center font-bold" style={{ minHeight: 104, fontSize: 24, lineHeight: 1.25, padding: '10px 16px', background: BLUE, color: gold ? GOLD : '#fff', boxShadow: '0 10px 14px -8px rgba(0,0,0,.45)' }}>{b}</motion.div>
-            ))}
+          <div className="flex flex-col gap-[18px]" style={{ marginTop: 4 }}>
+            {cols[i].map((b, k) => <Box key={k} c={b} d={1.1 + i * 0.25 + k * 0.2} gold={gold} minH={minH} />)}
           </div>
         </div>
       ))}
@@ -283,20 +300,22 @@ const Bul = ({ items }: { items: string[] }) => <ul className="text-left list-di
 function S8() {
   return (
     <Landscape title="PeopleHub HRIS System Landscape" foot={<><b>Non-Strategic</b> HR Functional Modules</>}
+      minH={96}
       heads={['Time And Attendance', 'PeopleHub- Mobile App', 'Employee Self-Services Portal', 'Payroll Management']}
       cols={[
-        ['Real Time Data Capturing', 'Create Multiple Shifts Roster Configuration', 'Late & Leave Policy'],
-        ['Mobile Clock In/Out & Geo Tracking', <div key="l" className="w-full"><div className="text-center">Leave Management</div><Bul items={['Leave Application Online', 'Leave Approval', 'OT Approval']} /></div>],
+        [{ t: 'Real Time Data Capturing', to: 'time-capture' }, { t: 'Create Multiple Shifts Roster Configuration', to: 'time-roster' }, 'Late & Leave Policy'],
+        [{ t: 'Mobile Clock In/Out & Geo Tracking', to: 'leave-apply' }, <div key="l" className="w-full"><div className="text-center">Leave Management</div><Bul items={['Leave Application Online', 'Leave Approval', 'OT Approval']} /></div>],
         ['Personal Data & Dashboard', 'Leave Management - Entitlements & Balance Leave', 'View Pay Slip & Attendance Patterns'],
-        [<div key="p" className="w-full"><Bul items={['Monthly', 'Periodical Payroll Processing', 'Weekly']} /></div>, 'Staff Loan Management', 'Integration to Government Portal for Reporting'],
+        [<div key="p" className="w-full"><Bul items={['Monthly', 'Periodical Payroll Processing', 'Weekly']} /></div>, { t: 'Staff Loan Management', to: 'pay-advance' }, 'Integration to Government Portal for Reporting', { t: 'GL Integration', to: 'pay-finance' }],
       ]} />
   )
 }
 function S9() {
-  const left = ['Employees Document Management  System', 'News Broadcasting', 'Asset Tracker', 'Integration to ERP System'], right = ['Salary Banking Automation', 'Letter Generator', 'Grievance Reporting']
-  const col = (items: string[], x: number, d: number) => (
+  const left: Cell[] = ['Employees Document Management  System', 'News Broadcasting', { t: 'Asset Tracker', to: 'serve-assets' }, 'Integration to ERP System']
+  const right: Cell[] = ['Salary Banking Automation', 'Letter Generator', 'Grievance Reporting', { t: 'AI Assistance', to: 'serve-chat' }]
+  const col = (items: Cell[], x: number, d: number) => (
     <div className="absolute flex flex-col gap-[24px]" style={{ left: x, top: 424, width: 384 }}>
-      {items.map((b, k) => <motion.div key={b} {...rise(d + k * 0.25, 36)} className="grid place-items-center text-center font-bold text-white" style={{ minHeight: 112, fontSize: 25, background: BLUE, padding: '10px 16px', boxShadow: '0 10px 14px -8px rgba(0,0,0,.45)' }}>{b}</motion.div>)}
+      {items.map((b, k) => <Box key={k} c={b} d={d + k * 0.25} minH={112} fs={25} />)}
     </div>
   )
   return (
@@ -395,11 +414,16 @@ function S13() {
 
 const mk = (id: string, title: string, secs: number, render: () => ReactNode, notes = ''): SlideDef => ({ id, section: 'Newworld pitch', title, secs, tier: 3, notes, render })
 
+const SIDE = ['time-capture', 'time-roster', 'leave-apply', 'pay-advance', 'pay-finance', 'serve-assets', 'serve-chat']
+
 export function buildNwFrcaSlides(): SlideDef[] {
-  return [
+  const ws = buildWorkshopSlides()
+  const pick = (id: string) => ws.find(x => x.id === id)!
+  const main: SlideDef[] = [
     mk('nw-welcome', 'Welcome to PeopleHub', 60, () => <S1 />, 'Welcome and introduction (2 min).'),
     mk('nw-blueprint', 'Modern Human Capital Management for FRCS', 60, () => <S2 />),
     mk('nw-agenda', 'What we will cover in 30 minutes', 60, () => <S3 />, 'Agenda: 2 / 7 / 12 / 5 / 4 minutes, then 15 minutes of questions.'),
+    pick('ws-roles'),
     mk('nw-household', 'Newworld: a household name', 90, () => <S4 />),
     mk('nw-team', 'A skilled team, backed by global partnerships', 90, () => <S5 />),
     mk('nw-local-partner', 'Your Local Technology Partner in Fiji', 90, () => <S6 />),
@@ -411,4 +435,6 @@ export function buildNwFrcaSlides(): SlideDef[] {
     mk('nw-delivery', 'How we will deliver and support', 90, () => <S12 />),
     mk('nw-next', 'Next steps', 60, () => <S13 />),
   ]
+  // system screens reached from the landscape boxes: opened by link, then Back (not part of the running order)
+  return [...main, ...SIDE.map(id => ({ ...pick(id), sideTrip: true }))]
 }
