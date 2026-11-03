@@ -31,6 +31,8 @@ import cRoyal from '../../assets/clients/royal-institute-of-colombo-pvt-ltd.jpg'
 import cSampath from '../../assets/clients/sampath-centre.jpeg'
 import cRail from '../../assets/clients/sri-lanka-railway.webp'
 import cSlt from '../../assets/clients/sri-lanka-telecom-services-ltd.webp'
+import cSithara from '../../assets/clients/sithara.jpeg'
+import cSltc from '../../assets/clients/sri-lanka-technological-campus-sltc.webp'
 
 /* The Newworld HRIS pitch for FRCS (v4.0), rebuilt slide for slide with the original wording and animation added. */
 
@@ -321,7 +323,7 @@ function S10() {
 }
 
 /* 11 · Trusted by -------------------------------------------------------------------------------------------- */
-const CLIENTS = [cJk, cState, cLtl, cKdaw, cAdvantis, cAvant, cSalaka, cRoccos, cNewworld, cAlan, cCic, cLotus, cEdna, cHci, cHemas, cHnb, cJay, cLyceum, cRoyal, cSampath, cRail, cSlt]
+const CLIENTS = [cJk, cState, cLtl, cKdaw, cAdvantis, cAvant, cSalaka, cRoccos, cNewworld, cAlan, cCic, cLotus, cEdna, cHci, cHemas, cHnb, cJay, cLyceum, cRoyal, cSampath, cRail, cSlt, cSithara, cSltc]
 function S11() {
   return (
     <Page bg="#fff">
