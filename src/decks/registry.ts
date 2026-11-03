@@ -5,6 +5,7 @@ import { OUTCOMES } from './workshop/data'
 import { overviewSlides } from './workshop/overview'
 import { categorySlides } from './workshop/categories'
 import { frcsClosingSlide, frcsOpeningSlides } from './workshop/frcs'
+import { buildNwFrcaSlides } from './nwfrca'
 import newworldLogo from '../assets/newworld-logo.png'
 import type { Config } from '../engine/Launcher'
 
@@ -80,6 +81,14 @@ export const decks: DeckDef[] = [
     chapters: OUTCOMES.map(o => ({ id: o.id, name: `${o.icon} ${o.name}` })),
     home: 'ws-cat-ops',
     preset: { country: 'fj', industry: 'generic', client: 'FRCS', presenter: { company: 'Newworld Technologies', logo: newworldLogo } },
+  },
+  {
+    id: 'nwfrca',
+    name: 'Newworld · FRCS pitch v4.0',
+    tagline: 'The 13-slide Newworld Technologies pitch for FRCS, rebuilt slide for slide with animation: blueprint, why Newworld, employee journey, system landscape, references, delivery and next steps.',
+    bestFor: 'The 30-minute FRCS presentation from the Newworld pitch file',
+    build: buildNwFrcaSlides,
+    preset: { country: 'fj', industry: 'generic', client: 'FRCS' },
   },
   {
     id: 'tour',

@@ -16,7 +16,7 @@ export function DeckThumb({ id }: { id: string }) {
       </svg>
     )
   }
-  if (id === 'frcs') {
+  if (id === 'frcs' || id === 'nwfrca') {
     return <div className="w-full h-full grid place-items-center" style={{ background: '#fff' }}><img src={newworldLogo} alt="" className="w-[104px] object-contain" /></div>
   }
   // tour: a grid of module tiles
