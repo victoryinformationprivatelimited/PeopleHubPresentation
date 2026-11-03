@@ -9,15 +9,9 @@ import microsoft from '../../assets/nwfrca/microsoft.png'
 import thakral from '../../assets/nwfrca/thakral.png'
 import ninja from '../../assets/nwfrca/ninja.png'
 import victory from '../../assets/nwfrca/victory.png'
-import cLand from '../../assets/nwfrca/c-land-reform.png'
 import cLtl from '../../assets/nwfrca/c-ltl.png'
-import cHtcey from '../../assets/nwfrca/c-htcey.png'
-import cHofsl from '../../assets/nwfrca/c-hofsl.png'
 import cKdaw from '../../assets/nwfrca/c-kdaw.png'
-import cGenxt from '../../assets/nwfrca/c-genxt.png'
-import cCeyoka from '../../assets/nwfrca/c-ceyoka.png'
 import cAdvantis from '../../assets/nwfrca/c-advantis.png'
-import cFert from '../../assets/nwfrca/c-ceylon-fert.png'
 import cAvant from '../../assets/nwfrca/c-avant-garde.png'
 import cSalaka from '../../assets/nwfrca/c-salaka.png'
 import cRoccos from '../../assets/nwfrca/c-roccos.png'
@@ -25,6 +19,18 @@ import cNewworld from '../../assets/nwfrca/c-newworld.png'
 import cAlan from '../../assets/nwfrca/c-alankulama.png'
 import cCic from '../../assets/nwfrca/c-cic.jpeg'
 import cLotus from '../../assets/nwfrca/c-lotus.jpeg'
+import cJk from '../../assets/clients/john-keells-properties-1.webp'
+import cState from '../../assets/clients/state-fertilizer.png'
+import cEdna from '../../assets/clients/edna.png'
+import cHci from '../../assets/clients/hci.jpg'
+import cHemas from '../../assets/clients/hemas.png'
+import cHnb from '../../assets/clients/hnb-assurance.jpg'
+import cJay from '../../assets/clients/jayarathna.jpeg'
+import cLyceum from '../../assets/clients/lyceum.png'
+import cRoyal from '../../assets/clients/royal-institute-of-colombo-pvt-ltd.jpg'
+import cSampath from '../../assets/clients/sampath-centre.jpeg'
+import cRail from '../../assets/clients/sri-lanka-railway.webp'
+import cSlt from '../../assets/clients/sri-lanka-telecom-services-ltd.webp'
 
 /* The Newworld HRIS pitch for FRCS (v4.0), rebuilt slide for slide with the original wording and animation added. */
 
@@ -315,7 +321,7 @@ function S10() {
 }
 
 /* 11 · Trusted by -------------------------------------------------------------------------------------------- */
-const CLIENTS = [cLand, cLtl, cHtcey, cHofsl, cKdaw, cGenxt, cCeyoka, cAdvantis, cFert, cAvant, cSalaka, cRoccos, cNewworld, cAlan, cCic, cLotus]
+const CLIENTS = [cJk, cState, cLtl, cKdaw, cAdvantis, cAvant, cSalaka, cRoccos, cNewworld, cAlan, cCic, cLotus, cEdna, cHci, cHemas, cHnb, cJay, cLyceum, cRoyal, cSampath, cRail, cSlt]
 function S11() {
   return (
     <Page bg="#fff">
@@ -330,11 +336,11 @@ function S11() {
         <motion.div {...rise(1.4, 24)} className="font-extrabold" style={{ fontSize: 66, color: '#F5B829', lineHeight: 1, marginTop: 44 }}>Government</motion.div>
         <motion.div {...rise(1.6, 24)} style={{ fontSize: 24, color: '#fff', marginTop: 10, lineHeight: 1.4 }}>Public sector experience with many departments including iconic Lotus Tower as a client</motion.div>
       </motion.div>
-      <div className="absolute grid grid-cols-4 gap-[16px]" style={{ left: 636, top: 236, width: 1198, gridAutoRows: '158px' }}>
+      <div className="absolute grid grid-cols-6 gap-[14px]" style={{ left: 636, top: 236, width: 1198, gridAutoRows: '158px' }}>
         {CLIENTS.map((c, k) => (
-          <motion.div key={k} initial={{ opacity: 0, rotateY: 90, scale: 0.8 }} animate={{ opacity: 1, rotateY: 0, scale: 1 }} transition={{ delay: 0.5 + k * 0.07, duration: 0.55, ease: 'easeOut' }}
+          <motion.div key={k} initial={{ opacity: 0, rotateY: 90, scale: 0.8 }} animate={{ opacity: 1, rotateY: 0, scale: 1 }} transition={{ delay: 0.5 + k * 0.06, duration: 0.55, ease: 'easeOut' }}
             className="grid place-items-center rounded-xl bg-white overflow-hidden min-h-0" style={{ height: 158, border: '1px solid #E2E8F0', boxShadow: '0 6px 16px -10px rgba(15,42,82,.4)', padding: 10 }}>
-            <img src={c} alt="" className="object-contain" style={{ maxHeight: 136, maxWidth: '100%' }} />
+            <img src={c} alt="" className="object-contain" style={{ maxHeight: 130, maxWidth: '100%' }} />
           </motion.div>
         ))}
       </div>
