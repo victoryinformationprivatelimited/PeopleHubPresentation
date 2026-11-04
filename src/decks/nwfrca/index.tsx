@@ -5,6 +5,7 @@ import { useNav } from '../../engine/context'
 import { buildWorkshopSlides } from '../workshop'
 import { momentSlide } from '../workshop/moments'
 import { MarkAttendancePhone } from './markAttendance'
+import { PHLogo } from '../../ui/PHLogo'
 import login from '../../assets/nwfrca/login.png'
 import frcsLogo from '../../assets/nwfrca/frcs.png'
 import nw from '../../assets/nwfrca/newworld-logo.png'
@@ -331,13 +332,28 @@ const Bul = ({ items, head }: { items: string[]; head?: string }) => (
   <div className="w-full">{head && <div className="text-center">{head}</div>}<ul className="text-left list-disc" style={{ paddingLeft: 36, width: 'fit-content', margin: '0 auto' }}>{items.map(i => <li key={i}>{i}</li>)}</ul></div>
 )
 
-function Landscape({ title, heads, cols, foot, gold, minH = 104, headH = 124, top = 188 }: { title: ReactNode; heads: string[]; cols: Cell[][]; foot: ReactNode; gold?: boolean; minH?: number; headH?: number; top?: number }) {
+type Head = string | { t: string; to: string }
+
+/** An orange header box; with a target it opens that system screen as a side trip. */
+function HeadBox({ h, d, headH }: { h: Head; d: number; headH: number }) {
+  const { jump, has } = useNav()
+  const text = typeof h === 'string' ? h : h.t, to = typeof h === 'string' ? undefined : h.to, live = !!to && has(to)
+  return (
+    <motion.button {...pop(d)} disabled={!live} onClick={() => live && jump(to!)} whileHover={live ? { scale: 1.04, backgroundColor: '#D9660F' } : undefined} whileTap={live ? { scale: 0.98 } : undefined}
+      className="grid place-items-center text-center font-bold text-white w-full relative" style={{ height: headH, fontSize: 31, background: OR, lineHeight: 1.25, padding: '0 20px', boxShadow: '0 12px 18px -8px rgba(0,0,0,.4)', cursor: live ? 'pointer' : 'default' }}>
+      {text}
+      {live && <span style={{ position: 'absolute', right: 10, top: 6, fontSize: 18, opacity: 0.9 }}>↗</span>}
+    </motion.button>
+  )
+}
+
+function Landscape({ title, heads, cols, foot, gold, minH = 104, headH = 124, top = 188 }: { title: ReactNode; heads: Head[]; cols: Cell[][]; foot: ReactNode; gold?: boolean; minH?: number; headH?: number; top?: number }) {
   return (
     <Page bg="#fff">
       <motion.h2 {...rise(0)} className="serif absolute left-0 right-0 text-center font-extrabold" style={{ top: 38, fontSize: 68, color: '#0B2559' }}>{title}</motion.h2>
       {heads.map((h, i) => (
-        <div key={h} className="absolute" style={{ left: colX(i), top, width: COLW }}>
-          <motion.div {...pop(0.4 + i * 0.25)} className="grid place-items-center text-center font-bold text-white" style={{ height: headH, fontSize: 31, background: OR, lineHeight: 1.25, padding: '0 20px', boxShadow: '0 12px 18px -8px rgba(0,0,0,.4)' }}>{h}</motion.div>
+        <div key={typeof h === 'string' ? h : h.t} className="absolute" style={{ left: colX(i), top, width: COLW }}>
+          <HeadBox h={h} d={0.4 + i * 0.25} headH={headH} />
           {i < heads.length - 1 && <div className="absolute" style={{ left: COLW + (GAP - 64) / 2, top: headH / 2 - 20 }}><Conn d={0.7 + i * 0.25} /></div>}
           <div style={{ marginTop: 8 }}><ArrowDown d={0.8 + i * 0.25} /></div>
           <div className="flex flex-col gap-[14px]" style={{ marginTop: 4 }}>
@@ -384,7 +400,7 @@ function S9() {
 function S10() {
   return (
     <Landscape gold title="PeopleHub HRIS Solution Landscape" foot={<><b>Strategic</b> HR Functional Modules</>} minH={118} headH={140} top={190}
-      heads={['Performance Management System', 'Recruitment & Onboarding', 'Workforce & Succession Planning', 'Learning & Development']}
+      heads={[{ t: 'Performance Management System', to: 'grow-perf' }, { t: 'Recruitment & Onboarding', to: 'hire-recruit' }, { t: 'Workforce & Succession Planning', to: 'grow-succ' }, { t: 'Learning & Development', to: 'grow-learn' }]}
       cols={[
         [<Lines key="a" items={['Goal & Objective Setting', 'Feedback & 360-Degree Reviews']} />, 'Competency & Skill Assessment', 'Performance Reviews & Appraisals'],
         [<Lines key="b" items={['Automated Recruitment', 'Candidate Experience']} />, 'AI-Based CV Sorting to AI-Based Interview Process', <Lines key="c" items={['Automated Onboarding Journey', 'Onboarding Effectiveness']} />],
@@ -476,11 +492,42 @@ function S13() {
   )
 }
 
+/* 14 · Questions & answers ------------------------------------------------------------------------------------ */
+function SQA() {
+  const bubbles = [[140, 220, 0], [1700, 260, 1.2], [260, 760, 0.6], [1620, 720, 1.8], [820, 120, 0.9], [380, 840, 0.3], [60, 480, 1.5], [1840, 520, 0.2]]
+  const contact: [string, string][] = [['✉', 'isuru.dahanayake@newworld.com.fj'], ['☎', '+679 999 2289'], ['⚲', 'Newworld Pte Ltd, Kings Road, Ba, Fiji']]
+  return (
+    <Page bg="#0B1017">
+      {bubbles.map(([x, y, d], k) => (
+        <motion.div key={k} className="absolute font-extrabold select-none" style={{ left: x, top: y, fontSize: 70 + (k % 3) * 26, color: k % 2 ? 'rgba(25,195,125,.16)' : 'rgba(46,117,182,.2)' }}
+          initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: [0, -26, 0] }} transition={{ opacity: { delay: d, duration: 0.8 }, y: { delay: d, duration: 5 + (k % 3), repeat: Infinity, ease: 'easeInOut' } }}>?</motion.div>
+      ))}
+      <div className="absolute inset-x-0 flex flex-col items-center text-center" style={{ top: 118 }}>
+        <motion.div {...pop(0.1)} className="relative grid place-items-center" style={{ width: 230, height: 230 }}>
+          {[0, 1, 2].map(i => <motion.span key={i} className="absolute rounded-full" style={{ inset: 0, border: `3px solid ${GREEN}` }} initial={{ scale: 0.7, opacity: 0.6 }} animate={{ scale: 1.7, opacity: 0 }} transition={{ duration: 3.2, repeat: Infinity, delay: i * 1.05, ease: 'easeOut' }} />)}
+          <div className="grid place-items-center rounded-full font-extrabold text-white" style={{ width: 200, height: 200, fontSize: 150, background: `linear-gradient(135deg, ${GREEN}, ${BLUE})`, boxShadow: '0 0 70px -10px rgba(25,195,125,.6)' }}>?</div>
+        </motion.div>
+        <motion.div {...rise(0.5)} className="text-[22px] font-extrabold tracking-[0.22em]" style={{ color: GREEN, marginTop: 36 }}>15 MIN · OPEN DISCUSSION</motion.div>
+        <motion.h2 {...rise(0.65, 50)} className="font-extrabold text-white" style={{ fontSize: 124, lineHeight: 1.1, marginTop: 8 }}>Questions & Answers</motion.h2>
+        <motion.p {...rise(0.95)} style={{ fontSize: 31, color: '#9AA7B8', marginTop: 16 }}>Thank you, FRCS — we would be glad to answer anything about PeopleHub and our delivery.</motion.p>
+        <motion.div {...rise(1.25)} className="flex items-center gap-8" style={{ marginTop: 52 }}>
+          <div className="grid place-items-center rounded-2xl" style={{ width: 120, height: 120, background: '#131A24', border: '1px solid #1E2A3A' }}><PHLogo className="h-[84px] w-[84px]" /></div>
+          <span className="text-[44px]" style={{ color: '#4B5A70' }}>×</span>
+          <div className="rounded-2xl bg-white" style={{ padding: '24px 40px' }}><NwLogo h={52} /></div>
+        </motion.div>
+      </div>
+      <motion.div {...rise(1.6, 20)} className="absolute left-0 right-0 flex items-center justify-center gap-14" style={{ top: 944, fontSize: 21, color: '#9AA7B8' }}>
+        {contact.map(([ic, t]) => <span key={t} className="flex items-center gap-3"><span style={{ color: GREEN }}>{ic}</span>{t}</span>)}
+      </motion.div>
+    </Page>
+  )
+}
+
 /** One footer for every slide: “PEOPLEHUB HRIS · NEWWORLD”. */
 const SECTION = 'Newworld'
 const mk = (id: string, title: string, secs: number, render: () => ReactNode, notes = ''): SlideDef => ({ id, section: SECTION, title, secs, tier: 3, notes, render })
 
-const SIDE = ['time-capture', 'time-roster', 'pay-advance', 'pay-finance', 'serve-assets', 'serve-chat']
+const SIDE = ['time-capture', 'time-roster', 'pay-advance', 'pay-finance', 'serve-assets', 'serve-chat', 'grow-perf', 'hire-recruit', 'grow-succ', 'grow-learn']
 
 export function buildNwFrcaSlides(): SlideDef[] {
   const ws = buildWorkshopSlides()
@@ -499,6 +546,7 @@ export function buildNwFrcaSlides(): SlideDef[] {
     mk('nw-trusted', 'Trusted by 600+ Organisations', 120, () => <S11 />),
     mk('nw-delivery', 'How We Will Deliver and Support FRCS', 90, () => <S12 />),
     mk('nw-next', 'Next Steps', 60, () => <S13 />),
+    mk('nw-qa', 'Questions & Answers', 900, () => <SQA />, 'Questions and answers (15 min), the last item on the agenda.'),
   ]
   // system screens reached from the landscape boxes: opened by link, then Back (not part of the running order)
   const mark: SlideDef = {
