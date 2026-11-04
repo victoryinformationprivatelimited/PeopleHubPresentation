@@ -106,10 +106,15 @@ export const decks: DeckDef[] = [
   },
 ]
 
+/** The portal can limit which presentations are offered (?decks=workshop,tour). A convenience for the presenter, not a security boundary. */
+let allowed: string[] | null = null
+export const setAllowedDecks = (ids: string[] | null) => { allowed = ids && ids.length ? ids : null }
+export const visibleDecks = () => (allowed ? decks.filter(d => allowed!.includes(d.id)) : decks)
+
 /** Deck opened when nothing has been chosen. */
 export const DEFAULT_DECK = 'workshop'
 
-export const resolveDeckId = (id?: string) => (decks.some(d => d.id === id) ? id! : DEFAULT_DECK)
+export const resolveDeckId = (id?: string) => (visibleDecks().some(d => d.id === id) ? id! : (visibleDecks()[0]?.id ?? DEFAULT_DECK))
 export const getDeck = (id?: string) => decks.find(d => d.id === resolveDeckId(id))!
 
 /** Keep only the chosen navigation screen ('all' keeps every one). */

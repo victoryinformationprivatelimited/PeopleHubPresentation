@@ -6,7 +6,7 @@ import { PrintView } from './engine/PrintView'
 import { Guide } from './engine/Guide'
 import { buildCtx } from './engine/buildCtx'
 import { agendaFor, defaultAgenda, pickSlides } from './engine/agenda'
-import { arrangeFor, getDeck, getDeckSlides, resolveDeckId } from './decks/registry'
+import { arrangeFor, getDeck, getDeckSlides, resolveDeckId, setAllowedDecks } from './decks/registry'
 import { PAIN_OUTCOME, defaultOutcomes } from './decks/workshop/data'
 
 type Mode = 'launcher' | 'show' | 'print' | 'guide'
@@ -14,12 +14,16 @@ type Mode = 'launcher' | 'show' | 'print' | 'guide'
 /** Launcher screen first. Query params (?country=lk&industry=apparel&client=Name&agenda=30&print=1) skip it. */
 function initial(): { cfg: Config; mode: Mode; auto: boolean; clientView: boolean; outcomes?: string[]; roles?: string[] } {
   const q = new URLSearchParams(location.search)
+  // The sales portal may limit the decks offered (?decks=workshop,tour); remembered for the session so a refresh keeps it
+  try { const d = q.get('decks') ?? sessionStorage.getItem('ph-decks'); if (d !== null) { sessionStorage.setItem('ph-decks', d); setAllowedDecks(d.split(',').filter(Boolean)) } } catch { /* storage unavailable */ }
+  // ?launcher=1 opens the full settings screen, with everything else in the address already filled in
+  const wantsSettings = q.has('launcher')
   const clientView = q.get('view') === 'client'
   // The client view must never pick up the presenter's saved settings.
   const saved = clientView ? emptyConfig : loadConfig()
   if (q.has('guide')) return { cfg: saved, mode: 'guide', auto: true, clientView: false }
   const keys = ['country', 'industry', 'client', 'headcount', 'hrTeam', 'pains', 'agenda', 'slides', 'print', 'view', 'pco', 'deck', 'nav']
-  if (!keys.some(k => q.has(k))) return { cfg: saved, mode: 'launcher', auto: true, clientView: false }
+  if (!wantsSettings && !keys.some(k => q.has(k))) return { cfg: saved, mode: 'launcher', auto: true, clientView: false }
   const agendaParam = q.get('agenda')
   const deck = resolveDeckId(q.get('deck') ?? saved.deck)
   const urlAgenda = q.get('slides') ? { ...defaultAgenda, mode: 'manual' as const, ids: q.get('slides')!.split(',').filter(Boolean) } : agendaParam ? { ...defaultAgenda, mode: 'auto' as const, minutes: Number(agendaParam) || 30 } : undefined
@@ -41,7 +45,7 @@ function initial(): { cfg: Config; mode: Mode; auto: boolean; clientView: boolea
     theme: q.get('theme') === 'light' ? 'light' : q.get('theme') === 'dark' ? 'dark' : saved.theme,
   }
   const list = (k: string) => (q.has(k) ? q.get(k)!.split(',').filter(Boolean) : undefined)
-  return { cfg, mode: q.has('print') ? 'print' : 'show', auto: q.get('auto') !== '0', clientView, outcomes: list('outcomes'), roles: list('roles') }
+  return { cfg, mode: wantsSettings ? 'launcher' : q.has('print') ? 'print' : 'show', auto: q.get('auto') !== '0', clientView, outcomes: list('outcomes'), roles: list('roles') }
 }
 
 export default function App() {

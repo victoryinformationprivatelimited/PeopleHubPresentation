@@ -6,7 +6,7 @@ import { painsFor } from '../profiles/pains'
 import { IndustryArt } from '../ui/IndustryArt'
 import { agendaFor, fmtTime, pickSlides, totalSecs, type Agenda } from './agenda'
 import { DeckThumb } from '../ui/DeckThumb'
-import { arrangeFor, decks, getDeckSlides, resolveDeckId } from '../decks/registry'
+import { arrangeFor, decks, getDeckSlides, resolveDeckId, visibleDecks } from '../decks/registry'
 import { defaultOutcomes } from '../decks/workshop/data'
 import { buildCtx } from './buildCtx'
 import type { SlideDef } from './context'
@@ -100,7 +100,7 @@ export function Launcher({ initial, onStart, onExport, onGuide }: { initial: Con
         <section className="mb-6">
           <h2 className="text-[13px] tracking-[0.2em] uppercase font-bold mb-3" style={{ color: 'var(--brand2)' }}>Choose presentation <span className="normal-case tracking-normal font-normal" style={{ color: 'var(--mute)' }}>— each one keeps its own duration and slide selection</span></h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {decks.map(d => {
+            {visibleDecks().map(d => {
               const ds = getDeckSlides(d.id), on = d.id === deckId
               return (
                 <button key={d.id} onClick={() => set({ deck: d.id, ...(d.preset ?? {}) })} className="card text-left p-4 flex gap-4 items-center transition hover:brightness-110"
