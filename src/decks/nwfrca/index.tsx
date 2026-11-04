@@ -12,34 +12,35 @@ import thakral from '../../assets/nwfrca/thakral.png'
 import ninja from '../../assets/nwfrca/ninja.png'
 import victory from '../../assets/nwfrca/victory.png'
 import huawei from '../../assets/nwfrca/huawei.png'
-import cLtl from '../../assets/nwfrca/c-ltl.png'
-import cKdaw from '../../assets/nwfrca/c-kdaw.png'
-import cAdvantis from '../../assets/nwfrca/c-advantis.png'
-import cAvant from '../../assets/nwfrca/c-avant-garde.png'
-import cSalaka from '../../assets/nwfrca/c-salaka.png'
-import cRoccos from '../../assets/nwfrca/c-roccos.png'
-import cAlan from '../../assets/nwfrca/c-alankulama.png'
-import cCic from '../../assets/nwfrca/c-cic.jpeg'
-import cLotus from '../../assets/nwfrca/c-lotus.jpeg'
-import cJk from '../../assets/clients/john-keells-properties-1.webp'
-import cState from '../../assets/clients/state-fertilizer.png'
-import cEdna from '../../assets/clients/edna.png'
-import cHci from '../../assets/clients/hci.jpg'
-import cHemas from '../../assets/clients/hemas.png'
-import cHnb from '../../assets/clients/hnb-assurance.jpg'
-import cHnbGen from '../../assets/clients/hnb-general-insurance.jpg'
-import cJay from '../../assets/clients/jayarathna.jpeg'
-import cLyceum from '../../assets/clients/lyceum.png'
-import cRoyal from '../../assets/clients/royal-institute-of-colombo-pvt-ltd.jpg'
-import cSampath from '../../assets/clients/sampath-centre.jpeg'
-import cSc from '../../assets/clients/sc-securities.jpeg'
-import cRail from '../../assets/clients/sri-lanka-railway.webp'
-import cSlt from '../../assets/clients/sri-lanka-telecom-services-ltd.webp'
-import cSithara from '../../assets/clients/sithara.jpeg'
-import cSltc from '../../assets/clients/sri-lanka-technological-campus-sltc.webp'
-import cLand from '../../assets/clients/land-reform-commission.png'
-import cAitken from '../../assets/clients/aitken-spence-travels-pvt-ltd.jpeg'
-import cDeLaRue from '../../assets/clients/de-la-rue-lanka-currency-and-security-print-private-limited.jpg'
+import l_land from '../../assets/nwfrca/logos/land.jpg'
+import l_state from '../../assets/nwfrca/logos/state.jpg'
+import l_rail from '../../assets/nwfrca/logos/rail.jpg'
+import l_lotus from '../../assets/nwfrca/logos/lotus.jpg'
+import l_hnb from '../../assets/nwfrca/logos/hnb.jpg'
+import l_hnbgen from '../../assets/nwfrca/logos/hnbgen.jpg'
+import l_sc from '../../assets/nwfrca/logos/sc.jpg'
+import l_jk from '../../assets/nwfrca/logos/jk.jpg'
+import l_hemas from '../../assets/nwfrca/logos/hemas.jpg'
+import l_slt from '../../assets/nwfrca/logos/slt.jpg'
+import l_cic from '../../assets/nwfrca/logos/cic.jpg'
+import l_aitken from '../../assets/nwfrca/logos/aitken.jpg'
+import l_delarue from '../../assets/nwfrca/logos/delarue.jpg'
+import l_ltl from '../../assets/nwfrca/logos/ltl.jpg'
+import l_kdaw from '../../assets/nwfrca/logos/kdaw.jpg'
+import l_avant from '../../assets/nwfrca/logos/avant.jpg'
+import l_salaka from '../../assets/nwfrca/logos/salaka.jpg'
+import l_roccos from '../../assets/nwfrca/logos/roccos.jpg'
+import l_alan from '../../assets/nwfrca/logos/alan.jpg'
+import l_edna from '../../assets/nwfrca/logos/edna.jpg'
+import l_hci from '../../assets/nwfrca/logos/hci.jpg'
+import l_jay from '../../assets/nwfrca/logos/jay.jpg'
+import l_lyceum from '../../assets/nwfrca/logos/lyceum.jpg'
+import l_royal from '../../assets/nwfrca/logos/royal.jpg'
+import l_sampath from '../../assets/nwfrca/logos/sampath.jpg'
+import l_sithara from '../../assets/nwfrca/logos/sithara.jpg'
+import l_sltc from '../../assets/nwfrca/logos/sltc.jpg'
+import l_advantis from '../../assets/nwfrca/logos/advantis.jpg'
+import l_tekwarden from '../../assets/nwfrca/logos/tekwarden.jpg'
 
 /* The Newworld HRIS presentation for FRCS (v4.0), rebuilt slide for slide with animation, then revised from the review notes. */
 
@@ -78,7 +79,7 @@ const NwLogo = ({ h = 58, style }: { h?: number; style?: CSSProperties }) => <im
 function Light({ title, children }: { title: string; children: ReactNode }) {
   return (
     <Page bg={LIGHT}>
-      <motion.div {...slideIn(0.1, 60)} className="absolute" style={{ right: 108, top: 36 }}><NwLogo h={58} /></motion.div>
+      <motion.div {...slideIn(0.1, 60)} className="absolute" style={{ right: 108, top: 44 }}><NwLogo h={42} /></motion.div>
       <motion.h2 {...rise(0)} className="absolute font-extrabold" style={{ left: 96, top: 92, fontSize: 60, color: NAVY, lineHeight: 1.1 }}>{title}</motion.h2>
       <motion.div initial={{ width: 0 }} animate={{ width: 168 }} transition={{ delay: 0.3, duration: 0.6 }} className="absolute rounded-full" style={{ left: 96, top: 196, height: 9, background: TEAL }} />
       {children}
@@ -137,8 +138,8 @@ function S1() {
         </motion.div>
       </motion.div>
       <div className="absolute left-0 right-0 flex items-center justify-between" style={{ top: 900, height: 108, padding: '0 150px', background: '#fff' }}>
-        <motion.img {...slideIn(0.8, -120)} src={frcsLogo} alt="Fiji Revenue and Customs Service" style={{ height: 76, width: 'auto' }} />
-        <motion.div {...slideIn(1.0, 120)}><NwLogo h={64} /></motion.div>
+        <motion.img {...slideIn(0.8, -120)} src={frcsLogo} alt="Fiji Revenue and Customs Service" style={{ height: 68, width: 'auto' }} />
+        <motion.div {...slideIn(1.0, 120)}><NwLogo h={48} /></motion.div>
       </div>
     </Page>
   )
@@ -150,7 +151,7 @@ function S2() {
   return (
     <Page bg="#0B1017">
       <motion.div {...slideIn(0.1)} className="absolute flex items-center gap-7" style={{ left: 100, top: 60 }}>
-        <div className="rounded-2xl bg-white" style={{ padding: '14px 28px' }}><NwLogo h={52} /></div>
+        <div className="rounded-2xl bg-white" style={{ padding: '14px 26px' }}><NwLogo h={40} /></div>
         <div className="w-px" style={{ height: 56, background: '#2B3646' }} />
         <div className="text-[26px] font-bold tracking-[0.2em]" style={{ color: '#9AA7B8' }}>TECHNOLOGIES</div>
       </motion.div>
@@ -190,7 +191,7 @@ function S3() {
 
 /* 4 · Household name ------------------------------------------------------------------------------------------ */
 function S4() {
-  const cards: [keyof typeof ICONS, string, string][] = [['server', 'Microsoft Dynamics ERP', 'Finance, supply chain and operations'], ['cart', 'eCommerce Solution', 'Online retail on the same backbone'], ['users', 'HRIS', 'Managing our own large, multi-site workforce'], ['shield', 'Infrastructure Solutions', 'Cyber Security, Network & Wireless Solutions, Endpoint & Patch Management Solutions']]
+  const cards: [keyof typeof ICONS, string, string][] = [['server', 'Microsoft Dynamics ERP', 'Finance, supply chain and operations'], ['cart', 'eCommerce Solution', 'Online retail on the same backbone'], ['shield', 'Infrastructure Solutions', 'Cyber Security, Network & Wireless Solutions, Endpoint & Patch Management Solutions'], ['users', 'HRIS', 'Managing our own large, multi-site workforce']]
   return (
     <Light title="Newworld: A Household Name, Powered by Technology">
       <div className="absolute" style={{ left: 96, top: 330, width: 700 }}>
@@ -211,16 +212,16 @@ function S4() {
 function S5() {
   const big = (n: ReactNode, label: ReactNode, d: number, top: number) => (
     <motion.div {...rise(d, 40)} className="absolute" style={{ left: 96, top }}>
-      <div className="font-extrabold" style={{ fontSize: 150, lineHeight: 1, color: TEAL }}>{n}</div>
-      <div style={{ fontSize: 29, color: NAVY, lineHeight: 1.35, width: 520 }}>{label}</div>
+      <div className="font-extrabold" style={{ fontSize: 104, lineHeight: 1, color: TEAL }}>{n}</div>
+      <div style={{ fontSize: 27, color: NAVY, lineHeight: 1.35, width: 520, marginTop: 4 }}>{label}</div>
     </motion.div>
   )
   const logos: [string, number][] = [[microsoft, 112], [thakral, 72], [victory, 112], [ninja, 58], [huawei, 112]]
   return (
     <Light title="A Skilled Team, Backed by Global Partnerships">
-      {big(<AnimNum to={1933} plain />, <><b>Fiji Heritage</b> & Enterprise Scale</>, 0.5, 262)}
-      {big(<AnimNum to={1300} suffix="+" delay={0.7} />, <>Employees on <b>PeopleHub</b> in Fiji</>, 0.8, 506)}
-      {big(<AnimNum to={20} suffix="+" delay={1.0} />, <>Highly skilled in-house <b>technical professionals</b>, recruited and trained by Newworld</>, 1.1, 750)}
+      {big(<AnimNum to={1933} plain />, <><b>Fiji Heritage</b> & Enterprise Scale</>, 0.5, 276)}
+      {big(<AnimNum to={1300} suffix="+" delay={0.7} />, <>Employees on <b>PeopleHub</b> in Fiji</>, 0.8, 526)}
+      {big(<AnimNum to={20} suffix="+" delay={1.0} />, <>Highly skilled in-house <b>technical professionals</b>, recruited and trained by Newworld</>, 1.1, 776)}
       <motion.div {...slideIn(0.7, 120)} className="absolute rounded-xl bg-white" style={{ left: 708, width: 1116, top: 262, height: 330, borderLeft: `12px solid ${TEAL}`, boxShadow: '0 6px 24px -10px rgba(15,42,82,.35)', padding: '26px 40px' }}>
         <div className="font-bold" style={{ fontSize: 33, color: NAVY }}>Strategic Global Partnerships</div>
         <div className="flex items-center justify-between" style={{ height: 150, marginTop: 6 }}>
@@ -243,7 +244,7 @@ function S6() {
   const card: CSSProperties = { background: '#fff', borderRadius: 20, boxShadow: '0 10px 34px -14px rgba(15,42,82,.35)', border: '1px solid #E5EAF1' }
   return (
     <Page bg="#F8FAFC">
-      <motion.div {...slideIn(0.1, 60)} className="absolute" style={{ right: 108, top: 36 }}><NwLogo h={58} /></motion.div>
+      <motion.div {...slideIn(0.1, 60)} className="absolute" style={{ right: 108, top: 44 }}><NwLogo h={42} /></motion.div>
       <motion.div {...rise(0)} className="absolute text-[20px] font-extrabold tracking-[0.12em]" style={{ left: 96, top: 70, color: '#0B8F4F' }}>PROVEN FIJI ENTERPRISE & TECHNOLOGY LEADERSHIP</motion.div>
       <motion.h2 {...rise(0.1)} className="absolute font-extrabold" style={{ left: 96, top: 114, fontSize: 56, color: '#0F172A' }}>Your Local Technology Partner in Fiji</motion.h2>
       <motion.div {...slideIn(0.4, -110)} className="absolute" style={{ ...card, left: 96, top: 270, width: 840, height: 640, padding: '34px 40px' }}>
@@ -390,12 +391,12 @@ function S10() {
 }
 
 /* 11 · Trusted by -------------------------------------------------------------------------------------------- */
-const LOCAL = [cLand, cState, cRail, cLotus, cHnb, cHnbGen, cSc, cJk, cHemas, cSlt, cCic, cAitken, cDeLaRue, cLtl, cKdaw, cAvant, cSalaka, cRoccos, cAlan, cEdna, cHci, cJay, cLyceum, cRoyal, cSampath, cSithara, cSltc]
+const LOCAL = [l_land, l_state, l_rail, l_lotus, l_hnb, l_hnbgen, l_sc, l_jk, l_hemas, l_slt, l_cic, l_aitken, l_delarue, l_ltl, l_kdaw, l_avant, l_salaka, l_roccos, l_alan, l_edna, l_hci, l_jay, l_lyceum, l_royal, l_sampath, l_sithara, l_sltc]
 function Tile({ src, dark, d }: { src?: string; dark?: boolean; d: number }) {
   return (
     <motion.div initial={{ opacity: 0, rotateY: 90, scale: 0.8 }} animate={{ opacity: 1, rotateY: 0, scale: 1 }} transition={{ delay: d, duration: 0.5, ease: 'easeOut' }}
-      className="grid place-items-center rounded-xl overflow-hidden min-h-0" style={{ height: 100, border: src ? '1px solid #E2E8F0' : '2px dashed #9FB0C7', background: dark ? '#0F2A52' : '#fff', boxShadow: src ? '0 6px 16px -10px rgba(15,42,82,.4)' : 'none', padding: 8 }}>
-      {src ? <img src={src} alt="" className="object-contain" style={{ maxHeight: 84, maxWidth: '100%' }} /> : <span className="text-center" style={{ fontSize: 15, fontWeight: 600, color: '#7C8AA0', lineHeight: 1.2 }}>Logo to<br />be added</span>}
+      className="grid place-items-center rounded-xl overflow-hidden min-h-0" style={{ height: 112, border: src ? '1px solid #E2E8F0' : '2px dashed #9FB0C7', background: dark ? '#0F2A52' : '#fff', boxShadow: src ? '0 6px 16px -10px rgba(15,42,82,.4)' : 'none', padding: 8 }}>
+      {src ? <img src={src} alt="" className="object-contain" style={{ maxHeight: 96, maxWidth: '100%' }} /> : <span className="text-center" style={{ fontSize: 15, fontWeight: 600, color: '#7C8AA0', lineHeight: 1.2 }}>Logo to<br />be added</span>}
     </motion.div>
   )
 }
@@ -407,25 +408,25 @@ const GroupLabel = ({ children, d }: { children: ReactNode; d: number }) => (
 function S11() {
   return (
     <Page bg="#fff">
-      <motion.div {...slideIn(0.1, 60)} className="absolute" style={{ right: 108, top: 36 }}><NwLogo h={58} /></motion.div>
+      <motion.div {...slideIn(0.1, 60)} className="absolute" style={{ right: 108, top: 44 }}><NwLogo h={42} /></motion.div>
       <motion.div {...rise(0)} className="absolute text-[18px] font-extrabold tracking-[0.3em]" style={{ left: 86, top: 64, color: '#E8912D' }}>TRUSTED BY</motion.div>
       <motion.h2 {...rise(0.1)} className="absolute font-extrabold" style={{ left: 86, top: 104, fontSize: 56, color: NAVY }}>600+ Organisations Rely on PeopleHub</motion.h2>
-      <motion.div {...slideIn(0.3, -100)} className="absolute rounded-2xl" style={{ left: 86, top: 236, width: 519, height: 720, background: '#0B2A6B', padding: '44px 40px', boxShadow: '0 18px 40px -18px rgba(11,42,107,.6)' }}>
-        <div className="font-extrabold" style={{ fontSize: 112, color: '#F5B829', lineHeight: 1 }}><AnimNum to={600} suffix="+" /></div>
-        <div style={{ fontSize: 26, color: '#fff', marginTop: 10 }}>Clients across every industry</div>
-        <div className="font-extrabold" style={{ fontSize: 112, color: '#F5B829', lineHeight: 1, marginTop: 44 }}><AnimNum to={12} suffix="+" delay={0.8} /></div>
-        <div style={{ fontSize: 26, color: '#fff', marginTop: 10, lineHeight: 1.4 }}>Years of building HR software people trust</div>
-        <motion.div {...rise(1.4, 24)} className="font-extrabold" style={{ fontSize: 66, color: '#F5B829', lineHeight: 1, marginTop: 44 }}>Government</motion.div>
-        <motion.div {...rise(1.6, 24)} style={{ fontSize: 24, color: '#fff', marginTop: 10, lineHeight: 1.4 }}>Public sector experience with many departments, including the iconic Lotus Tower as a client</motion.div>
+      <motion.div {...slideIn(0.3, -100)} className="absolute rounded-2xl" style={{ left: 86, top: 236, width: 400, height: 704, background: '#0B2A6B', padding: '40px 34px', boxShadow: '0 18px 40px -18px rgba(11,42,107,.6)' }}>
+        <div className="font-extrabold" style={{ fontSize: 96, color: '#F5B829', lineHeight: 1 }}><AnimNum to={600} suffix="+" /></div>
+        <div style={{ fontSize: 24, color: '#fff', marginTop: 10 }}>Clients across every industry</div>
+        <div className="font-extrabold" style={{ fontSize: 96, color: '#F5B829', lineHeight: 1, marginTop: 40 }}><AnimNum to={12} suffix="+" delay={0.8} /></div>
+        <div style={{ fontSize: 24, color: '#fff', marginTop: 10, lineHeight: 1.4 }}>Years of building HR software people trust</div>
+        <motion.div {...rise(1.4, 24)} className="font-extrabold" style={{ fontSize: 54, color: '#F5B829', lineHeight: 1, marginTop: 40 }}>Government</motion.div>
+        <motion.div {...rise(1.6, 24)} style={{ fontSize: 22, color: '#fff', marginTop: 10, lineHeight: 1.4 }}>Public sector experience with many departments, including the iconic Lotus Tower as a client</motion.div>
       </motion.div>
-      <div className="absolute" style={{ left: 636, top: 236, width: 1198 }}>
+      <div className="absolute" style={{ left: 520, top: 236, width: 1314 }}>
         <GroupLabel d={0.4}>Local (Sri Lanka)</GroupLabel>
-        <div className="grid grid-cols-8 gap-[10px]">{LOCAL.map((c, k) => <Tile key={k} src={c} d={0.5 + k * 0.04} />)}</div>
+        <div className="grid grid-cols-7 gap-[10px]">{LOCAL.map((c, k) => <Tile key={k} src={c} d={0.5 + k * 0.04} />)}</div>
         <div style={{ height: 22 }} />
         <GroupLabel d={1.8}>International</GroupLabel>
-        <div className="grid grid-cols-8 gap-[10px]">
-          <Tile src={cAdvantis} d={1.9} /><Tile src={orbit} dark d={2.0} /><Tile src={nw} d={2.1} />
-          <Tile d={2.2} /><Tile d={2.3} />
+        <div className="grid grid-cols-7 gap-[10px]">
+          <Tile src={l_advantis} d={1.9} /><Tile src={orbit} dark d={2.0} /><Tile src={nw} d={2.1} /><Tile src={l_tekwarden} d={2.2} />
+          <Tile d={2.3} />
         </div>
       </div>
     </Page>
@@ -454,7 +455,7 @@ function S13() {
   const contact: [string, string][] = [['✉', 'isuru.dahanayake@newworld.com.fj'], ['☎', '+679 999 2289'], ['⚲', 'Newworld Pte Ltd, Kings Road, Ba, Fiji']]
   return (
     <Page bg="#0B1017">
-      <motion.div {...pop(0.1)} className="absolute rounded-2xl bg-white" style={{ left: 710, top: 160, width: 500, padding: '20px 34px', display: 'grid', placeItems: 'center' }}><NwLogo h={62} /></motion.div>
+      <motion.div {...pop(0.1)} className="absolute rounded-2xl bg-white" style={{ left: 760, top: 168, width: 400, padding: '18px 30px', display: 'grid', placeItems: 'center' }}><NwLogo h={46} /></motion.div>
       <motion.div {...rise(0.4)} className="absolute left-0 right-0 text-center text-[21px] font-extrabold tracking-[0.12em]" style={{ top: 322, color: GREEN }}>NEXT STEPS • FRCS HRIS MODERNISATION</motion.div>
       <motion.h2 {...rise(0.55, 50)} className="absolute left-0 right-0 text-center font-extrabold text-white" style={{ top: 372, fontSize: 82, lineHeight: 1.18, padding: '0 220px' }}>Ready to Power FRCS’s Workforce Transformation</motion.h2>
       <motion.p {...rise(0.9)} className="absolute left-0 right-0 text-center" style={{ top: 620, fontSize: 26, lineHeight: 1.6, color: '#9AA7B8', padding: '0 330px' }}>Local accountability from Newworld Technologies, backed by PeopleHub’s proven HR engineering and 24/7 SLA-governed support.</motion.p>
@@ -485,7 +486,6 @@ export function buildNwFrcaSlides(): SlideDef[] {
     mk('nw-welcome', 'Welcome to PeopleHub', 60, () => <S1 />, 'Welcome and introduction (2 min). The date and time on the sign-in screen come from the MEETING setting in the deck source; empty means the live date and clock.'),
     mk('nw-blueprint', 'Modern Human Capital Management for FRCS', 60, () => <S2 />),
     mk('nw-agenda', 'What We Will Cover in 30 Minutes', 60, () => <S3 />, 'Agenda: 2 / 7 / 12 / 5 / 4 minutes, then 15 minutes of questions.'),
-    pick('ws-roles'),
     mk('nw-household', 'Newworld: A Household Name, Powered by Technology', 90, () => <S4 />),
     mk('nw-team', 'A Skilled Team, Backed by Global Partnerships', 90, () => <S5 />),
     mk('nw-local-partner', 'Your Local Technology Partner in Fiji', 90, () => <S6 />),
