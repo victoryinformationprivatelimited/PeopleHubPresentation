@@ -43,6 +43,8 @@ import l_sithara from '../../assets/nwfrca/logos/sithara.jpg'
 import l_sltc from '../../assets/nwfrca/logos/sltc.jpg'
 import l_advantis from '../../assets/nwfrca/logos/advantis.jpg'
 import l_tekwarden from '../../assets/nwfrca/logos/tekwarden.jpg'
+import l_tache from '../../assets/nwfrca/logos/tache.jpg'
+import l_hayleys from '../../assets/nwfrca/logos/hayleys.jpg'
 
 /* The Newworld HRIS presentation for FRCS (v4.0), rebuilt slide for slide with animation, then revised from the review notes. */
 
@@ -393,7 +395,7 @@ function S10() {
 }
 
 /* 11 · Trusted by -------------------------------------------------------------------------------------------- */
-const LOCAL = [l_land, l_state, l_rail, l_lotus, l_hnb, l_hnbgen, l_sc, l_jk, l_hemas, l_slt, l_cic, l_aitken, l_delarue, l_ltl, l_kdaw, l_avant, l_salaka, l_roccos, l_alan, l_edna, l_hci, l_jay, l_lyceum, l_royal, l_sampath, l_sithara, l_sltc]
+const LOCAL = [l_land, l_state, l_rail, l_lotus, l_hnb, l_hnbgen, l_sc, l_jk, l_hayleys, l_hemas, l_slt, l_cic, l_aitken, l_delarue, l_ltl, l_kdaw, l_avant, l_salaka, l_roccos, l_alan, l_edna, l_hci, l_jay, l_lyceum, l_royal, l_sampath, l_sithara, l_sltc]
 function Tile({ src, dark, d }: { src?: string; dark?: boolean; d: number }) {
   return (
     <motion.div initial={{ opacity: 0, rotateY: 90, scale: 0.8 }} animate={{ opacity: 1, rotateY: 0, scale: 1 }} transition={{ delay: d, duration: 0.5, ease: 'easeOut' }}
@@ -427,8 +429,7 @@ function S11() {
         <div style={{ height: 22 }} />
         <GroupLabel d={1.8}>International</GroupLabel>
         <div className="grid grid-cols-7 gap-[10px]">
-          <Tile src={l_advantis} d={1.9} /><Tile src={orbit} dark d={2.0} /><Tile src={nw} d={2.1} /><Tile src={l_tekwarden} d={2.2} />
-          <Tile d={2.3} />
+          <Tile src={l_advantis} d={1.9} /><Tile src={orbit} dark d={2.0} /><Tile src={nw} d={2.1} /><Tile src={l_tekwarden} d={2.2} /><Tile src={l_tache} d={2.3} />
         </div>
       </div>
     </Page>
