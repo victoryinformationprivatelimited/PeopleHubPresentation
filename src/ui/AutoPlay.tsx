@@ -26,7 +26,7 @@ const OPTS: Record<string, Opts> = {
   leave: { plays: [{ first: ['Casual', '=28', '=30', 'Submit request', 'wait:7000'], steps: 0 }, { first: ['Entitlements & policy', 'Medical', 'Casual'], steps: 0 }] },
   recruitment: { plays: [{ first: ['css:[draggable="true"]|0', '@btn', '@btn', '@btn'], steps: 0 }, { first: ['css:[draggable="true"]|3', '@btn', '@btn'], steps: 0 }] },
   tasks: { type: 'Prepare onboarding pack' },
-  'mark-attendance': { plays: [{ first: ['Mark attendance', 'Mark attendance', 'Mark attendance'], steps: 0 }] },
+  'mark-attendance': { plays: [{ first: ['Mark attendance', 'Mark attendance'], steps: 0 }] },
   termination: { cap: 5, plays: [{ steps: 8 }] },
   term: { cap: 5, plays: [{ steps: 8 }] },
   security: { cap: 6, plays: [{ steps: 8 }] },

@@ -4,7 +4,7 @@ import type { SlideDef } from '../../engine/context'
 import { useNav } from '../../engine/context'
 import { buildWorkshopSlides } from '../workshop'
 import { momentSlide } from '../workshop/moments'
-import { EssDemo } from '../../slides/demosB'
+import { MarkAttendancePhone } from './markAttendance'
 import login from '../../assets/nwfrca/login.png'
 import frcsLogo from '../../assets/nwfrca/frcs.png'
 import nw from '../../assets/nwfrca/newworld-logo.png'
@@ -504,10 +504,10 @@ export function buildNwFrcaSlides(): SlideDef[] {
     ...momentSlide({
       outcome: 'serve', key: 'mark-attendance', title: 'Mark attendance', headline: 'Clock in and out from the employee app.',
       scenario: c => `${c.country.sampleNames[1].split(' ')[0]} reaches Head Office, opens the PeopleHub app and taps Mark attendance. The punch is stamped with the time and location and goes straight to the timesheet.`,
-      results: ['Mobile clock in/out with geo tracking', 'Punches outside the allowed zone go for approval', 'Attendance pattern, payslip and balances in the same app'],
-      included: ['Mobile clock in/out', 'Geo tracking', 'Android', 'iPhone', 'Attendance patterns'],
-      demo: () => <EssDemo start={2} />,
-      notes: 'Employee self-service: Mark attendance. Tap Mark attendance to clock in, again to clock out. Reached from the Mobile Clock In/Out & Geo Tracking box on the system landscape; Back returns there.',
+      results: ['Live location on a map', 'An allowed radius around the office', 'Outside the zone, the punch goes for approval'],
+      included: ['Mobile clock in/out', 'Geo tracking', 'Geofence radius', 'Android', 'iPhone'],
+      demo: () => <MarkAttendancePhone />,
+      notes: 'Mark attendance in the employee app (mobile view): the map shows the employee’s live location and the allowed radius around the office. Inside the zone the punch is recorded; outside it goes for approval. Tap the map to move the location, tap Mark attendance to clock in, again to clock out. Reached from the Mobile Clock In/Out & Geo Tracking box on the system landscape; Back returns there.',
     }),
     section: SECTION, sideTrip: true,
   }
