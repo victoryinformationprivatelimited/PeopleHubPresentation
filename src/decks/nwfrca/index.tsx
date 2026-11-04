@@ -245,7 +245,7 @@ function S5() {
 
 /* 6 · Local technology partner ------------------------------------------------------------------------------ */
 function S6() {
-  const rows: [string, string][] = [['Internal Production Proof', '1,300+ Staff Active'], ['Fiji Regulatory Alignment', 'FNPF • PAYE/PDR • ERA 2007 • SRT • ECAL'], ['National ICT Footprint', '20 Technical Specialists']]
+  const rows: [string, string][] = [['Internal Production Proof', '1,300+ Staff Active'], ['Fiji Regulatory Alignment', 'FNPF • PAYE/PDR • ERP 2007 • SRT • ECAL'], ['National ICT Footprint', '20 Technical Specialists']]
   const minis: [keyof typeof ICONS, string, string, string][] = [['clock', '24×7 Coverage', 'Agreement-based SLA response', '#16A34A'], ['monitor', 'Dedicated Helpdesk', 'Direct phone, portal & email', '#2563EB'], ['pin', 'On-Site Presence', 'Rapid Fiji-wide intervention', '#EA7A12'], ['users', 'Local Governance', 'Single point of accountability', '#7C3AED']]
   const card: CSSProperties = { background: '#fff', borderRadius: 20, boxShadow: '0 10px 34px -14px rgba(15,42,82,.35)', border: '1px solid #E5EAF1' }
   return (
