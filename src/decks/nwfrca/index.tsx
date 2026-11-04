@@ -5,6 +5,7 @@ import { useNav } from '../../engine/context'
 import { buildWorkshopSlides } from '../workshop'
 import { momentSlide } from '../workshop/moments'
 import { MarkAttendancePhone } from './markAttendance'
+import { ReportsDashboardsDemo } from './reportsDashboards'
 import { PHLogo } from '../../ui/PHLogo'
 import login from '../../assets/nwfrca/login.png'
 import frcsLogo from '../../assets/nwfrca/frcs.png'
@@ -380,10 +381,10 @@ function S8() {
 }
 function S9() {
   const left: Cell[] = ['Employee Document Management System', 'News Broadcasting', { t: 'Asset Tracker', to: 'serve-assets' }, 'Integration to ERP System']
-  const right: Cell[] = ['Salary Banking Automation', 'Letter Generator', 'Grievance Reporting', { t: 'AI Assistance', to: 'serve-chat' }]
+  const right: Cell[] = ['Salary Banking Automation', 'Letter Generator', 'Grievance Reporting', { t: 'AI Assistance', to: 'serve-chat' }, { t: 'Reports and Dashboards', to: 'data-reports-dashboards' }]
   const col = (items: Cell[], x: number, d: number) => (
-    <div className="absolute flex flex-col gap-[22px]" style={{ left: x, top: 424, width: 384 }}>
-      {items.map((b, k) => <Box key={k} c={b} d={d + k * 0.25} minH={104} fs={25} />)}
+    <div className="absolute flex flex-col gap-[16px]" style={{ left: x, top: 424, width: 384 }}>
+      {items.map((b, k) => <Box key={k} c={b} d={d + k * 0.25} minH={88} fs={25} />)}
     </div>
   )
   const cxL = 960 - 330, cxR = 960 + 330   // the two arrows and the two columns share these centres
@@ -560,5 +561,16 @@ export function buildNwFrcaSlides(): SlideDef[] {
     }),
     section: SECTION, sideTrip: true,
   }
-  return [...main, ...SIDE.map(id => ({ ...pick(id), sideTrip: true })), mark]
+  const reports: SlideDef = {
+    ...momentSlide({
+      outcome: 'data', key: 'reports-dashboards', title: 'Reports and dashboards', headline: 'Live dashboards and reports your team builds itself.',
+      scenario: c => `${c.country.sampleNames[3].split(' ')[0]} from HR opens the dashboard for the Monday review: headcount, attendance and leave at a glance. Then a report is grouped by department, switched to a chart and pinned.`,
+      results: ['Live KPIs for headcount, attendance, leave and payroll', 'Build-your-own reports with charts and group-by', 'Pin a report to the dashboard and export it to Excel'],
+      included: ['Live dashboards', 'Report builder', 'Pin & share', 'Saved reports', 'Excel export'],
+      demo: () => <ReportsDashboardsDemo />, wide: true,
+      notes: 'Reports and dashboards. Start on the Dashboard tab (click a KPI or a department), then Report builder: pick a chart type and Group by, then Pin. Reached from the Reports and Dashboards box on the system landscape; Back returns there.',
+    }),
+    section: SECTION, sideTrip: true,
+  }
+  return [...main, ...SIDE.map(id => ({ ...pick(id), sideTrip: true })), mark, reports]
 }
