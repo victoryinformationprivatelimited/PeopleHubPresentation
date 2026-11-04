@@ -38,7 +38,7 @@ function MomentSlide({ def }: { def: MomentDef }) {
       <div className={`${def.wide ? 'col-span-4' : 'col-span-5'} flex flex-col gap-4`}>
         <div>
           <motion.div {...fade(0)} className="text-[18px] tracking-[0.2em] uppercase font-bold mb-2 flex items-center gap-2" style={{ color: o.color }}>
-            <OIcon id={o.id} size={38} color={o.color} />{o.name} · {idx + 1}/{o.moments.length}
+            <OIcon id={o.id} size={38} color={o.color} />{o.name}{idx >= 0 ? ` · ${idx + 1}/${o.moments.length}` : ''}
           </motion.div>
           <motion.h2 {...fade(0.06)} className={`serif ${def.wide ? 'text-[46px]' : 'text-[58px]'} leading-[1.04] font-bold mb-2`}>{def.title}</motion.h2>
           <motion.div {...fade(0.12)} className="text-[28px] font-semibold grad-text leading-snug">{def.headline}</motion.div>

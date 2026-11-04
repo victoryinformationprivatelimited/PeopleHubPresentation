@@ -3,6 +3,8 @@ import { motion } from 'framer-motion'
 import type { SlideDef } from '../../engine/context'
 import { useNav } from '../../engine/context'
 import { buildWorkshopSlides } from '../workshop'
+import { momentSlide } from '../workshop/moments'
+import { EssDemo } from '../../slides/demosB'
 import login from '../../assets/nwfrca/login.png'
 import frcsLogo from '../../assets/nwfrca/frcs.png'
 import nw from '../../assets/nwfrca/newworld-logo.png'
@@ -239,7 +241,7 @@ function S5() {
 
 /* 6 · Local technology partner ------------------------------------------------------------------------------ */
 function S6() {
-  const rows: [string, string][] = [['Internal Production Proof', '1,300+ Staff Active'], ['Fiji Regulatory Alignment', 'FNPF • PAYE/PDR • ERA 2007 • SRT • ECAL'], ['National ICT Footprint', '20 Technical Specialists']]
+  const rows: [string, string][] = [['Internal Production Proof', '1,300+ Staff Active'], ['Fiji Regulatory Alignment', 'FNPF • PAYE/PDR • ERA 2007 • SRT • ECAL'], ['National ICT Footprint', '20 Technical Specialists']]
   const minis: [keyof typeof ICONS, string, string, string][] = [['clock', '24×7 Coverage', 'Agreement-based SLA response', '#16A34A'], ['monitor', 'Dedicated Helpdesk', 'Direct phone, portal & email', '#2563EB'], ['pin', 'On-Site Presence', 'Rapid Fiji-wide intervention', '#EA7A12'], ['users', 'Local Governance', 'Single point of accountability', '#7C3AED']]
   const card: CSSProperties = { background: '#fff', borderRadius: 20, boxShadow: '0 10px 34px -14px rgba(15,42,82,.35)', border: '1px solid #E5EAF1' }
   return (
@@ -247,24 +249,24 @@ function S6() {
       <motion.div {...slideIn(0.1, 60)} className="absolute" style={{ right: 108, top: 44 }}><NwLogo h={42} /></motion.div>
       <motion.div {...rise(0)} className="absolute text-[20px] font-extrabold tracking-[0.12em]" style={{ left: 96, top: 70, color: '#0B8F4F' }}>PROVEN FIJI ENTERPRISE & TECHNOLOGY LEADERSHIP</motion.div>
       <motion.h2 {...rise(0.1)} className="absolute font-extrabold" style={{ left: 96, top: 114, fontSize: 56, color: '#0F172A' }}>Your Local Technology Partner in Fiji</motion.h2>
-      <motion.div {...slideIn(0.4, -110)} className="absolute" style={{ ...card, left: 96, top: 270, width: 840, height: 640, padding: '34px 40px' }}>
-        <div className="flex items-center gap-5"><div className="rounded-xl grid place-items-center" style={{ width: 64, height: 64, background: '#E8F7EF' }}><Ico d={ICONS.shield} c="#0B8F4F" size={38} /></div><div className="font-extrabold" style={{ fontSize: 36, color: '#0F172A' }}>Enterprise Strength & Scale</div></div>
-        <p style={{ fontSize: 25, lineHeight: 1.55, color: '#334155', marginTop: 22 }}>Serving Fiji since 1933 with 19 supermarkets and 3 wholesale operations nationwide. Newworld runs mission-critical retail ERP, cloud infrastructure, business intelligence, and cyber operations.</p>
-        <div className="flex flex-col gap-3" style={{ marginTop: 26 }}>
+      <motion.div {...slideIn(0.4, -110)} className="absolute" style={{ ...card, left: 96, top: 262, width: 840, height: 730, padding: '34px 40px' }}>
+        <div className="flex items-center gap-5"><div className="rounded-xl grid place-items-center" style={{ width: 64, height: 64, background: '#E8F7EF' }}><Ico d={ICONS.shield} c="#0B8F4F" size={38} /></div><div className="font-extrabold" style={{ fontSize: 40, color: '#0F172A' }}>Enterprise Strength & Scale</div></div>
+        <p style={{ fontSize: 29, lineHeight: 1.5, color: '#334155', marginTop: 22 }}>Serving Fiji since 1933 with 19 supermarkets and 3 wholesale operations nationwide. Newworld runs mission-critical retail ERP, cloud infrastructure, business intelligence, and cyber operations.</p>
+        <div className="flex flex-col gap-4" style={{ marginTop: 28 }}>
           {rows.map(([l, v], k) => (
-            <motion.div key={l} {...rise(1.0 + k * 0.2, 24)} className="flex items-center justify-between gap-6 rounded-xl px-6 py-4" style={{ background: '#F1F5F9' }}>
-              <span className="flex-none" style={{ fontSize: 22, color: '#334155', fontWeight: 600 }}>{l}</span><span className="font-extrabold text-right" style={{ fontSize: 22, color: '#0B8F4F', lineHeight: 1.3 }}>{v}</span>
+            <motion.div key={l} {...rise(1.0 + k * 0.2, 24)} className="flex items-center justify-between gap-6 rounded-xl px-6 py-5" style={{ background: '#F1F5F9' }}>
+              <span className="flex-none" style={{ fontSize: 26, color: '#334155', fontWeight: 600 }}>{l}</span><span className="font-extrabold text-right" style={{ fontSize: 26, color: '#0B8F4F', lineHeight: 1.3 }}>{v}</span>
             </motion.div>
           ))}
         </div>
       </motion.div>
-      <motion.div {...slideIn(0.6, 110)} className="absolute" style={{ ...card, left: 984, top: 270, width: 840, height: 640, padding: '34px 40px' }}>
-        <div className="flex items-center gap-5"><div className="rounded-xl grid place-items-center" style={{ width: 64, height: 64, background: '#E7F0FE' }}><Ico d={ICONS.headset} c="#2563EB" size={38} /></div><div className="font-extrabold" style={{ fontSize: 36, color: '#0F172A' }}>Dedicated Local Support Levels</div></div>
-        <p style={{ fontSize: 25, lineHeight: 1.55, color: '#334155', marginTop: 22 }}>Direct, on-the-ground accountability for FRCS. Our Suva and Ba IT service centres provide immediate on-site response and formal SLA-backed coverage.</p>
-        <div className="grid grid-cols-2 gap-4" style={{ marginTop: 24 }}>
+      <motion.div {...slideIn(0.6, 110)} className="absolute" style={{ ...card, left: 984, top: 262, width: 840, height: 730, padding: '34px 40px' }}>
+        <div className="flex items-center gap-5"><div className="rounded-xl grid place-items-center" style={{ width: 64, height: 64, background: '#E7F0FE' }}><Ico d={ICONS.headset} c="#2563EB" size={38} /></div><div className="font-extrabold" style={{ fontSize: 40, color: '#0F172A' }}>Dedicated Local Support Levels</div></div>
+        <p style={{ fontSize: 29, lineHeight: 1.5, color: '#334155', marginTop: 22 }}>Direct, on-the-ground accountability for FRCS. Our Suva and Ba IT service centres provide immediate on-site response and formal SLA-backed coverage.</p>
+        <div className="grid grid-cols-2 gap-5" style={{ marginTop: 28 }}>
           {minis.map(([ic, t, d, c], k) => (
-            <motion.div key={t} {...pop(1.1 + k * 0.18)} className="rounded-xl p-4" style={{ border: '1px solid #E5EAF1', background: '#fff' }}>
-              <Ico d={ICONS[ic]} c={c} size={28} /><div className="font-extrabold" style={{ fontSize: 22, color: '#0F172A', marginTop: 4 }}>{t}</div><div style={{ fontSize: 19, color: '#64748B', lineHeight: 1.3 }}>{d}</div>
+            <motion.div key={t} {...pop(1.1 + k * 0.18)} className="rounded-xl p-5" style={{ border: '1px solid #E5EAF1', background: '#fff' }}>
+              <Ico d={ICONS[ic]} c={c} size={34} /><div className="font-extrabold" style={{ fontSize: 27, color: '#0F172A', marginTop: 6 }}>{t}</div><div style={{ fontSize: 22, color: '#64748B', lineHeight: 1.3 }}>{d}</div>
             </motion.div>
           ))}
         </div>
@@ -352,7 +354,7 @@ function S8() {
       heads={['Time and Attendance', 'PeopleHub Mobile App', 'Employee Self-Service Portal', 'Payroll Management']}
       cols={[
         [{ t: 'Real-Time Data Capturing', to: 'time-capture' }, { t: 'Create Multiple Shifts Roster Configuration', to: 'time-roster' }, 'Late & Leave Policy'],
-        [{ t: 'Mobile Clock In/Out & Geo Tracking', to: 'leave-apply' }, <Bul key="l" head="Leave Management" items={['Leave Application Online', 'Leave Approval', 'OT Approval']} />],
+        [{ t: 'Mobile Clock In/Out & Geo Tracking', to: 'serve-mark-attendance' }, <Bul key="l" head="Leave Management" items={['Leave Application Online', 'Leave Approval', 'OT Approval']} />],
         ['Personal Data & Dashboard', 'Leave Management – Entitlements & Leave Balance', 'View Payslip & Attendance Patterns'],
         [<Bul key="p" head="Periodic Payroll Processing" items={['Monthly', 'Weekly']} />, { t: 'Staff Loan Management', to: 'pay-advance' }, 'Integration to Government Portal for Reporting', { t: 'GL Integration', to: 'pay-finance' }, 'Third-Party Integrations'],
       ]} />
@@ -477,7 +479,7 @@ function S13() {
 const SECTION = 'Newworld'
 const mk = (id: string, title: string, secs: number, render: () => ReactNode, notes = ''): SlideDef => ({ id, section: SECTION, title, secs, tier: 3, notes, render })
 
-const SIDE = ['time-capture', 'time-roster', 'leave-apply', 'pay-advance', 'pay-finance', 'serve-assets', 'serve-chat']
+const SIDE = ['time-capture', 'time-roster', 'pay-advance', 'pay-finance', 'serve-assets', 'serve-chat']
 
 export function buildNwFrcaSlides(): SlideDef[] {
   const ws = buildWorkshopSlides()
@@ -498,5 +500,16 @@ export function buildNwFrcaSlides(): SlideDef[] {
     mk('nw-next', 'Next Steps', 60, () => <S13 />),
   ]
   // system screens reached from the landscape boxes: opened by link, then Back (not part of the running order)
-  return [...main, ...SIDE.map(id => ({ ...pick(id), sideTrip: true }))]
+  const mark: SlideDef = {
+    ...momentSlide({
+      outcome: 'serve', key: 'mark-attendance', title: 'Mark attendance', headline: 'Clock in and out from the employee app.',
+      scenario: c => `${c.country.sampleNames[1].split(' ')[0]} reaches Head Office, opens the PeopleHub app and taps Mark attendance. The punch is stamped with the time and location and goes straight to the timesheet.`,
+      results: ['Mobile clock in/out with geo tracking', 'Punches outside the allowed zone go for approval', 'Attendance pattern, payslip and balances in the same app'],
+      included: ['Mobile clock in/out', 'Geo tracking', 'Android', 'iPhone', 'Attendance patterns'],
+      demo: () => <EssDemo start={2} />,
+      notes: 'Employee self-service: Mark attendance. Tap Mark attendance to clock in, again to clock out. Reached from the Mobile Clock In/Out & Geo Tracking box on the system landscape; Back returns there.',
+    }),
+    section: SECTION, sideTrip: true,
+  }
+  return [...main, ...SIDE.map(id => ({ ...pick(id), sideTrip: true })), mark]
 }

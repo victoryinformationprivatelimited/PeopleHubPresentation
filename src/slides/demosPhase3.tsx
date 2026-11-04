@@ -41,9 +41,11 @@ export function EngagementDemo() {
 }
 
 /* ───────── Employee self-service ───────── */
-export function EssDemo() {
+export function EssDemo({ start = 0 }: { start?: number } = {}) {
   const { country, company, logo } = useDeck()
-  const [tile, setTile] = useState(0)
+  const [tile, setTile] = useState(start)
+  const [punches, setPunches] = useState<[string, string][]>([])
+  const markNow = () => { const d = new Date(); setPunches(p => [...p, [p.length % 2 === 0 ? 'In' : 'Out', `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`]]) }
   const [apps, setApps] = useState(['Leave · 2 days', 'Shift change', 'Salary advance'])
   const [letter, setLetter] = useState(false)
   const [phone, setPhone] = useState(country.phoneExample)
@@ -52,7 +54,7 @@ export function EssDemo() {
   const panel: ReactNode[] = [
     <div key="l" className="flex flex-col gap-2">{(country.leaveTypes as unknown as [string, number, number][]).map(([n, a, t]) => <div key={n}><div className="flex justify-between text-[14.5px] mb-1"><span>{n}</span><b>{a} / {t} days</b></div><Bar pct={(a / t) * 100} color="var(--ok)" /></div>)}<Btn onClick={() => setTile(5)}>Request leave ▶</Btn></div>,
     <div key="p" className="flex flex-col gap-2">{['Oct', 'Sep', 'Aug'].map((m, i) => <div key={m} className="card px-3 py-2 flex justify-between text-[14.5px]"><span>{m} 2026 payslip</span><b>{country.currency} {(net - i * 450).toLocaleString()}</b></div>)}</div>,
-    <div key="a" className="flex flex-col gap-2 text-[14.5px]">{[['In', '08:12', 'Head office'], ['Out', '17:36', 'Head office']].map(([a, b, c]) => <div key={a} className="card px-3 py-2 flex justify-between"><span>{a} · {b}</span><Badge tone="ok">{c}</Badge></div>)}<div style={{ color: 'var(--mute)' }}>This month: 21 days present · 2 late</div></div>,
+    <div key="a" className="flex flex-col gap-2 text-[14.5px]"><Btn onClick={markNow}>Mark attendance ▶</Btn>{punches.length === 0 && <div style={{ color: 'var(--mute)' }}>Tap to clock in. Your location is checked against the allowed zone.</div>}{punches.map(([a, b], i) => <motion.div key={i} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="card px-3 py-2 flex justify-between"><span>{a} · {b}</span><Badge tone="ok">✓ Head office · in zone</Badge></motion.div>)}<div style={{ color: 'var(--mute)' }}>This month: 21 days present · 2 late</div></div>,
     <div key="u" className="flex flex-col gap-2"><div className="text-[12px] uppercase tracking-wider" style={{ color: 'var(--mute)' }}>Mobile number (editable)</div><input value={phone} onChange={e => setPhone(e.target.value)} className="rounded-lg px-3 py-2 text-[15px] outline-none" style={{ background: 'var(--bg)', border: '1.5px solid var(--line)', color: 'var(--ink)' }} /><div className="text-[12.5px]" style={{ color: 'var(--mute)' }}>Changes go to HR for approval · full change history kept</div></div>,
     <div key="le" className="flex flex-col gap-2 text-[14.5px]"><div className="card px-3 py-2">Employment confirmation letter</div><Btn tone={letter ? 'ok' : 'brand'} onClick={() => setLetter(true)}>{letter ? '✓ Ready — download PDF' : 'Request letter ▶'}</Btn></div>,
     <div key="ap" className="flex flex-col gap-2">{apps.length ? apps.map(a => <div key={a} className="card px-3 py-2 flex items-center gap-2 text-[14.5px]"><span className="flex-1">{a}</span><button onClick={() => setApps(x => x.filter(y => y !== a))}><Badge tone="ok">Approve</Badge></button></div>) : <div className="text-[14.5px]" style={{ color: 'var(--ok)' }}>✓ All caught up — nothing waiting.</div>}</div>,
