@@ -11,6 +11,7 @@ import microsoft from '../../assets/nwfrca/microsoft.png'
 import thakral from '../../assets/nwfrca/thakral.png'
 import ninja from '../../assets/nwfrca/ninja.png'
 import victory from '../../assets/nwfrca/victory.png'
+import huawei from '../../assets/nwfrca/huawei.png'
 import cLtl from '../../assets/nwfrca/c-ltl.png'
 import cKdaw from '../../assets/nwfrca/c-kdaw.png'
 import cAdvantis from '../../assets/nwfrca/c-advantis.png'
@@ -43,7 +44,7 @@ import cDeLaRue from '../../assets/clients/de-la-rue-lanka-currency-and-security
 /* The Newworld HRIS presentation for FRCS (v4.0), rebuilt slide for slide with animation, then revised from the review notes. */
 
 /** Scheduled meeting shown on the sign-in screen. Leave `text` empty to show the live date and clock instead. */
-const MEETING = { date: '', time: '' }
+const MEETING = { date: 'Thursday, November 5, 2026', time: '10:00 AM' }
 
 const NAVY = '#0F2A52', TEAL = '#14A79D', ORANGE = '#F5A742', GRAY = '#5B6B7F', LIGHT = '#F3F7FA'
 const OR = '#C55A11', BLUE = '#2E75B6', GOLD = '#FFC000', GREEN = '#19C37D'
@@ -214,7 +215,7 @@ function S5() {
       <div style={{ fontSize: 29, color: NAVY, lineHeight: 1.35, width: 520 }}>{label}</div>
     </motion.div>
   )
-  const logos: [string, number][] = [[microsoft, 112], [thakral, 72], [victory, 112], [ninja, 58]]
+  const logos: [string, number][] = [[microsoft, 112], [thakral, 72], [victory, 112], [ninja, 58], [huawei, 112]]
   return (
     <Light title="A Skilled Team, Backed by Global Partnerships">
       {big(<AnimNum to={1933} plain />, <><b>Fiji Heritage</b> & Enterprise Scale</>, 0.5, 262)}
@@ -224,7 +225,6 @@ function S5() {
         <div className="font-bold" style={{ fontSize: 33, color: NAVY }}>Strategic Global Partnerships</div>
         <div className="flex items-center justify-between" style={{ height: 150, marginTop: 6 }}>
           {logos.map(([src, h], k) => <motion.img key={k} {...pop(1.1 + k * 0.18)} src={src} alt="" style={{ height: h, maxWidth: 240, objectFit: 'contain' }} />)}
-          <motion.div {...pop(1.9)} className="grid place-items-center text-center rounded-xl" style={{ width: 150, height: 96, border: '2px dashed #9FB0C7', color: '#7C8AA0', fontSize: 18, fontWeight: 600, lineHeight: 1.2 }}>Huawei<br />logo</motion.div>
         </div>
         <div style={{ fontSize: 25, color: GRAY }}>Collaboration to skill up local teams and access best-practice delivery.</div>
       </motion.div>
